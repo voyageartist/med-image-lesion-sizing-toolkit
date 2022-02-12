@@ -1,0 +1,26 @@
+version: 2
+jobs:
+  build-and-test:
+    working_directory: /LesionSizingToolkit-build
+    docker:
+      - image: insighttoolkit/module-ci:latest
+    steps:
+      - checkout:
+          path: /LesionSizingToolkit
+      - run:
+          name: Fetch CTest driver script
+          command: |
+            curl -L https://raw.githubusercontent.com/InsightSoftwareConsortium/ITK/dashboard/itk_common.cmake -O
+      - run:
+          name: Configure CTest script
+          command: |
+            SHASNIP=$(echo $CIRCLE_SHA1 | cut -c1-7)
+            cat > dashboard.cmake << EOF
+            set(CTEST_SITE "CircleCI")
+            set(CTEST_BUILD_NAME "External-LesionSizingToolkit-${CIRCLE_BRANCH}-${CIRCLE_BUILD_NUM}-${SHASNIP}")
+            set(CTEST_BUILD_CONFIGURATION "MinSizeRel")
+            set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
+            set(CTEST_BUILD_FLAGS: "-j5")
+            set(CTEST_SOURCE_DIRECTORY /LesionSizingToolkit)
+            set(CTEST_BINARY_DIRECTORY /LesionSizingToolkit-build)
+  
