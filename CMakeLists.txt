@@ -1,0 +1,18 @@
+cmake_minimum_required(VERSION 3.10.2)
+project(LesionSizingToolkit)
+
+if(NOT ITK_SOURCE_DIR)
+  find_package(ITK REQUIRED)
+  include(${ITK_USE_FILE})
+  list(APPEND CMAKE_MODULE_PATH ${ITK_CMAKE_DIR})
+  include(ITKModuleExternal)
+else()
+  itk_module_impl()
+endif()
+
+option(LSTK_USE_VTK "Build visualization helper tools." OFF)
+if(LSTK_USE_VTK)
+  find_package(VTK REQUIRED COMPONENTS vtkRenderingVolume vtkIOGeometry vtkIOLegacy vtkIOImage vtkInteractionWidgets vtkInteractionImage)
+  set(VERSION_MIN "6.0.0")
+  if(${VTK_VERSION} VERSION_LESS ${VERSION_MIN})
+    message(ERROR " LSTK_USE_VTK requires VTK version ${VERSION_MIN} or newer but the current version is ${VTK_VERSIO
