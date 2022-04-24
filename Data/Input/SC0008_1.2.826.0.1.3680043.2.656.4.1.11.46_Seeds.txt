@@ -1,0 +1,6 @@
+
+ObjectType = Scene
+NDims = 3
+NObjects = 1
+ObjectType = Landmark
+NDims = 3
