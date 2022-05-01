@@ -1,3 +1,4 @@
+
 ObjectType = Scene
 NDims = 3
 NObjects = 1
@@ -14,4 +15,4 @@ ElementType = MET_FLOAT
 PointDim = x y z red green blue alpha
 NPoints = 1
 Points = 
-  385.569  361.406  -119 1 0 0 1 
+  388.381  362.109  -119 1 0 0 1 
