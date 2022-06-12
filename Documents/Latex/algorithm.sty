@@ -61,4 +61,19 @@
   \ifthenelse{\equal{\ALG@within}{part}}
      {\newfloat{algorithm}{htbp}{loa}[part]}{}
   \ifthenelse{\equal{\ALG@within}{chapter}}
-     {\newflo
+     {\newfloat{algorithm}{htbp}{loa}[chapter]}{}
+  \ifthenelse{\equal{\ALG@within}{section}}
+     {\newfloat{algorithm}{htbp}{loa}[section]}{}
+  \ifthenelse{\equal{\ALG@within}{subsection}}
+     {\newfloat{algorithm}{htbp}{loa}[subsection]}{}
+  \ifthenelse{\equal{\ALG@within}{subsubsection}}
+     {\newfloat{algorithm}{htbp}{loa}[subsubsection]}{}
+  \ifthenelse{\equal{\ALG@within}{nothing}}
+     {\newfloat{algorithm}{htbp}{loa}}{}
+}{
+  \newfloat{algorithm}{htbp}{loa}
+}
+\floatname{algorithm}{\ALG@name}
+
+\newcommand{\listofalgorithms}{\listof{algorithm}{\listalgorithmname}}
+
