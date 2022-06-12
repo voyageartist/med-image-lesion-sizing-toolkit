@@ -836,3 +836,283 @@
   \def\optional##1{{\Large[}##1{\Large]}}
   \def\production##1##2{\code{##1}&::=&\code{##2}\\}
   \def\orgroup##1{{\def\or{\textbar\ }##1}}
+  \def\token##1{##1}
+  \begin{center}
+    \begin{tabular}{lcl}
+}{%
+    \end{tabular}
+  \end{center}
+}
+
+% Deprecation stuff.
+% Should be extended to allow an index / list of deprecated stuff.  But
+% there's a lot of stuff that needs to be done to make that automatable.
+%
+% First parameter is the release number that deprecates the feature, the
+% second is the action the should be taken by users of the feature.
+%
+% Example:
+%  \deprecated{1.5.1}{Use \method{frobnicate()} instead.}
+%
+\newcommand{\deprecated}[2]{%
+  \strong{Deprecated since release #1.}  #2\par}
+
+% New stuff.
+% This should be used to mark things which have been added to the
+% development tree but that aren't in the release, but are documented.
+% This allows release of documentation that already includes updated
+% descriptions.  Place at end of descriptor environment.
+%
+% Example:
+%  \versionadded{1.5.2}
+%  \versionchanged[short explanation]{2.0}
+%
+\newcommand{\versionadded}[2][\itk@badkey]{%
+  \ifx#1\@undefined%
+    {  New in version #2.  }%
+  \else%
+    {  New in version #2:\ #1.  }%
+  \fi%
+}
+\newcommand{\versionchanged}[2][\itk@badkey]{%
+  \ifx#1\@undefined%
+    {  Changed in version #2.  }%
+  \else%
+    {  Changed in version #2:\ #1.  }%
+  \fi%
+}
+
+
+% Tables.
+%
+\newenvironment{tableii}[4]{%
+  \begin{center}%
+    \def\lineii##1##2{\csname#2\endcsname{##1}&##2\\}%
+    \begin{tabular}{#1}\strong{#3}&\strong{#4} \\* \hline%
+}{%
+    \end{tabular}%
+  \end{center}%
+}
+
+\newenvironment{longtableii}[4]{%
+  \begin{center}%
+    \def\lineii##1##2{\csname#2\endcsname{##1}&##2\\}%
+    \begin{longtable}[c]{#1}\strong{#3}&\strong{#4} \\* \hline\endhead%
+}{%
+    \end{longtable}%
+  \end{center}%
+}
+
+\newenvironment{tableiii}[5]{%
+  \begin{center}%
+    \def\lineiii##1##2##3{\csname#2\endcsname{##1}&##2&##3\\}%
+    \begin{tabular}{#1}\strong{#3}&\strong{#4}&\strong{#5} \\%
+      \hline%
+}{%
+    \end{tabular}%
+  \end{center}%
+}
+
+\newenvironment{longtableiii}[5]{%
+  \begin{center}%
+    \def\lineiii##1##2##3{\csname#2\endcsname{##1}&##2&##3\\}%
+    \begin{longtable}[c]{#1}\strong{#3}&\strong{#4}&\strong{#5} \\%
+      \hline\endhead%
+}{%
+    \end{longtable}%
+  \end{center}%
+}
+
+\newenvironment{tableiv}[6]{%
+  \begin{center}%
+    \def\lineiv##1##2##3##4{\csname#2\endcsname{##1}&##2&##3&##4\\}%
+    \begin{tabular}{#1}\strong{#3}&\strong{#4}&\strong{#5}&\strong{#6} \\%
+      \hline%
+}{%
+    \end{tabular}%
+  \end{center}%
+}
+
+\newenvironment{longtableiv}[6]{%
+  \begin{center}%
+    \def\lineiv##1##2##3##4{\csname#2\endcsname{##1}&##2&##3&##4\\}%
+    \begin{longtable}[c]{#1}\strong{#3}&\strong{#4}&\strong{#5}&\strong{#6}%
+      \\%
+      \hline\endhead%
+}{%
+    \end{longtable}%
+  \end{center}%
+}
+
+\newenvironment{tablev}[7]{%
+  \begin{center}%
+    \def\linev##1##2##3##4##5{\csname#2\endcsname{##1}&##2&##3&##4&##5\\}%
+    \begin{tabular}{#1}\strong{#3}&\strong{#4}&\strong{#5}&\strong{#6}&\strong{#7} \\%
+      \hline%
+}{%
+    \end{tabular}%
+  \end{center}%
+}
+
+\newenvironment{longtablev}[7]{%
+  \begin{center}%
+    \def\linev##1##2##3##4##5{\csname#2\endcsname{##1}&##2&##3&##4&##5\\}%
+    \begin{longtable}[c]{#1}\strong{#3}&\strong{#4}&\strong{#5}&\strong{#6}&\strong{#7}%
+      \\%
+      \hline\endhead%
+}{%
+    \end{longtable}%
+  \end{center}%
+}
+
+% Cross-referencing (AMK, new impl. FLD)
+% Sample usage:
+%  \begin{seealso}
+%    \seemodule{rand}{Uniform random number generator.}; % Module xref
+%    \seetext{\emph{Encyclopedia Britannica}}.           % Ref to a book
+% 
+%    % A funky case: module name contains '_'; have to supply an optional key
+%    \seemodule[copyreg]{copy_reg}{Interface constructor registration for
+%                                  \module{pickle}.}
+%  \end{seealso}
+%
+% Note that the last parameter for \seemodule and \seetext should be complete
+% sentences and be terminated with the proper punctuation.
+
+\@ifundefined{pdfannotlink}{%
+  \newcommand{\itk@seemodule}[3][\itk@modulebadkey]{%
+    \par%
+    \ifx\itk@modulebadkey#1\def\itk@modulekey{#2}\else\def\itk@modulekey{#1}\fi%
+    \begin{fulllineitems}
+      \item[Module \module{#2} (section \ref{module-\itk@modulekey}):]
+      #3
+    \end{fulllineitems}
+  }
+}{\newcommand{\itk@seemodule}[3][\itk@modulebadkey]{%
+    \par%
+    \ifx\itk@modulebadkey#1\def\itk@modulekey{#2}\else\def\itk@modulekey{#1}\fi%
+    \begin{fulllineitems}
+      \item[\itk@linkToName{label-module-\itk@modulekey}{Module \module{#2}}
+            (section \ref{module-\itk@modulekey}):]
+      #3
+    \end{fulllineitems}
+  }
+}
+% \seetitle[url]{title}{why it's interesting}
+\newcommand{\itk@seetitle}[3][\itk@modulebadkey]{%
+  \par
+  \begin{fulllineitems}
+    \item[\citetitle{#2}]
+    \ifx\itk@modulebadkey#1\else
+      \item[{\small{(\url{#1})}}]
+    \fi
+    #3
+  \end{fulllineitems}
+}
+% \seepep{number}{title}{why it's interesting}
+\newcommand{\itk@seepep}[3]{%
+  \par%
+  \begin{fulllineitems}
+    \item[\pep{#1}, ``\emph{#2}'']
+    #3
+  \end{fulllineitems}
+}
+% \seerfc{number}{title}{why it's interesting}
+\newcommand{\itk@seerfc}[3]{%
+  \par%
+  \begin{fulllineitems}
+    \item[\rfc{#1}, ``\emph{#2}'']
+    #3
+  \end{fulllineitems}
+}
+% \seeurl{url}{why it's interesting}
+\newcommand{\itk@seeurl}[2]{%
+  \par%
+  \begin{fulllineitems}
+    \item[\url{#1}]
+    #2
+  \end{fulllineitems}
+}
+\newenvironment{seealso}[0]{
+  \par
+  \strong{See Also:}\par
+  \def\seetext##1{\par{##1}}
+  \let\seemodule=\itk@seemodule
+  \let\seepep=\itk@seepep
+  \let\seerfc=\itk@seerfc
+  \let\seetitle=\itk@seetitle
+  \let\seeurl=\itk@seeurl
+}{\par}
+
+
+% Allow the Insight release number to be specified independently of the
+% \date{}.  This allows the date to reflect the document's date and
+% release to specify the Insight release that is documented.
+%
+\newcommand{\itk@release}{}
+\newcommand{\version}{}
+\newcommand{\shortversion}{}
+\newcommand{\releaseinfo}{}
+\newcommand{\releasename}{Release}
+\newcommand{\release}[1]{%
+  \renewcommand{\itk@release}{\releasename\space\version}%
+  \renewcommand{\version}{#1}}
+\newcommand{\setshortversion}[1]{%
+  \renewcommand{\shortversion}{#1}}
+\newcommand{\setreleaseinfo}[1]{%
+  \renewcommand{\releaseinfo}{#1}}
+
+% Allow specification of the author's address separately from the
+% author's name.  This can be used to format them differently, which
+% is a good thing.
+%
+\newcommand{\itk@authoraddress}{}
+\newcommand{\authoraddress}[1]{\renewcommand{\itk@authoraddress}{#1}}
+\let\developersaddress=\authoraddress
+\let\developer=\author
+\let\developers=\author
+
+% This sets up the fancy chapter headings that make the documents look
+% at least a little better than the usual LaTeX output.
+%
+\@ifundefined{ChTitleVar}{}{
+  \ChNameVar{\raggedleft\normalsize\itk@HeaderFamily}
+  \ChNumVar{\raggedleft \bfseries\Large\itk@HeaderFamily}
+  \ChTitleVar{\raggedleft \rm\Huge\itk@HeaderFamily}
+  % This creates chapter heads without the leading \vspace*{}:
+  \def\@makechapterhead#1{%
+    {\parindent \z@ \raggedright \normalfont
+      \ifnum \c@secnumdepth >\m@ne
+        \DOCH
+      \fi
+      \interlinepenalty\@M
+      \DOTI{#1}
+    }
+  }
+}
+
+
+% Definition lists; requested by AMK for HOWTO documents.  Probably useful
+% elsewhere as well, so keep in in the general style support.
+%
+\newenvironment{definitions}{%
+  \begin{description}%
+  \def\term##1{\item[##1]\mbox{}\\*[0mm]}
+}{%
+  \end{description}%
+}
+
+% Tell TeX about pathological hyphenation cases:
+\hyphenation{Base-HTTP-Re-quest-Hand-ler}
+
+
+%
+%  Commands for adding the link reference to the URL in the Insight Journal
+%
+\newcommand{\urlhandle}[1]{
+\url{https://hdl.handle.net/1926/#1}}  
+
+\newcommand{\IJhandlefooter}[1]{
+\fancyfoot[CO,CE]{
+Latest version available at the \href{https://www.insight-journal.org}{Insight Journal} [\urlhandle{#1}]\\
+Distributed under \href{https://creativecommons.org/licenses/by/3.0/us/}{Creative Commons Attribution License}}}

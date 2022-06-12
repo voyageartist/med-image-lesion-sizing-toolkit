@@ -1,0 +1,26 @@
+% ALGORITHM STYLE -- Released 8 April 1996
+%    for LaTeX-2e
+% Copyright -- 1994 Peter Williams
+% E-mail Peter.Williams@dsto.defence.gov.au
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{algorithm}
+\typeout{Document Style `algorithm' - floating environment}
+
+\RequirePackage{float}
+\RequirePackage{ifthen}
+\newcommand{\ALG@within}{nothing}
+\newboolean{ALG@within}
+\setboolean{ALG@within}{false}
+\newcommand{\ALG@floatstyle}{ruled}
+\newcommand{\ALG@name}{Algorithm}
+\newcommand{\listalgorithmname}{List of \ALG@name s}
+
+% Declare Options
+% first appearance
+\DeclareOption{plain}{
+  \renewcommand{\ALG@floatstyle}{plain}
+}
+\DeclareOption{ruled}{
+  \renewcommand{\ALG@floatstyle}{ruled}
+}
+\DeclareOption{boxed}
