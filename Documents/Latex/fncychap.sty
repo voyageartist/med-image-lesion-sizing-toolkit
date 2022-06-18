@@ -74,4 +74,52 @@
 
 
 %%%% DEFINITION OF Title variables
-\newcommand{\CTV}{\Huge\bf
+\newcommand{\CTV}{\Huge\bfseries}
+\newcommand{\ChTitleVar}[1]{\renewcommand{\CTV}{#1}}
+
+%%%% DEFINITION OF the basic rule width
+\newlength{\RW}
+\setlength{\RW}{1pt}
+\newcommand{\ChRuleWidth}[1]{\setlength{\RW}{#1}}
+
+\newif\ifUCT
+\UCTfalse
+\newif\ifLCT
+\LCTfalse
+\def\ChTitleLowerCase{\LCTtrue\UCTfalse}
+\def\ChTitleUpperCase{\UCTtrue\LCTfalse}
+\def\ChTitleAsIs{\UCTfalse\LCTfalse}
+\newcommand{\FmTi}[1]{%
+\ifUCT
+
+   {\MakeUppercase#1}\LCTfalse
+\else
+   \ifLCT
+      {\MakeLowercase#1}\UCTfalse
+   \else #1
+   \fi
+\fi}
+
+
+
+\newlength{\mylen}
+\newlength{\myhi}
+\newlength{\px}
+\newlength{\py}
+\newlength{\pyy}
+\newlength{\pxx}
+
+
+\def\mghrulefill#1{\leavevmode\leaders\hrule\@height #1\hfill\kern\z@}
+
+\newcommand{\DOCH}{%
+  \CNV\FmN{\@chapapp}\space \CNoV\thechapter
+  \par\nobreak
+  \vskip 20\p@
+  }
+\newcommand{\DOTI}[1]{%
+    \CTV\FmTi{#1}\par\nobreak
+    \vskip 40\p@
+    }
+\newcommand{\DOTIS}[1]{%
+    \CTV\FmTi{#1}\par\n
