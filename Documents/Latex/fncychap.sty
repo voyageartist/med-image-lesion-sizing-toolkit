@@ -27,4 +27,51 @@
              [1997/04/06 v1.11
                  LaTeX package (Revised chapters)]
 
-%%%% DEFI
+%%%% DEFINITION OF Chapapp variables
+\newcommand{\CNV}{\huge\bfseries}
+\newcommand{\ChNameVar}[1]{\renewcommand{\CNV}{#1}}
+
+
+%%%% DEFINITION OF TheChapter variables
+\newcommand{\CNoV}{\huge\bfseries}
+\newcommand{\ChNumVar}[1]{\renewcommand{\CNoV}{#1}}
+
+\newif\ifUCN
+\UCNfalse
+\newif\ifLCN
+\LCNfalse
+\def\ChNameLowerCase{\LCNtrue\UCNfalse}
+\def\ChNameUpperCase{\UCNtrue\LCNfalse}
+\def\ChNameAsIs{\UCNfalse\LCNfalse}
+
+%%%%% Fix for AMSBook 971008
+
+\@ifundefined{@chapapp}{\let\@chapapp\chaptername}{}
+
+
+%%%%% Fix for Bjarne and appendix 980211
+
+\newif\ifinapp
+\inappfalse
+\renewcommand\appendix{\par
+  \setcounter{chapter}{0}%
+  \setcounter{section}{0}%
+  \inapptrue%
+  \renewcommand\@chapapp{\appendixname}%
+  \renewcommand\thechapter{\@Alph\c@chapter}}
+
+%%%%%
+
+\newcommand{\FmN}[1]{%
+\ifUCN
+   {\MakeUppercase#1}\LCNfalse
+\else
+   \ifLCN
+      {\MakeLowercase#1}\UCNfalse
+   \else #1
+   \fi
+\fi}
+
+
+%%%% DEFINITION OF Title variables
+\newcommand{\CTV}{\Huge\bf
