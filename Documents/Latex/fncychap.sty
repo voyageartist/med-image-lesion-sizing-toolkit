@@ -122,4 +122,44 @@
     \vskip 40\p@
     }
 \newcommand{\DOTIS}[1]{%
-    \CTV\FmTi{#1}\par\n
+    \CTV\FmTi{#1}\par\nobreak
+    \vskip 40\p@
+    }
+
+%%%%%% SONNY DEF
+
+\DeclareOption{Sonny}{%
+  \ChNameVar{\Large\sf}
+  \ChNumVar{\Huge}
+  \ChTitleVar{\Large\sf}
+  \ChRuleWidth{0.5pt}
+  \ChNameUpperCase
+  \renewcommand{\DOCH}{%
+    \raggedleft
+    \CNV\FmN{\@chapapp}\space \CNoV\thechapter
+    \par\nobreak
+    \vskip 40\p@}
+  \renewcommand{\DOTI}[1]{%
+    \CTV\raggedleft\mghrulefill{\RW}\par\nobreak
+    \vskip 5\p@
+    \CTV\FmTi{#1}\par\nobreak
+    \mghrulefill{\RW}\par\nobreak
+    \vskip 40\p@}
+  \renewcommand{\DOTIS}[1]{%
+    \CTV\raggedleft\mghrulefill{\RW}\par\nobreak
+    \vskip 5\p@
+    \CTV\FmTi{#1}\par\nobreak
+    \mghrulefill{\RW}\par\nobreak
+    \vskip 40\p@}
+}
+
+%%%%%% LENNY DEF
+
+\DeclareOption{Lenny}{%
+
+  \ChNameVar{\fontsize{14}{16}\usefont{OT1}{phv}{m}{n}\selectfont}
+  \ChNumVar{\fontsize{60}{62}\usefont{OT1}{ptm}{m}{n}\selectfont}
+  \ChTitleVar{\Huge\bfseries\rm}
+  \ChRuleWidth{1pt}
+  \renewcommand{\DOCH}{%
+    \settowidth{\px}{\CNV\FmN{\
