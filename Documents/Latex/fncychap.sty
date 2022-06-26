@@ -202,4 +202,43 @@
 
   \renewcommand{\DOTIS}[1]{%
     \raggedright
-    \CTV\FmTi{#1}\
+    \CTV\FmTi{#1}\par\nobreak
+    \vskip 40\p@}
+ }
+
+
+%%%%%%% GLENN DEF
+
+
+\DeclareOption{Glenn}{%
+  \ChNameVar{\bfseries\Large\sf}
+  \ChNumVar{\Huge}
+  \ChTitleVar{\bfseries\Large\rm}
+  \ChRuleWidth{1pt}
+  \ChNameUpperCase
+  \ChTitleUpperCase
+  \renewcommand{\DOCH}{%
+    \settoheight{\myhi}{\CTV\FmTi{Test}}
+    \setlength{\py}{\baselineskip}
+    \addtolength{\py}{\RW}
+    \addtolength{\py}{\myhi}
+    \setlength{\pyy}{\py}
+    \addtolength{\pyy}{-1\RW}
+     
+    \raggedright
+    \CNV\FmN{\@chapapp}\space\CNoV\thechapter
+    \hskip 3pt\mghrulefill{\RW}\rule[-1\pyy]{2\RW}{\py}\par\nobreak}
+
+  \renewcommand{\DOTI}[1]{%
+    \addtolength{\pyy}{-4pt}
+    \settoheight{\myhi}{\CTV\FmTi{#1}}
+    \addtolength{\myhi}{\py}
+    \addtolength{\myhi}{-1\RW}
+    \vskip -1\pyy
+    \rule{2\RW}{\myhi}\mghrulefill{\RW}\hskip 2pt
+    \raggedleft\CTV\FmTi{#1}\par\nobreak
+    \vskip 80\p@}
+
+  \renewcommand{\DOTIS}[1]{%
+    \setlength{\py}{10pt}
+    \setlengt
