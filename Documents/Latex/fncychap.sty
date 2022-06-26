@@ -241,4 +241,44 @@
 
   \renewcommand{\DOTIS}[1]{%
     \setlength{\py}{10pt}
-    \setlengt
+    \setlength{\pyy}{\py}
+    \addtolength{\pyy}{\RW}
+    \setlength{\myhi}{\baselineskip}
+    \addtolength{\myhi}{\pyy}
+    \mghrulefill{\RW}\rule[-1\py]{2\RW}{\pyy}\par\nobreak
+%    \addtolength{}{}
+\vskip -1\baselineskip
+    \rule{2\RW}{\myhi}\mghrulefill{\RW}\hskip 2pt
+    \raggedleft\CTV\FmTi{#1}\par\nobreak
+    \vskip 60\p@}
+  }
+
+%%%%%%% CONNY DEF
+
+\DeclareOption{Conny}{%
+  \ChNameUpperCase
+  \ChTitleUpperCase  
+  \ChNameVar{\centering\Huge\rm\bfseries}
+  \ChNumVar{\Huge}
+  \ChTitleVar{\centering\Huge\rm}
+  \ChRuleWidth{2pt}
+
+  \renewcommand{\DOCH}{%
+    \mghrulefill{3\RW}\par\nobreak
+    \vskip -0.5\baselineskip
+    \mghrulefill{\RW}\par\nobreak
+    \CNV\FmN{\@chapapp}\space \CNoV\thechapter
+    \par\nobreak
+    \vskip -0.5\baselineskip
+   }
+  \renewcommand{\DOTI}[1]{%
+    \mghrulefill{\RW}\par\nobreak
+    \CTV\FmTi{#1}\par\nobreak
+    \vskip 60\p@
+    }
+  \renewcommand{\DOTIS}[1]{%
+    \mghrulefill{\RW}\par\nobreak
+    \CTV\FmTi{#1}\par\nobreak
+    \vskip 60\p@
+    }
+ 
