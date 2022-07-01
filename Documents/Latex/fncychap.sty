@@ -281,4 +281,38 @@
     \CTV\FmTi{#1}\par\nobreak
     \vskip 60\p@
     }
- 
+  }
+
+%%%%%%% REJNE DEF
+
+\DeclareOption{Rejne}{%
+
+  \ChNameUpperCase
+  \ChTitleUpperCase  
+  \ChNameVar{\centering\Large\rm}
+  \ChNumVar{\Huge}
+  \ChTitleVar{\centering\Huge\rm}
+  \ChRuleWidth{1pt}
+  \renewcommand{\DOCH}{%
+    \settoheight{\py}{\CNoV\thechapter}
+    \addtolength{\py}{-1pt}
+    \CNV\FmN{\@chapapp}\par\nobreak
+    \vskip 20\p@
+    \setlength{\myhi}{2\baselineskip}
+    \setlength{\px}{\myhi}
+    \addtolength{\px}{-1\RW}
+    \rule[-1\px]{\RW}{\myhi}\mghrulefill{\RW}\hskip
+    10pt\raisebox{-0.5\py}{\CNoV\thechapter}\hskip
+10pt\mghrulefill{\RW}\rule[-1\px]{\RW}{\myhi}\par\nobreak
+     \vskip -1\p@
+    }
+  \renewcommand{\DOTI}[1]{%
+    \setlength{\mylen}{\textwidth}
+    \addtolength{\mylen}{-2\RW}
+    {\vrule width\RW}\parbox{\mylen}{\CTV\FmTi{#1}}{\vrule
+width\RW}\par\nobreak
+    \vskip
+-1pt\rule{\RW}{2\baselineskip}\mghrulefill{\RW}\rule{\RW}{2\baselineskip}
+    \vskip 60\p@
+    }
+  \renewcomma
