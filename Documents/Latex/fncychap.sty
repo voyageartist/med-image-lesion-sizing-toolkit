@@ -315,4 +315,39 @@ width\RW}\par\nobreak
 -1pt\rule{\RW}{2\baselineskip}\mghrulefill{\RW}\rule{\RW}{2\baselineskip}
     \vskip 60\p@
     }
-  \renewcomma
+  \renewcommand{\DOTIS}[1]{%
+    \setlength{\py}{\fboxrule}
+    \setlength{\fboxrule}{\RW}
+    \setlength{\mylen}{\textwidth}
+    \addtolength{\mylen}{-2\RW}
+    \fbox{\parbox{\mylen}{\vskip
+2\baselineskip\CTV\FmTi{#1}\par\nobreak\vskip \baselineskip}} 
+    \setlength{\fboxrule}{\py}
+    \vskip 60\p@
+    }
+  }
+
+
+%%%%%%% BJARNE DEF
+
+\DeclareOption{Bjarne}{%
+  \ChNameUpperCase
+  \ChTitleUpperCase  
+  \ChNameVar{\raggedleft\normalsize\rm}
+  \ChNumVar{\raggedleft \bfseries\Large}
+  \ChTitleVar{\raggedleft \Large\rm}
+  \ChRuleWidth{1pt}
+
+
+%% Note thechapter -> c@chapter fix appendix bug
+
+  \newcounter{AlphaCnt}
+  \newcounter{AlphaDecCnt}
+  \newcommand{\AlphaNo}{%
+    \ifcase\number\theAlphaCnt
+      \ifnum\c@chapter=0
+        ZERO\else{}\fi
+    \or ONE\or TWO\or THREE\or FOUR\or FIVE
+    \or SIX\or SEVEN\or EIGHT\or NINE\or TEN
+    \or ELEVEN\or TWELVE\or THIRTEEN\or FOURTEEN\or FIFTEEN
+    \or SIXTEEN\or SEVENTEEN\or EIGHTEEN\or NINETEEN\f
