@@ -350,4 +350,44 @@ width\RW}\par\nobreak
     \or ONE\or TWO\or THREE\or FOUR\or FIVE
     \or SIX\or SEVEN\or EIGHT\or NINE\or TEN
     \or ELEVEN\or TWELVE\or THIRTEEN\or FOURTEEN\or FIFTEEN
-    \or SIXTEEN\or SEVENTEEN\or EIGHTEEN\or NINETEEN\f
+    \or SIXTEEN\or SEVENTEEN\or EIGHTEEN\or NINETEEN\fi
+}
+
+  \newcommand{\AlphaDecNo}{%
+    \setcounter{AlphaDecCnt}{0}
+    \@whilenum\number\theAlphaCnt>0\do
+      {\addtocounter{AlphaCnt}{-10}
+       \addtocounter{AlphaDecCnt}{1}}
+     \ifnum\number\theAlphaCnt=0
+     \else
+       \addtocounter{AlphaDecCnt}{-1}
+       \addtocounter{AlphaCnt}{10}
+     \fi
+     
+     
+    \ifcase\number\theAlphaDecCnt\or TEN\or TWENTY\or THIRTY\or
+    FORTY\or FIFTY\or SIXTY\or SEVENTY\or EIGHTY\or NINETY\fi
+    }
+  \newcommand{\TheAlphaChapter}{%
+    
+    \ifinapp 
+      \thechapter
+    \else
+      \setcounter{AlphaCnt}{\c@chapter}
+      \ifnum\c@chapter<20
+        \AlphaNo
+      \else
+        \AlphaDecNo\AlphaNo
+      \fi
+    \fi
+    }  
+  \renewcommand{\DOCH}{%
+    \mghrulefill{\RW}\par\nobreak
+    \CNV\FmN{\@chapapp}\par\nobreak 
+    \CNoV\TheAlphaChapter\par\nobreak
+    \vskip -1\baselineskip\vskip 5pt\mghrulefill{\RW}\par\nobreak
+    \vskip 20\p@
+    }
+  \renewcommand{\DOTI}[1]{%
+    \CTV\FmTi{#1}\par\nobreak
+    \vskip 40\
