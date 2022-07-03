@@ -1,0 +1,156 @@
+
+%	PICINS.STY --- Style File zum Einbinden von Bildern
+%	Autor:	J. Bleser, E. Lang
+%	Hochschulrechenzentrum
+%	Technische Hochschule Darmstadt
+%	!!!  Dieses Style-File ist urheberrechtlich geschuetzt	!!!
+%	!!!  Aenderungen nur mit Zustimmung der Autoren 	!!!
+\message{Option `picins' Version 3.0  Sep. 1992, TH Darmstadt/HRZ}
+\newbox\@BILD%
+\newbox\@TEXT%
+\newdimen\d@breite%
+\newdimen\d@hoehe%
+\newdimen\d@xoff%
+\newdimen\d@yoff%
+\newdimen\d@shad%
+\newdimen\d@dash%
+\newdimen\d@boxl%
+\newdimen\d@pichskip%
+\newdimen\d@tmp
+\newdimen\d@tmpa
+\newdimen\d@bskip
+\newdimen\hsiz@%
+\newdimen\p@getot@l%
+\newcount\c@breite
+\newcount\c@hoehe
+\newcount\c@xoff
+\newcount\c@yoff
+\newcount\c@pos
+\newcount\c@shad
+\newcount\c@dash
+\newcount\c@boxl
+\newcount\c@zeilen%
+\newcount\@changemode%
+\newcount\c@piccaption%
+\newcount\c@piccaptionpos%
+\newcount\c@picpos
+\newcount\c@whole%
+\newcount\c@half%
+\newcount\c@tmp
+\newcount\c@tmpa
+\newcount\c@tmpb
+\newcount\c@tmpc
+\newcount\c@tmpd
+\newskip\d@leftskip
+\newif\if@list \@listfalse%
+\newif\if@offset%
+
+
+\c@piccaptionpos=1%
+\c@picpos=0
+\d@shad=4pt%
+\d@dash=4pt%
+\d@boxl=10pt%
+\d@pichskip=1em%
+\@changemode=0%
+\def\@captype{figure}%
+\let\old@par=\par%
+
+\def\pichskip#1{\d@pichskip #1\relax}
+
+
+\def\shadowthickness#1{\d@shad #1\relax}
+
+
+\def\dashlength#1{\d@dash #1\relax}
+
+
+\def\boxlength#1{\d@boxl #1\relax}
+
+
+\def\picchangemode{\@changemode=1}%
+\def\nopicchangemode{\@changemode=0}%
+
+
+\def\piccaptionoutside{\c@piccaptionpos=1}%
+\def\piccaptioninside{\c@piccaptionpos=2}%
+\def\piccaptionside{\c@piccaptionpos=3}%
+\def\piccaptiontopside{\c@piccaptionpos=4}%
+
+\def\piccaption{\@ifnextchar [{\@piccaption}{\@piccaption[]}}
+\def\@piccaption[#1]#2{\c@piccaption=1\def\sh@rtf@rm{#1}\def\capti@nt@xt{#2}}
+\def\make@piccaption{%
+ \hsiz@\d@breite%
+ \ifnum\c@piccaptionpos=2%
+   \advance\hsiz@ -2\fboxsep%
+ \fi%
+ \ifnum\c@piccaptionpos>2%
+   \hsiz@\hsize\advance\hsiz@-\d@breite\advance\hsiz@-\d@pichskip%
+ \fi%
+ \setbox\@TEXT=\vbox{\hsize\hsiz@\caption[\sh@rtf@rm]{\capti@nt@xt}}%
+}
+
+
+
+\def\newcaption{\refstepcounter\@captype\@dblarg{\@newcaption\@captype}}
+\long\def\@newcaption#1[#2]#3{%
+  \old@par%
+  \addcontentsline{\csname ext@#1\endcsname }{#1}%
+    {\protect\numberline{\csname the#1\endcsname}{\ignorespaces #2}}
+  \begingroup\@parboxrestore\normalsize%
+    \@newmakecaption{\csname fnum@#1\endcsname}{\ignorespaces #3}\old@par%
+  \endgroup%
+}
+\long\def\@newmakecaption#1#2{%
+  \vskip 10pt%
+  \setbox\@tempboxa \hbox {#1: #2}%
+  \ifdim \wd\@tempboxa >\hsize%
+    \setbox0=\hbox{#1: }\dimen0=\hsize\advance\dimen0 by-\wd0
+    \setbox1=\vtop{\hsize=\dimen0 #2}
+    \hbox{\box0 \box1}
+    \par
+  \else \hbox to\hsize {\hfil \box \@tempboxa \hfil}
+  \fi
+}
+
+
+
+
+
+\def\parpic{%
+  \@ifnextchar ({\iparpic}{\iparpic(0pt,0pt)}
+}
+\def\iparpic(#1,#2){%
+  \@ifnextchar ({\@offsettrue\iiparpic(#1,#2)}%
+		{\@offsetfalse\iiparpic(#1,#2)(0pt,0pt)}
+}
+\def\iiparpic(#1,#2)(#3,#4){%
+  \@ifnextchar [{\iiiparpic(#1,#2)(#3,#4)}{\iiiparpic(#1,#2)(#3,#4)[l]}
+}
+\def\iiiparpic(#1,#2)(#3,#4)[#5]{%
+  \@ifnextchar [{\ivparpic(#1,#2)(#3,#4)[#5]}{\ivparpic(#1,#2)(#3,#4)[#5][]}
+}
+\def\ivparpic(#1,#2)(#3,#4)[#5][#6]#7{%
+ \let\par=\old@par\par%
+ \hangindent0pt\hangafter1%
+ \setbox\@BILD=\hbox{#7}%
+ \d@breite=#1\d@breite=\the\d@breite%
+ \ifdim\d@breite=0pt\d@breite=\wd\@BILD\fi%
+ \c@breite=\d@breite\divide\c@breite by65536%
+ \multiply\c@piccaption\c@piccaptionpos%
+ \d@hoehe=#2\d@hoehe=\the\d@hoehe%
+ \ifdim\d@hoehe=0pt\d@hoehe=\ht\@BILD\advance\d@hoehe by\dp\@BILD\fi%
+ \c@hoehe=\d@hoehe\divide\c@hoehe by65536%
+ \d@xoff=#3\c@xoff=\d@xoff\divide\c@xoff by65536%
+ \d@yoff=\d@hoehe%
+ \advance\d@yoff by-#4\c@yoff=\d@yoff\divide\c@yoff by65536%
+ \c@pos=1\unitlength1pt%
+ \if@offset%
+   \setbox\@BILD=\hbox{%
+     \begin{picture}(\c@breite,\c@hoehe)%
+       \put(0,0){\makebox(\c@breite,\c@hoehe){}}%
+       \put(\c@xoff,\c@yoff){\box\@BILD}%
+     \end{picture}%
+   }%
+ \else%
+   \setbox\@BILD=\hbox{%
