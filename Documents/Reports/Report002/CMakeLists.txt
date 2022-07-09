@@ -1,4 +1,5 @@
-project(Report001)
+
+project(Report002)
 
  
 #
@@ -24,10 +25,14 @@ set(REPORT_SRCS
 #
 #  Get the list of figures generated during testing
 #
-file(GLOB REPORT_GENERATED_FIGURES "${LesionSizingToolkit_BINARY_DIR}/Testing/Temporary/*.png")
+file(GLOB REPORT_GENERATED_FIGURES "${LesionSizingToolkit_BINARY_DIR}/Testing/Temporary/*NIST*.png")
 
 set(PROJECT_REPORT_SOURCE_DIR "${PROJECT_SOURCE_DIR}")
 set(PROJECT_REPORT_BINARY_DIR "${PROJECT_BINARY_DIR}")
+
+file(GLOB REPORT_STATIC_FIGURES "${PROJECT_REPORT_SOURCE_DIR}/*.png")
+
+set(REPORT_GENERATED_FIGURES  ${REPORT_STATIC_FIGURES} ${REPORT_GENERATED_FIGURES})
 
 #
 # This adds a custom command for each source file in REPORT_SRCS
@@ -67,16 +72,16 @@ set(REPORT_ELEMENTS
   )
 
 #
-# This adds a custom target that generates Report001.pdf
+# This adds a custom target that generates Report002.pdf
 # This target depends on the list of copied files created
 # with the custom command above and the Plots target.
 #
-add_custom_target(ReportIJ001 ALL 
+add_custom_target(ReportIJ002 ALL 
    COMMAND ${PDFLATEX_COMPILER} 
-        ${PROJECT_REPORT_SOURCE_DIR}/Report001.tex 
+        ${PROJECT_REPORT_SOURCE_DIR}/Report002.tex 
         -output-directory ${PROJECT_REPORT_BINARY_DIR}
    COMMAND ${PDFLATEX_COMPILER} 
-        ${PROJECT_REPORT_SOURCE_DIR}/Report001.tex 
+        ${PROJECT_REPORT_SOURCE_DIR}/Report002.tex 
         -output-directory ${PROJECT_REPORT_BINARY_DIR}
    DEPENDS ${COPY_RESULTS} ${REPORT_ELEMENTS} 
    WORKING_DIRECTORY ${PROJECT_REPORT_BINARY_DIR}
