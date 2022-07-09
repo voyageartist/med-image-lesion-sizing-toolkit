@@ -18,4 +18,4 @@ endif(NOT GNUPLOT)
 if( GNUPLOT AND PDFLATEX_COMPILER )
   add_subdirectory( Report001 )
   add_subdirectory( Report002 )
-endif( GNUPLOT AND PDF
+endif( GNUPLOT AND PDFLATEX_COMPILER )
