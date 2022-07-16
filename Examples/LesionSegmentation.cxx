@@ -63,4 +63,34 @@ public:
   }
 
   virtual void
-  Execu
+  Execute(vtkObject * vtkNotUsed(caller), unsigned long, void *)
+  {
+    this->Actor->SetVisibility(1 - this->Actor->GetVisibility());
+    this->RenWin->Render();
+  }
+
+protected:
+  vtkActor *        Actor;
+  vtkRenderWindow * RenWin;
+};
+
+
+// --------------------------------------------------------------------------
+LesionSegmentationCLI::InputImageType::Pointer
+GetImage(std::string dir, bool ignoreDirection)
+{
+  const unsigned int Dimension = LesionSegmentationCLI::ImageDimension;
+  using ImageType = itk::Image<LesionSegmentationCLI::PixelType, Dimension>;
+
+  using ReaderType = itk::ImageSeriesReader<ImageType>;
+  ReaderType::Pointer reader = ReaderType::New();
+
+  using ImageIOType = itk::GDCMImageIO;
+  ImageIOType::Pointer dicomIO = ImageIOType::New();
+
+  reader->SetImageIO(dicomIO);
+
+  using NamesGeneratorType = itk::GDCMSeriesFileNames;
+  NamesGeneratorType::Pointer nameGenerator = NamesGeneratorType::New();
+
+  nameGenerator-
