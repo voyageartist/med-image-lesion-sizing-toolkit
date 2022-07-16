@@ -93,4 +93,34 @@ GetImage(std::string dir, bool ignoreDirection)
   using NamesGeneratorType = itk::GDCMSeriesFileNames;
   NamesGeneratorType::Pointer nameGenerator = NamesGeneratorType::New();
 
-  nameGenerator-
+  nameGenerator->SetUseSeriesDetails(true);
+  nameGenerator->AddSeriesRestriction("0008|0021");
+  nameGenerator->SetDirectory(dir);
+
+  try
+  {
+    std::cout << std::endl << "The directory: " << std::endl;
+    std::cout << std::endl << dir << std::endl << std::endl;
+    std::cout << "Contains the following DICOM Series: ";
+    std::cout << std::endl << std::endl;
+
+    using SeriesIdContainer = std::vector<std::string>;
+
+    const SeriesIdContainer & seriesUID = nameGenerator->GetSeriesUIDs();
+
+    SeriesIdContainer::const_iterator seriesItr = seriesUID.begin();
+    SeriesIdContainer::const_iterator seriesEnd = seriesUID.end();
+    while (seriesItr != seriesEnd)
+    {
+      std::cout << seriesItr->c_str() << std::endl;
+      seriesItr++;
+    }
+
+
+    std::string seriesIdentifier;
+    seriesIdentifier = seriesUID.begin()->c_str();
+
+
+    std::cout << std::endl << std::endl;
+    std::cout << "Now reading series: " << std::endl << std::endl;
+    std::cout <<
