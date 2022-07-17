@@ -226,4 +226,30 @@ ViewImageAndSegmentationSurface(LesionSegmentationCLI::InputImageType::Pointer i
 
     imagePlaneWidget[i]->DisplayTextOn();
 #if VTK_MAJOR_VERSION <= 5
-    imagePlaneW
+    imagePlaneWidget[i]->SetInput(itk2vtko->GetOutput());
+#else
+    imagePlaneWidget[i]->SetInputData(itk2vtko->GetOutput());
+#endif
+
+
+    imagePlaneWidget[i]->SetPlaneOrientation(i);
+    imagePlaneWidget[i]->SetSlicePosition(pd->GetCenter()[i]);
+    imagePlaneWidget[i]->SetPicker(picker);
+    imagePlaneWidget[i]->RestrictPlaneToVolumeOn();
+    double color[3] = { 0, 0, 0 };
+    color[i] = 1;
+    imagePlaneWidget[i]->GetPlaneProperty()->SetColor(color);
+    imagePlaneWidget[i]->SetTexturePlaneProperty(ipwProp);
+    imagePlaneWidget[i]->SetResliceInterpolateToLinear();
+    imagePlaneWidget[i]->SetWindowLevel(1700, -500);
+    imagePlaneWidget[i]->SetInteractor(iren);
+    imagePlaneWidget[i]->On();
+  }
+
+  imagePlaneWidget[0]->SetKeyPressActivationValue('x');
+  imagePlaneWidget[1]->SetKeyPressActivationValue('y');
+  imagePlaneWidget[2]->SetKeyPressActivationValue('z');
+
+
+  // Set the background to something grayish
+  renderer->SetBackground(0.4392, 0.5020, 0.564
