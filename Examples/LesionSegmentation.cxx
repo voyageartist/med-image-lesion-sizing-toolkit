@@ -164,4 +164,32 @@ GetImage(std::string dir, bool ignoreDirection)
 
     if (ignoreDirection)
     {
-      std::cout << "Ignoring the direction of the D
+      std::cout << "Ignoring the direction of the DICOM image and using identity." << std::endl;
+      image->SetDirection(direction);
+    }
+    return image;
+  }
+  catch (itk::ExceptionObject & ex)
+  {
+    std::cout << ex << std::endl;
+    return NULL;
+  }
+
+  return NULL;
+}
+
+// --------------------------------------------------------------------------
+int
+ViewImageAndSegmentationSurface(LesionSegmentationCLI::InputImageType::Pointer image,
+                                vtkPolyData *                                  pd,
+                                double *                                       roi,
+                                LesionSegmentationCLI &                        args)
+{
+
+  std::cout << "Setting up visualization..." << std::endl;
+
+
+  using InputImageType = LesionSegmentationCLI::InputImageType;
+
+  using RealITKToVTKFilterType = itk::ImageToVTKImageFilter<LesionSegmentationCLI::InputImageType>;
+  RealITKToVTKFilterType::Pointer itk2vt
