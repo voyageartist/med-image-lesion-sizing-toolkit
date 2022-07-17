@@ -123,4 +123,45 @@ GetImage(std::string dir, bool ignoreDirection)
 
     std::cout << std::endl << std::endl;
     std::cout << "Now reading series: " << std::endl << std::endl;
-    std::cout <<
+    std::cout << seriesIdentifier << std::endl;
+    std::cout << std::endl << std::endl;
+
+
+    using FileNamesContainer = std::vector<std::string>;
+    FileNamesContainer fileNames;
+
+    fileNames = nameGenerator->GetFileNames(seriesIdentifier);
+
+    FileNamesContainer::const_iterator fitr = fileNames.begin();
+    FileNamesContainer::const_iterator fend = fileNames.end();
+
+    while (fitr != fend)
+    {
+      std::cout << *fitr << std::endl;
+      ++fitr;
+    }
+
+
+    reader->SetFileNames(fileNames);
+
+    try
+    {
+      reader->Update();
+    }
+    catch (itk::ExceptionObject & ex)
+    {
+      std::cout << ex << std::endl;
+      return NULL;
+    }
+
+
+    ImageType::Pointer       image = reader->GetOutput();
+    ImageType::DirectionType direction;
+    direction.SetIdentity();
+    image->DisconnectPipeline();
+    std::cout << "Image Direction:" << image->GetDirection() << std::endl;
+
+
+    if (ignoreDirection)
+    {
+      std::cout << "Ignoring the direction of the D
