@@ -192,4 +192,38 @@ ViewImageAndSegmentationSurface(LesionSegmentationCLI::InputImageType::Pointer i
   using InputImageType = LesionSegmentationCLI::InputImageType;
 
   using RealITKToVTKFilterType = itk::ImageToVTKImageFilter<LesionSegmentationCLI::InputImageType>;
-  RealITKToVTKFilterType::Pointer itk2vt
+  RealITKToVTKFilterType::Pointer itk2vtko = RealITKToVTKFilterType::New();
+  itk2vtko->SetInput(image);
+  itk2vtko->Update();
+
+  // display the results.
+  VTK_CREATE(vtkRenderer, renderer);
+  VTK_CREATE(vtkRenderWindow, renWin);
+  VTK_CREATE(vtkRenderWindowInteractor, iren);
+
+  renderer->GetActiveCamera()->ParallelProjectionOn();
+
+  renWin->SetSize(600, 600);
+  renWin->AddRenderer(renderer);
+  iren->SetRenderWindow(renWin);
+
+  // use cell picker for interacting with the image orthogonal views.
+  //
+  VTK_CREATE(vtkCellPicker, picker);
+  picker->SetTolerance(0.005);
+
+
+  // assign default props to the ipw's texture plane actor
+  VTK_CREATE(vtkProperty, ipwProp);
+
+
+  // Create 3 orthogonal view using the ImagePlaneWidget
+  //
+  vtkSmartPointer<vtkImagePlaneWidget> imagePlaneWidget[3];
+  for (unsigned int i = 0; i < 3; i++)
+  {
+    imagePlaneWidget[i] = vtkSmartPointer<vtkImagePlaneWidget>::New();
+
+    imagePlaneWidget[i]->DisplayTextOn();
+#if VTK_MAJOR_VERSION <= 5
+    imagePlaneW
