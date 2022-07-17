@@ -252,4 +252,42 @@ ViewImageAndSegmentationSurface(LesionSegmentationCLI::InputImageType::Pointer i
 
 
   // Set the background to something grayish
-  renderer->SetBackground(0.4392, 0.5020, 0.564
+  renderer->SetBackground(0.4392, 0.5020, 0.5647);
+
+  VTK_CREATE(vtkPolyDataMapper, polyMapper);
+  VTK_CREATE(vtkActor, polyActor);
+
+  std::cout << "Computing surface normals for shading.." << std::endl;
+  VTK_CREATE(vtkPolyDataNormals, normals);
+#if VTK_MAJOR_VERSION <= 5
+  normals->SetInput(pd);
+#else
+  normals->SetInputData(pd);
+#endif
+  normals->SetFeatureAngle(60.0);
+  normals->Update();
+
+  polyActor->SetMapper(polyMapper);
+#if VTK_MAJOR_VERSION <= 5
+  polyMapper->SetInput(normals->GetOutput());
+#else
+  polyMapper->SetInputData(normals->GetOutput());
+#endif
+
+  VTK_CREATE(vtkProperty, property);
+  property->SetAmbient(0.1);
+  property->SetDiffuse(0.1);
+  property->SetSpecular(0.5);
+  property->SetColor(0, 1, 0);
+  property->SetLineWidth(2.0);
+  property->SetRepresentationToSurface();
+
+  polyActor->SetProperty(property);
+  renderer->AddActor(polyActor);
+
+  if (args.GetOptionWasSet("Wireframe"))
+  {
+    property->SetRepresentationToWireframe();
+  }
+
+  // Bring up the render window and b
