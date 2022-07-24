@@ -290,4 +290,30 @@ ViewImageAndSegmentationSurface(LesionSegmentationCLI::InputImageType::Pointer i
     property->SetRepresentationToWireframe();
   }
 
-  // Bring up the render window and b
+  // Bring up the render window and begin interaction.
+  renderer->ResetCamera();
+  renWin->Render();
+
+  VTK_CREATE(vtkInteractorStyleTrackballCamera, style);
+  iren->SetInteractorStyle(style);
+
+  SwitchVisibilityCallback * switchVisibility = SwitchVisibilityCallback::New();
+  switchVisibility->SetRenderWindow(renWin);
+  switchVisibility->SetActor(polyActor);
+  iren->AddObserver(vtkCommand::UserEvent, switchVisibility);
+  switchVisibility->Delete();
+
+  if (args.GetOptionWasSet("ShowBoundingBox"))
+  {
+    VTK_CREATE(vtkOutlineSource, outline);
+    outline->SetBounds(roi);
+    VTK_CREATE(vtkPolyDataMapper, outlineMapper);
+#if VTK_MAJOR_VERSION <= 5
+    outlineMapper->SetInput(outline->GetOutput());
+#else
+    outlineMapper->SetInputData(outline->GetOutput());
+#endif
+    VTK_CREATE(vtkActor, outlineActor);
+    outlineActor->SetMapper(outlineMapper);
+    outlineActor->GetProperty()->SetColor(0, 1, 0);
+    renderer->AddActor(outlineA
