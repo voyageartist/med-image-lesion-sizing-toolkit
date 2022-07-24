@@ -404,4 +404,30 @@ main(int argc, char * argv[])
   InputImageType::Pointer  image;
 
   std::cout << "Reading " << args.GetValueAsString("InputImage") << ".." << std::endl;
-  if (!args.GetValueAsString("InputDICOMDir").empty
+  if (!args.GetValueAsString("InputDICOMDir").empty())
+  {
+    std::cout << "Reading from DICOM dir " << args.GetValueAsString("InputDICOMDir") << ".." << std::endl;
+    image = GetImage(args.GetValueAsString("InputDICOMDir"), args.GetValueAsBool("IgnoreDirection"));
+
+    if (!image)
+    {
+      std::cerr << "Failed to read the input image" << std::endl;
+      return EXIT_FAILURE;
+    }
+  }
+
+  if (!args.GetValueAsString("InputImage").empty())
+  {
+    reader->SetFileName(args.GetValueAsString("InputImage"));
+    reader->Update();
+    image = reader->GetOutput();
+  }
+
+
+  // To make sure the tumor polydata aligns with the image volume during
+  // vtk rendering in ViewImageAndSegmentationSurface(),
+  // reorient image so that the direction matrix is an identity matrix.
+  using InputReaderType = itk::ImageFileReader<InputImageType>;
+  itk::OrientImageFilter<InputImageType, InputImageType>::Pointer orienter =
+    itk::OrientImageFilter<InputImageType, InputImageType>::New();
+  orie
