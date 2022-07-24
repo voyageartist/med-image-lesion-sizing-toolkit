@@ -346,4 +346,40 @@ ViewImageAndSegmentationSurface(LesionSegmentationCLI::InputImageType::Pointer i
       renderer->ResetCameraClippingRange();
 
       // Reset the camera to the full size of the view for the screenshot
-      double parallelScale = 0, bou
+      double parallelScale = 0, bounds[6], l2norm = 0;
+      itk2vtko->GetOutput()->GetBounds(bounds);
+      for (unsigned int k = 0; k < 3; k++)
+      {
+        if (k != i)
+        {
+          l2norm += ((bounds[2 * k + 1] - bounds[2 * k]) * (bounds[2 * k + 1] - bounds[2 * k]));
+          parallelScale = std::max(parallelScale, bounds[2 * k + 1] - bounds[2 * k]);
+        }
+      }
+      renderer->GetActiveCamera()->Zoom(sqrt(l2norm) / parallelScale);
+
+      renWin->Render();
+
+      VTK_CREATE(vtkWindowToImageFilter, w2f);
+      w2f->SetInput(renWin);
+
+      VTK_CREATE(vtkPNGWriter, screenshotWriter);
+
+      screenshotWriter->SetFileName(os.str().c_str());
+      std::cout << "Screenshot saved to " << os.str().c_str() << std::endl;
+      screenshotWriter->SetInputConnection(w2f->GetOutputPort());
+      screenshotWriter->Write();
+    }
+  }
+  else
+  {
+    iren->Start();
+  }
+
+  return EXIT_SUCCESS;
+}
+
+
+// --------------------------------------------------------------------------
+int
+main(int argc, 
