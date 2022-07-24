@@ -316,4 +316,34 @@ ViewImageAndSegmentationSurface(LesionSegmentationCLI::InputImageType::Pointer i
     VTK_CREATE(vtkActor, outlineActor);
     outlineActor->SetMapper(outlineMapper);
     outlineActor->GetProperty()->SetColor(0, 1, 0);
-    renderer->AddActor(outlineA
+    renderer->AddActor(outlineActor);
+  }
+
+  std::cout << "Bringing up visualization.." << std::endl;
+
+  if (!args.GetValueAsString("Screenshot").empty())
+  {
+
+    double camPos[3][3] = { { 1, 0, 0 }, { 0, -1, 0 }, { 0, 0, -1 } };
+    double viewUp[3][3] = { { 0, 0, 1 }, { 0, 0, 1 }, { 0, -1, 0 } };
+
+    for (unsigned int i = 0; i < 3; i++)
+    {
+      std::ostringstream os;
+      os << args.GetValueAsString("Screenshot") << "_" << i << ".png" << std::ends;
+
+      renderer->GetActiveCamera()->SetPosition(camPos[i]);
+      renderer->GetActiveCamera()->SetFocalPoint(0, 0, 0);
+      renderer->GetActiveCamera()->SetViewUp(viewUp[i]);
+
+      for (unsigned int j = 0; j < 3; j++)
+      {
+        imagePlaneWidget[j]->Off();
+      }
+      imagePlaneWidget[i]->On();
+      imagePlaneWidget[i]->SetSlicePosition(pd->GetCenter()[i]);
+      renderer->ResetCamera();
+      renderer->ResetCameraClippingRange();
+
+      // Reset the camera to the full size of the view for the screenshot
+      double parallelScale = 0, bou
