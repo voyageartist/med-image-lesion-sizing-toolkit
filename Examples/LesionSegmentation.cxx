@@ -382,4 +382,26 @@ ViewImageAndSegmentationSurface(LesionSegmentationCLI::InputImageType::Pointer i
 
 // --------------------------------------------------------------------------
 int
-main(int argc, 
+main(int argc, char * argv[])
+{
+  // register DICOM and META IO factories
+  itk::ObjectFactoryBase::RegisterFactory(itk::GDCMImageIOFactory::New());
+  itk::ObjectFactoryBase::RegisterFactory(itk::MetaImageIOFactory::New());
+
+  LesionSegmentationCLI args(argc, argv);
+
+  using InputImageType = LesionSegmentationCLI::InputImageType;
+  using RealImageType = LesionSegmentationCLI::RealImageType;
+  const unsigned int ImageDimension = LesionSegmentationCLI::ImageDimension;
+
+  using InputReaderType = itk::ImageFileReader<InputImageType>;
+  using OutputWriterType = itk::ImageFileWriter<RealImageType>;
+  using SegmentationFilterType = itk::LesionSegmentationImageFilter8<InputImageType, RealImageType>;
+
+
+  // Read the volume
+  InputReaderType::Pointer reader = InputReaderType::New();
+  InputImageType::Pointer  image;
+
+  std::cout << "Reading " << args.GetValueAsString("InputImage") << ".." << std::endl;
+  if (!args.GetValueAsString("InputDICOMDir").empty
