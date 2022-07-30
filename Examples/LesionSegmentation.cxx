@@ -487,4 +487,32 @@ main(int argc, char * argv[])
     ROIFilterType::Pointer roiFilter = ROIFilterType::New();
     roiFilter->SetRegionOfInterest(roiRegion);
 
-    using ROIWriterType = itk::ImageFileWriter<
+    using ROIWriterType = itk::ImageFileWriter<InputImageType>;
+    ROIWriterType::Pointer roiWriter = ROIWriterType::New();
+    roiWriter->SetFileName(args.GetValueAsString("OutputROI"));
+    roiFilter->SetInput(image);
+    roiWriter->SetInput(roiFilter->GetOutput());
+
+    std::cout << "Writing the ROI image as: " << args.GetValueAsString("OutputROI") << std::endl;
+    try
+    {
+      roiWriter->Update();
+    }
+    catch (itk::ExceptionObject & err)
+    {
+      std::cerr << "ExceptionObject caught !" << err << std::endl;
+      return EXIT_FAILURE;
+    }
+  }
+
+
+  // Progress reporting
+  using ProgressReporterType = itk::LesionSegmentationCommandLineProgressReporter;
+  ProgressReporterType::Pointer progressCommand = ProgressReporterType::New();
+
+  // Run the segmentation filter. Clock ticking...
+
+  std::cout << "\n Running the segmentation filter." << std::endl;
+  SegmentationFilterType::Pointer seg = SegmentationFilterType::New();
+  seg->SetInput(image);
+  seg->SetSeeds(args.GetSeeds
