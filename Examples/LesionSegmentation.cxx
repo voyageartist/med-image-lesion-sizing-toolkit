@@ -430,4 +430,37 @@ main(int argc, char * argv[])
   using InputReaderType = itk::ImageFileReader<InputImageType>;
   itk::OrientImageFilter<InputImageType, InputImageType>::Pointer orienter =
     itk::OrientImageFilter<InputImageType, InputImageType>::New();
-  orie
+  orienter->UseImageDirectionOn();
+  InputImageType::DirectionType direction;
+  direction.SetIdentity();
+  orienter->SetDesiredCoordinateDirection(direction);
+  orienter->SetInput(image);
+  orienter->Update();
+  image = orienter->GetOutput();
+
+  // Set the image object on the args
+  args.SetImage(image);
+
+
+  // Compute the ROI region
+
+  double *                   roi = args.GetROI();
+  InputImageType::RegionType region = image->GetLargestPossibleRegion();
+
+  // convert bounds into region indices
+  InputImageType::PointType p1, p2;
+  InputImageType::IndexType pi1, pi2;
+  InputImageType::IndexType startIndex;
+  for (unsigned int i = 0; i < ImageDimension; i++)
+  {
+    p1[i] = roi[2 * i];
+    p2[i] = roi[2 * i + 1];
+  }
+
+  image->TransformPhysicalPointToIndex(p1, pi1);
+  image->TransformPhysicalPointToIndex(p2, pi2);
+
+  InputImageType::SizeType roiSize;
+  for (unsigned int i = 0; i < ImageDimension; i++)
+  {
+    roiSize[i] = itk::Ma
