@@ -463,4 +463,28 @@ main(int argc, char * argv[])
   InputImageType::SizeType roiSize;
   for (unsigned int i = 0; i < ImageDimension; i++)
   {
-    roiSize[i] = itk::Ma
+    roiSize[i] = itk::Math::abs(pi2[i] - pi1[i]);
+    startIndex[i] = (pi1[i] < pi2[i]) ? pi1[i] : pi2[i];
+  }
+  InputImageType::RegionType roiRegion(startIndex, roiSize);
+  std::cout << "ROI region is " << roiRegion << std::endl;
+  if (!roiRegion.Crop(image->GetBufferedRegion()))
+  {
+    std::cerr << "ROI region has no overlap with the image region of" << image->GetBufferedRegion() << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  std::cout << "ROI region is " << roiRegion << " : covers voxels = " << roiRegion.GetNumberOfPixels() << " : "
+            << image->GetSpacing()[0] * image->GetSpacing()[1] * image->GetSpacing()[2] * roiRegion.GetNumberOfPixels()
+            << " mm^3" << std::endl;
+
+
+  // Write ROI if requested
+  if (args.GetOptionWasSet("OutputROI"))
+  {
+    using ROIFilterType = itk::RegionOfInterestImageFilter<InputImageType, InputImageType>;
+
+    ROIFilterType::Pointer roiFilter = ROIFilterType::New();
+    roiFilter->SetRegionOfInterest(roiRegion);
+
+    using ROIWriterType = itk::ImageFileWriter<
