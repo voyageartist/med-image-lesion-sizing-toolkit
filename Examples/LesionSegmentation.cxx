@@ -515,4 +515,32 @@ main(int argc, char * argv[])
   std::cout << "\n Running the segmentation filter." << std::endl;
   SegmentationFilterType::Pointer seg = SegmentationFilterType::New();
   seg->SetInput(image);
-  seg->SetSeeds(args.GetSeeds
+  seg->SetSeeds(args.GetSeeds());
+  seg->SetRegionOfInterest(roiRegion);
+  seg->AddObserver(itk::ProgressEvent(), progressCommand);
+  if (args.GetOptionWasSet("Sigma"))
+  {
+    seg->SetSigma(args.GetSigmas());
+  }
+  seg->SetSigmoidBeta(args.GetValueAsBool("PartSolid") ? -500 : -200);
+  seg->Update();
+
+
+  if (!args.GetValueAsString("OutputImage").empty())
+  {
+    std::cout << "Writing the output segmented level set." << args.GetValueAsString("OutputImage")
+              << ". The segmentation is an isosurface of this image at a value of -0.5" << std::endl;
+    OutputWriterType::Pointer writer = OutputWriterType::New();
+    writer->SetFileName(args.GetValueAsString("OutputImage"));
+    writer->SetInput(seg->GetOutput());
+    writer->Update();
+  }
+
+  // Compute volume
+
+  using RealITKToVTKFilterType = itk::ImageToVTKImageFilter<RealImageType>;
+  RealITKToVTKFilterType::Pointer itk2vtko = RealITKToVTKFilterType::New();
+  itk2vtko->SetInput(seg->GetOutput());
+  itk2vtko->Update();
+
+  std::c
