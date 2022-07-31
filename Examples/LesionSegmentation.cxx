@@ -543,4 +543,32 @@ main(int argc, char * argv[])
   itk2vtko->SetInput(seg->GetOutput());
   itk2vtko->Update();
 
-  std::c
+  std::cout << "Generating an isosurface of the zero-level set (iso-value of -0.5)" << std::endl;
+  vtkSmartPointer<vtkMarchingCubes> mc = vtkSmartPointer<vtkMarchingCubes>::New();
+#if VTK_MAJOR_VERSION <= 5
+  mc->SetInput(itk2vtko->GetOutput());
+#else
+  mc->SetInputData(itk2vtko->GetOutput());
+#endif
+
+  mc->SetValue(0, -0.5);
+  mc->Update();
+
+  if (mc->GetOutput()->GetNumberOfCells() == 0)
+  {
+    std::cerr << "Segmentation failed !" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  std::cout << "Computing volume of mesh using discretized divergence" << std::endl;
+  vtkSmartPointer<vtkMassProperties> mp = vtkSmartPointer<vtkMassProperties>::New();
+#if VTK_MAJOR_VERSION <= 5
+  mp->SetInput(mc->GetOutput());
+#else
+  mp->SetInputData(mc->GetOutput());
+#endif
+  const double volume = mp->GetVolume();
+
+  std::cout << "Volume of segmentation mm^3 = " << volume << std::endl;
+
+  if (args.GetOptionWasSet
