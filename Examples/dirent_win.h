@@ -184,3 +184,83 @@ readdir(DIR * dirp)
   }
 
   /* get next directory entry */
+  if (dirp->cached != 0)
+  {
+    /* a valid directory entry already in memory */
+    dirp->cached = 0;
+  }
+  else
+  {
+    /* read next directory entry from disk */
+    if (FindNextFileA(dirp->search_handle, &dirp->current.data) == FALSE)
+    {
+      /* the very last file has been processed or an error occured */
+      FindClose(dirp->search_handle);
+      dirp->search_handle = INVALID_HANDLE_VALUE;
+      return NULL;
+    }
+  }
+
+  /* copy as a multibyte character string */
+  STRNCPY(dirp->current.d_name, dirp->current.data.cFileName, sizeof(dirp->current.d_name));
+  dirp->current.d_name[MAX_PATH] = '\0';
+
+  return &dirp->current;
+}
+
+
+/*****************************************************************************
+ * Close directory stream opened by opendir() function.  Close of the
+ * directory stream invalidates the DIR structure as well as any previously
+ * read directory entry.
+ */
+static int
+closedir(DIR * dirp)
+{
+  assert(dirp != NULL);
+
+  /* release search handle */
+  if (dirp->search_handle != INVALID_HANDLE_VALUE)
+  {
+    FindClose(dirp->search_handle);
+    dirp->search_handle = INVALID_HANDLE_VALUE;
+  }
+
+  /* release directory handle */
+  free(dirp);
+  return 0;
+}
+
+
+/*****************************************************************************
+ * Resets the position of the directory stream to which dirp refers to the
+ * beginning of the directory. It also causes the directory stream to refer
+ * to the current state of the corresponding directory, as a call to opendir()
+ * would have done. If dirp does not refer to a directory stream, the effect
+ * is undefined.
+ */
+static void
+rewinddir(DIR * dirp)
+{
+  /* release search handle */
+  if (dirp->search_handle != INVALID_HANDLE_VALUE)
+  {
+    FindClose(dirp->search_handle);
+    dirp->search_handle = INVALID_HANDLE_VALUE;
+  }
+
+  /* open new search handle and retrieve first file */
+  dirp->search_handle = FindFirstFileA(dirp->patt, &dirp->current.data);
+  if (dirp->search_handle == INVALID_HANDLE_VALUE)
+  {
+    /* invalid search pattern? */
+    free(dirp);
+    return;
+  }
+
+  /* there is an un-processed directory entry in memory now */
+  dirp->cached = 1;
+}
+
+
+#endif /*DIRENT_H*/
