@@ -571,4 +571,23 @@ main(int argc, char * argv[])
 
   std::cout << "Volume of segmentation mm^3 = " << volume << std::endl;
 
-  if (args.GetOptionWasSet
+  if (args.GetOptionWasSet("OutputMesh"))
+  {
+    VTK_CREATE(vtkSTLWriter, writer);
+    writer->SetFileName(args.GetValueAsString("OutputMesh").c_str());
+#if VTK_MAJOR_VERSION <= 5
+    writer->SetInput(mc->GetOutput());
+#else
+    writer->SetInputData(mc->GetOutput());
+#endif
+    writer->Write();
+  }
+
+  if (args.GetOptionWasSet("Visualize"))
+  {
+    return ViewImageAndSegmentationSurface(image, mc->GetOutput(), roi, args);
+  }
+
+
+  return EXIT_SUCCESS;
+}
