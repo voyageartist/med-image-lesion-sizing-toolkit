@@ -16,4 +16,32 @@
  *
  *=========================================================================*/
 
-#ifndef itkLesionSegmentationCommandLineProgressR
+#ifndef itkLesionSegmentationCommandLineProgressReporter_h
+#  define itkLesionSegmentatioCommandLineProgressReporter_h
+
+#  include "itkLesionSegmentationImageFilter8.h"
+#  include "itkCommand.h"
+#  include <string>
+
+namespace itk
+{
+
+class ITKCommon_EXPORT LesionSegmentationCommandLineProgressReporter : public Command
+{
+public:
+  /** Standard class type alias. */
+  using Self = LesionSegmentationCommandLineProgressReporter;
+  using Superclass = Object;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+
+  itkNewMacro(Self);
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(LesionSegmentationCommandLineProgressReporter, Command);
+
+  // Description:
+  // Satisfy the superclass API for callbacks. Recall that the caller is
+  // the instance invoking the event; eid is the event id (see
+  // vtkCommand.h); and calldata is information sent when the callback
+  // was invoked (e.g., progress value in th
