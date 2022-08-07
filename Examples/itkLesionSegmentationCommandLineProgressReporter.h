@@ -44,4 +44,38 @@ public:
   // Satisfy the superclass API for callbacks. Recall that the caller is
   // the instance invoking the event; eid is the event id (see
   // vtkCommand.h); and calldata is information sent when the callback
-  // was invoked (e.g., progress value in th
+  // was invoked (e.g., progress value in the vtkCommand::ProgressEvent).
+  virtual void
+  Execute(const Object * caller, const EventObject & event);
+  virtual void
+  Execute(Object * caller, const EventObject & event);
+
+  void
+  SetReportProgress(int i)
+  {
+    this->ReportProgress = i;
+  }
+
+protected:
+  virtual void
+  ExecuteInternal(const Object * caller, const EventObject & event);
+
+  int ProgressValue;
+  int ReportProgress;
+
+  // BTX
+  std::string ProgressString;
+  // ETX
+
+  LesionSegmentationCommandLineProgressReporter();
+  ~LesionSegmentationCommandLineProgressReporter();
+
+private:
+  LesionSegmentationCommandLineProgressReporter(const Self &); // purposely not implemented
+  void
+  operator=(const Self &); // purposely not implemented
+};
+
+} // namespace itk
+
+#endif
