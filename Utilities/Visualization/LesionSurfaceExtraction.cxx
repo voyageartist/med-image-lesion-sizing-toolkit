@@ -57,4 +57,31 @@ main(int argc, char * argv[])
 #endif
 
 
-  std::string surfaceFileNameExtensio
+  std::string surfaceFileNameExtension = vtksys::SystemTools::GetFilenameLastExtension(argv[3]);
+
+  if (surfaceFileNameExtension == ".vtk")
+  {
+    VTK_CREATE(vtkPolyDataWriter, polyDataWriter);
+#if VTK_MAJOR_VERSION <= 5
+    polyDataWriter->SetInput(contourFilter->GetOutput());
+#else
+    polyDataWriter->SetInputData(contourFilter->GetOutput());
+#endif
+    polyDataWriter->SetFileName(argv[3]);
+    polyDataWriter->Update();
+  }
+
+  if (surfaceFileNameExtension == ".stl")
+  {
+    VTK_CREATE(vtkSTLWriter, stlWriter);
+#if VTK_MAJOR_VERSION <= 5
+    stlWriter->SetInput(contourFilter->GetOutput());
+#else
+    stlWriter->SetInputData(contourFilter->GetOutput());
+#endif
+    stlWriter->SetFileName(argv[3]);
+    stlWriter->Update();
+  }
+
+  return EXIT_SUCCESS;
+}
