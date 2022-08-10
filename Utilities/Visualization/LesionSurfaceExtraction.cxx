@@ -16,4 +16,45 @@
 =========================================================================*/
 
 #include "vtkMetaImageReader.h"
-#include "vtkContourFilt
+#include "vtkContourFilter.h"
+#include "vtkImageData.h"
+#include "vtkPolyDataWriter.h"
+#include "vtkSTLWriter.h"
+#include "vtkSmartPointer.h"
+#include "vtksys/SystemTools.hxx"
+#include "vtkVersion.h"
+
+
+#define VTK_CREATE(type, name) vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
+
+
+int
+main(int argc, char * argv[])
+{
+
+  if (argc < 4)
+  {
+    std::cerr << "Missing parameters" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " imageFileName isoValue outputSurface";
+    std::cerr << std::endl;
+    return 1;
+  }
+
+  VTK_CREATE(vtkMetaImageReader, imageReader);
+
+  imageReader->SetFileName(argv[1]);
+  imageReader->Update();
+
+  float isoValue = atof(argv[2]);
+
+  VTK_CREATE(vtkContourFilter, contourFilter);
+
+  contourFilter->SetValue(0, isoValue);
+#if VTK_MAJOR_VERSION <= 5
+  contourFilter->SetInput(imageReader->GetOutput());
+#else
+  contourFilter->SetInputData(imageReader->GetOutput());
+#endif
+
+
+  std::string surfaceFileNameExtensio
