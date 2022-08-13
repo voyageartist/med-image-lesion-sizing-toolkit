@@ -1,0 +1,9 @@
+branches:
+ only:
+  - master
+
+version: "0.0.1.{build}"
+
+install:
+
+  - curl -L https://raw.githubusercontent.com/Insig

@@ -207,3 +207,135 @@ main(int argc, char * argv[])
 #endif
     xImagePlaneWidget->SetPlaneOrientationToXAxes();
     xImagePlaneWidget->SetSliceIndex(0);
+    xImagePlaneWidget->SetPicker(picker);
+    xImagePlaneWidget->RestrictPlaneToVolumeOn();
+    xImagePlaneWidget->SetKeyPressActivationValue('x');
+    xImagePlaneWidget->GetPlaneProperty()->SetColor(1, 0, 0);
+    xImagePlaneWidget->SetTexturePlaneProperty(ipwProp);
+    xImagePlaneWidget->SetResliceInterpolateToNearestNeighbour();
+
+    yImagePlaneWidget->DisplayTextOn();
+#if VTK_MAJOR_VERSION <= 5
+    yImagePlaneWidget->SetInput(vtkImporter1->GetOutput());
+#else
+    yImagePlaneWidget->SetInputData(vtkImporter1->GetOutput());
+#endif
+    yImagePlaneWidget->SetPlaneOrientationToYAxes();
+    yImagePlaneWidget->SetSliceIndex(0);
+    yImagePlaneWidget->SetPicker(picker);
+    yImagePlaneWidget->RestrictPlaneToVolumeOn();
+    yImagePlaneWidget->SetKeyPressActivationValue('y');
+    yImagePlaneWidget->GetPlaneProperty()->SetColor(1, 1, 0);
+    yImagePlaneWidget->SetTexturePlaneProperty(ipwProp);
+    yImagePlaneWidget->SetLookupTable(xImagePlaneWidget->GetLookupTable());
+
+    zImagePlaneWidget->DisplayTextOn();
+#if VTK_MAJOR_VERSION <= 5
+    zImagePlaneWidget->SetInput(vtkImporter1->GetOutput());
+#else
+    zImagePlaneWidget->SetInputData(vtkImporter1->GetOutput());
+#endif
+    zImagePlaneWidget->SetPlaneOrientationToZAxes();
+    zImagePlaneWidget->SetSliceIndex(0);
+    zImagePlaneWidget->SetPicker(picker);
+    zImagePlaneWidget->SetKeyPressActivationValue('z');
+    zImagePlaneWidget->GetPlaneProperty()->SetColor(0, 0, 1);
+    zImagePlaneWidget->SetTexturePlaneProperty(ipwProp);
+    zImagePlaneWidget->SetLookupTable(xImagePlaneWidget->GetLookupTable());
+
+    xImagePlaneWidget->SetInteractor(iren);
+    xImagePlaneWidget->On();
+
+    yImagePlaneWidget->SetInteractor(iren);
+    yImagePlaneWidget->On();
+
+    zImagePlaneWidget->SetInteractor(iren);
+    zImagePlaneWidget->On();
+
+
+    // Set the background to something grayish
+    renderer->SetBackground(0.4392, 0.5020, 0.5647);
+
+
+    // Draw contours around the segmented regions
+    VTK_CREATE(vtkContourFilter, contour);
+#if VTK_MAJOR_VERSION <= 5
+    contour->SetInput(vtkImporter2->GetOutput());
+#else
+    contour->SetInputData(vtkImporter2->GetOutput());
+#endif
+    MaskPixelType contourValue = 0.0;
+
+    if (argc > 3)
+    {
+      contourValue = atoi(argv[3]);
+    }
+
+    contour->SetValue(0, contourValue);
+
+
+    VTK_CREATE(vtkPolyDataMapper, polyMapper);
+    VTK_CREATE(vtkActor, polyActor);
+
+    polyActor->SetMapper(polyMapper);
+#if VTK_MAJOR_VERSION <= 5
+    polyMapper->SetInput(contour->GetOutput());
+#else
+    polyMapper->SetInputData(contour->GetOutput());
+#endif
+
+
+    VTK_CREATE(vtkProperty, property);
+    property->SetAmbient(0.1);
+    property->SetDiffuse(0.1);
+    property->SetSpecular(0.5);
+    property->SetColor(1.0, 0.0, 0.0);
+    property->SetLineWidth(2.0);
+    property->SetRepresentationToSurface();
+
+    polyActor->SetProperty(property);
+
+    renderer->AddActor(polyActor);
+
+
+    if (argc > 4)
+    {
+      int representation = atoi(argv[4]);
+      switch (representation)
+      {
+        case 0:
+          property->SetRepresentationToSurface();
+          break;
+        case 1:
+          property->SetRepresentationToWireframe();
+          break;
+      }
+    }
+
+    if (argc > 5)
+    {
+      VTK_CREATE(vtkSTLWriter, writer);
+      writer->SetFileName(argv[5]);
+
+#if VTK_MAJOR_VERSION <= 5
+      writer->SetInput(contour->GetOutput());
+#else
+      writer->SetInputData(contour->GetOutput());
+#endif
+
+      writer->Write();
+    }
+
+    // Bring up the render window and begin interaction.
+    renderer->ResetCamera();
+    renWin->Render();
+    iren->Start();
+  }
+  catch (itk::ExceptionObject & e)
+  {
+    std::cerr << "Exception catched !! " << e << std::endl;
+  }
+
+
+  return 0;
+}
