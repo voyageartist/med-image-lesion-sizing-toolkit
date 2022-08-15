@@ -41,4 +41,36 @@ BinaryThresholdFeatureGenerator<NDimension>::BinaryThresholdFeatureGenerator()
 }
 
 
-template <unsigned int N
+template <unsigned int NDimension>
+BinaryThresholdFeatureGenerator<NDimension>::~BinaryThresholdFeatureGenerator() = default;
+
+
+template <unsigned int NDimension>
+void
+BinaryThresholdFeatureGenerator<NDimension>::PrintSelf(std::ostream & os, Indent indent) const
+{
+  Superclass::PrintSelf(os, indent);
+}
+
+
+template <unsigned int NDimension>
+void
+BinaryThresholdFeatureGenerator<NDimension>::GenerateData()
+{
+  // Report progress.
+  ProgressAccumulator::Pointer progress = ProgressAccumulator::New();
+  progress->SetMiniPipelineFilter(this);
+  progress->RegisterInternalFilter(this->m_BinaryThresholdFilter, 1.0);
+
+  typename InputImageSpatialObjectType::ConstPointer inputObject =
+    dynamic_cast<const InputImageSpatialObjectType *>(this->ProcessObject::GetInput(0));
+
+  if (!inputObject)
+  {
+    itkExceptionMacro("Missing input spatial object or incorrect type");
+  }
+
+  const InputImageType * inputImage = inputObject->GetImage();
+
+  if (!inputImage)
+  
