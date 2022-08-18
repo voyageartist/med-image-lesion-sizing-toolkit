@@ -73,4 +73,27 @@ BinaryThresholdFeatureGenerator<NDimension>::GenerateData()
   const InputImageType * inputImage = inputObject->GetImage();
 
   if (!inputImage)
-  
+  {
+    itkExceptionMacro("Missing input image");
+  }
+
+  this->m_BinaryThresholdFilter->SetInput(inputImage);
+  this->m_BinaryThresholdFilter->SetLowerThreshold(this->m_Threshold);
+  this->m_BinaryThresholdFilter->SetUpperThreshold(itk::NumericTraits<OutputPixelType>::max());
+  this->m_BinaryThresholdFilter->SetOutsideValue(0.0);
+  this->m_BinaryThresholdFilter->SetInsideValue(1.0);
+
+  this->m_BinaryThresholdFilter->Update();
+
+  typename OutputImageType::Pointer outputImage = this->m_BinaryThresholdFilter->GetOutput();
+
+  outputImage->DisconnectPipeline();
+
+  auto * outputObject = dynamic_cast<OutputImageSpatialObjectType *>(this->ProcessObject::GetOutput(0));
+
+  outputObject->SetImage(outputImage);
+}
+
+} // end namespace itk
+
+#endif
