@@ -57,4 +57,26 @@ public:
  * (1) Smooth the input image with Gaussian filter.
  * (2) Calculate the second directional derivatives of the smoothed image.
  * (3) Non-Maximum Suppression: the zero-crossings of 2nd derivative are found,
- *     and the sign of third derivat
+ *     and the sign of third derivative is used to find the correct extrema.
+ * (4) The hysteresis thresholding is applied to the gradient magnitude
+ *      (multiplied with zero-crossings) of the smoothed image to find and
+ *      link edges.
+ *
+ * \par Inputs and Outputs
+ * The input to this filter should be a scalar, real-valued Itk image of
+ * arbitrary dimension.  The output should also be a scalar, real-value Itk
+ * image of the same dimensionality.
+ *
+ * \par Parameters
+ * There are four parameters for this filter that control the sub-filters used
+ * by the algorithm.
+ *
+ * \par
+ * Sigma is used in the Gaussian smoothing of the input image.
+ * See  itkSmoothingRecursiveGaussianImageFilter for information on these
+ * parameters.
+ *
+ * \par
+ * Threshold is the lowest allowed value in the output image.  Its data type is
+ * the same as the data type of the output image. Any values below the
+ * Threshold level will be replaced with the OutsideValue parameter value,
