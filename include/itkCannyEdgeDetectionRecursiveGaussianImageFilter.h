@@ -26,4 +26,35 @@
 #include "itkMultiplyImageFilter.h"
 #include "itkZeroFluxNeumannBoundaryCondition.h"
 #include "itkMultiThreaderBase.h"
-#include "itkDerivativeOpe
+#include "itkDerivativeOperator.h"
+#include "itkSparseFieldLayer.h"
+#include "itkObjectStore.h"
+
+
+namespace itk
+{
+using MultiThreader = MultiThreaderBase;
+
+
+template <typename TValueType>
+class ListNode
+{
+public:
+  TValueType m_Value;
+
+  ListNode * Next;
+  ListNode * Previous;
+};
+
+
+/** \class CannyEdgeDetectionRecursiveGaussianImageFilter
+ *
+ * This filter is an implementation of a Canny edge detector for scalar-valued
+ * images.  Based on John Canny's paper "A Computational Approach to Edge
+ * Detection"(IEEE Transactions on Pattern Analysis and Machine Intelligence,
+ * Vol. PAMI-8, No.6, November 1986),  there are four major steps used in the
+ * edge-detection scheme:
+ * (1) Smooth the input image with Gaussian filter.
+ * (2) Calculate the second directional derivatives of the smoothed image.
+ * (3) Non-Maximum Suppression: the zero-crossings of 2nd derivative are found,
+ *     and the sign of third derivat
