@@ -79,4 +79,33 @@ public:
  * \par
  * Threshold is the lowest allowed value in the output image.  Its data type is
  * the same as the data type of the output image. Any values below the
- * Threshold level will be replaced with the OutsideValue parameter value,
+ * Threshold level will be replaced with the OutsideValue parameter value, whose
+ * default is zero.
+ *
+ * \todo Edge-linking will be added when an itk connected component labeling
+ * algorithm is available.
+ *
+ * \ingroup LesionSizingToolkit
+ *
+ * \sa SmoothingRecursiveGaussianImageFilter
+ * \sa ZeroCrossingImageFilter
+ * \sa ThresholdImageFilter */
+template <typename TInputImage, typename TOutputImage>
+class ITK_TEMPLATE_EXPORT CannyEdgeDetectionRecursiveGaussianImageFilter
+  : public ImageToImageFilter<TInputImage, TOutputImage>
+{
+public:
+  /** Standard "Self" & Superclass type alias.  */
+  using Self = CannyEdgeDetectionRecursiveGaussianImageFilter;
+  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
+
+  /** Image type alias support   */
+  using InputImageType = TInputImage;
+  using OutputImageType = TOutputImage;
+
+  /** SmartPointer type alias support  */
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+
+  /** Define pixel types. */
+  using InputImagePixelType = typename TInp
