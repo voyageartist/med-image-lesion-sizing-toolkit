@@ -127,4 +127,30 @@ public:
 
   using ListNodeType = ListNode<IndexType>;
   using ListNodeStorageType = ObjectStore<ListNodeType>;
-  using ListType = SparseFieldLayer<ListNodeType>
+  using ListType = SparseFieldLayer<ListNodeType>;
+  using ListPointerType = typename ListType::Pointer;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro(Self);
+
+  /** Typedef to describe the output image region type. */
+  using OutputImageRegionType = typename TOutputImage::RegionType;
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(CannyEdgeDetectionRecursiveGaussianImageFilter, ImageToImageFilter);
+
+  /** ImageDimension constant    */
+  static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
+  static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
+
+  /** Typedef of double containers */
+  using ArrayType = FixedArray<double, itkGetStaticConstMacro(ImageDimension)>;
+
+  /** Smoothing parameters for the Gaussian filter. */
+  void
+  SetSigmaArray(const SigmaArrayType & sigmas);
+  void
+  SetSigma(ScalarRealType sigma);
+  SigmaArrayType
+  GetSigmaArray() const;
+  Scalar
