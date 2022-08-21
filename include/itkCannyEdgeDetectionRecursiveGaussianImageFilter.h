@@ -108,4 +108,23 @@ public:
   using ConstPointer = SmartPointer<const Self>;
 
   /** Define pixel types. */
-  using InputImagePixelType = typename TInp
+  using InputImagePixelType = typename TInputImage::PixelType;
+  using OutputImagePixelType = typename TOutputImage::PixelType;
+  using IndexType = typename TInputImage::IndexType;
+
+  using GaussianImageFilterType = SmoothingRecursiveGaussianImageFilter<InputImageType, OutputImageType>;
+  using ScalarRealType = typename GaussianImageFilterType::ScalarRealType;
+  using SigmaArrayType = typename GaussianImageFilterType::SigmaArrayType;
+
+  /** The default boundary condition is used unless overridden
+   *in the Evaluate() method. */
+  using DefaultBoundaryConditionType = ZeroFluxNeumannBoundaryCondition<OutputImageType>;
+
+  /** The type of data structure that is passed to this function object
+   * to evaluate at a pixel that does not lie on a data set boundary.
+   */
+  using NeighborhoodType = ConstNeighborhoodIterator<OutputImageType, DefaultBoundaryConditionType>;
+
+  using ListNodeType = ListNode<IndexType>;
+  using ListNodeStorageType = ObjectStore<ListNodeType>;
+  using ListType = SparseFieldLayer<ListNodeType>
