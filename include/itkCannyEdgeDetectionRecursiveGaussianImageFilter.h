@@ -153,4 +153,36 @@ public:
   SetSigma(ScalarRealType sigma);
   SigmaArrayType
   GetSigmaArray() const;
-  Scalar
+  ScalarRealType
+  GetSigma() const;
+
+  /* Set the Threshold value for detected edges. */
+  void
+  SetThreshold(const OutputImagePixelType th)
+  {
+    this->m_Threshold = th;
+    this->m_UpperThreshold = m_Threshold;
+    this->m_LowerThreshold = m_Threshold / 2.0;
+    itkLegacyReplaceBodyMacro(SetThreshold, 2.2, SetUpperThreshold);
+  }
+
+  OutputImagePixelType
+  GetThreshold(OutputImagePixelType itkNotUsed(th))
+  {
+    itkLegacyReplaceBodyMacro(GetThreshold, 2.2, GetUpperThreshold);
+    return this->m_Threshold;
+  }
+
+  ///* Set the Threshold value for detected edges. */
+  itkSetMacro(UpperThreshold, OutputImagePixelType);
+  itkGetMacro(UpperThreshold, OutputImagePixelType);
+
+  itkSetMacro(LowerThreshold, OutputImagePixelType);
+  itkGetMacro(LowerThreshold, OutputImagePixelType);
+
+  /* Set the Thresholdvalue for detected edges. */
+  itkSetMacro(OutsideValue, OutputImagePixelType);
+  itkGetMacro(OutsideValue, OutputImagePixelType);
+
+  OutputImageType *
+  GetNonMa
