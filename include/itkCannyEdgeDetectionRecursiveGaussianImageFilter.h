@@ -205,4 +205,37 @@ public:
   itkConceptMacro(InputHasNumericTraitsCheck, (Concept::HasNumericTraits<InputImagePixelType>));
   itkConceptMacro(OutputHasNumericTraitsCheck, (Concept::HasNumericTraits<OutputImagePixelType>));
   itkConceptMacro(SameDimensionCheck, (Concept::SameDimension<ImageDimension, OutputImageDimension>));
-  itkCon
+  itkConceptMacro(InputIsFloatingPointCheck, (Concept::IsFloatingPoint<InputImagePixelType>));
+  itkConceptMacro(OutputIsFloatingPointCheck, (Concept::IsFloatingPoint<OutputImagePixelType>));
+  /** End concept checking */
+#endif
+
+protected:
+  CannyEdgeDetectionRecursiveGaussianImageFilter();
+  CannyEdgeDetectionRecursiveGaussianImageFilter(const Self &) {}
+  void
+  PrintSelf(std::ostream & os, Indent indent) const override;
+
+  void
+  GenerateData() override;
+
+  using MultiplyImageFilterType = MultiplyImageFilter<OutputImageType, OutputImageType, OutputImageType>;
+
+private:
+  ~CannyEdgeDetectionRecursiveGaussianImageFilter() override = default;
+
+  /** Thread-Data Structure   */
+  struct CannyThreadStruct
+  {
+    CannyEdgeDetectionRecursiveGaussianImageFilter * Filter;
+  };
+
+  /** This allocate storage for m_UpdateBuffer, m_UpdateBuffer1 */
+  void
+  AllocateUpdateBuffer();
+
+  /** Implement hysteresis thresholding */
+  void
+  HysteresisThresholding();
+
+  /** Edg
