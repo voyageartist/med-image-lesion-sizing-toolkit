@@ -185,4 +185,24 @@ public:
   itkGetMacro(OutsideValue, OutputImagePixelType);
 
   OutputImageType *
-  GetNonMa
+  GetNonMaximumSuppressionImage() const
+  {
+    return this->m_MultiplyImageFilter->GetOutput();
+  }
+
+  /** CannyEdgeDetectionRecursiveGaussianImageFilter needs a larger input requested
+   * region than the output requested region ( derivative operators, etc).
+   * As such, CannyEdgeDetectionRecursiveGaussianImageFilter needs to provide an implementation
+   * for GenerateInputRequestedRegion() in order to inform the
+   * pipeline execution model.
+   *
+   * \sa ImageToImageFilter::GenerateInputRequestedRegion()  */
+  void
+  GenerateInputRequestedRegion() throw(InvalidRequestedRegionError) override;
+
+#ifdef ITK_USE_CONCEPT_CHECKING
+  /** Begin concept checking */
+  itkConceptMacro(InputHasNumericTraitsCheck, (Concept::HasNumericTraits<InputImagePixelType>));
+  itkConceptMacro(OutputHasNumericTraitsCheck, (Concept::HasNumericTraits<OutputImagePixelType>));
+  itkConceptMacro(SameDimensionCheck, (Concept::SameDimension<ImageDimension, OutputImageDimension>));
+  itkCon
