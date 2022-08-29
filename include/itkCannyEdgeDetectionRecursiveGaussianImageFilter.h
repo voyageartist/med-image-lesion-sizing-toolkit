@@ -238,4 +238,31 @@ private:
   void
   HysteresisThresholding();
 
-  /** Edg
+  /** Edge linking funciton */
+  void
+  FollowEdge(IndexType index);
+
+  /** Check if the index is in bounds or not */
+  bool
+  InBounds(IndexType index);
+
+
+  /** Calculate the second derivative of the smoothed image, it writes the
+   *  result to m_UpdateBuffer using the ThreadedCompute2ndDerivative() method
+   *  and multithreading mechanism.   */
+  void
+  Compute2ndDerivative();
+
+  /**
+   * Split the input into "num" pieces, returning region "i" as
+   * "splitRegion". This method is called "num" times to return non-overlapping
+   * regions. The method returns the number of pieces that the input
+   * can be split into by the routine. i.e. return value is less than or equal
+   * to "num".
+   * \sa ImageSource
+   */
+  //  virtual
+  //  int SplitUpdateContainer(int i, int num, ThreadRegionType& splitRegion);
+
+  /** Does the actual work of calculating of the 2nd derivative over a region
+   *  supplied by the multithreading mechanism.
