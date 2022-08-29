@@ -266,3 +266,29 @@ private:
 
   /** Does the actual work of calculating of the 2nd derivative over a region
    *  supplied by the multithreading mechanism.
+   *
+   *  \sa Compute2ndDerivative
+   *  \sa Compute2ndDerivativeThreaderCallBack   */
+  void
+  ThreadedCompute2ndDerivative(const OutputImageRegionType & outputRegionForThread, int threadId);
+
+  /** This callback method uses ImageSource::SplitRequestedRegion to acquire an
+   * output region that it passes to ThreadedCompute2ndDerivative for
+   * processing.  */
+  static ITK_THREAD_RETURN_TYPE
+  Compute2ndDerivativeThreaderCallback(void * arg);
+
+  /** This methos is used to calculate the 2nd derivative for
+   * non-boundary pixels. It is called by the ThreadedCompute2ndDerivative
+   * method. */
+  OutputImagePixelType
+  ComputeCannyEdge(const NeighborhoodType & it, void * globalData);
+
+  /** Calculate the gradient of the second derivative of the smoothed image,
+   *  it writes the result to m_UpdateBuffer1 using the
+   *  ThreadedCompute2ndDerivativePos() method and multithreading mechanism.
+   */
+  void
+  Compute2ndDerivativePos();
+
+ 
