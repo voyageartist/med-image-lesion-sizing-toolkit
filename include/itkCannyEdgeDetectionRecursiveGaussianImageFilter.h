@@ -291,4 +291,28 @@ private:
   void
   Compute2ndDerivativePos();
 
- 
+  /** Does the actual work of calculating of the 2nd derivative over a region
+   *  supplied by the multithreading mechanism.
+   *
+   *  \sa Compute2ndDerivativePos
+   *  \sa Compute3ndDerivativePosThreaderCallBack   */
+  void
+  ThreadedCompute2ndDerivativePos(const OutputImageRegionType & outputRegionForThread, int threadId);
+
+  /**This callback method uses ImageSource::SplitRequestedRegion to acquire an
+   * output region that it passes to ThreadedCompute2ndDerivative for
+   * processing.   */
+  static ITK_THREAD_RETURN_TYPE
+  Compute2ndDerivativePosThreaderCallback(void * arg);
+
+  /** Standard deviation of the gaussian used for smoothing */
+  SigmaArrayType m_Sigma;
+
+  /** The maximum error of the gaussian blurring kernel in each dimensional
+   * direction.  */
+  ArrayType m_MaximumError;
+
+  /** Upper threshold value for identifying edges. */
+  OutputImagePixelType m_UpperThreshold; // should be float here?
+
+  /** Lower threshold value for identifyi
