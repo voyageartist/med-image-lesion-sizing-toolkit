@@ -337,4 +337,21 @@ private:
   /** Function objects that are used in the inner loops of derivatiVex
       calculations. */
   DerivativeOperator<OutputImagePixelType, itkGetStaticConstMacro(ImageDimension)> m_ComputeCannyEdge1stDerivativeOper;
-  DerivativeOperator<OutputImagePixelType, itkGetStaticConstMacro(ImageDimension)> 
+  DerivativeOperator<OutputImagePixelType, itkGetStaticConstMacro(ImageDimension)> m_ComputeCannyEdge2ndDerivativeOper;
+
+  std::slice m_ComputeCannyEdgeSlice[ImageDimension];
+
+  unsigned long m_Stride[ImageDimension];
+  unsigned long m_Center;
+
+  typename ListNodeStorageType::Pointer m_NodeStore;
+  ListPointerType                       m_NodeList;
+};
+
+} // end of namespace itk
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#  include "itkCannyEdgeDetectionRecursiveGaussianImageFilter.hxx"
+#endif
+
+#endif
