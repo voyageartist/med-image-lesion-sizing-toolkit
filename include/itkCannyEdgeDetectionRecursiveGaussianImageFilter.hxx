@@ -37,4 +37,34 @@ CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage,
 
   m_OutsideValue = NumericTraits<OutputImagePixelType>::Zero;
   m_Threshold = NumericTraits<OutputImagePixelType>::Zero;
-  m_UpperThresh
+  m_UpperThreshold = NumericTraits<OutputImagePixelType>::Zero;
+  m_LowerThreshold = NumericTraits<OutputImagePixelType>::Zero;
+
+  m_GaussianFilter = GaussianImageFilterType::New();
+  m_MultiplyImageFilter = MultiplyImageFilterType::New();
+  m_UpdateBuffer1 = OutputImageType::New();
+
+  // Set up neighborhood slices for all the dimensions.
+  typename Neighborhood<OutputImagePixelType, ImageDimension>::RadiusType r;
+  r.Fill(1);
+
+  // Dummy neighborhood used to set up the slices.
+  Neighborhood<OutputImagePixelType, ImageDimension> it;
+  it.SetRadius(r);
+
+  // Slice the neighborhood
+  m_Center = it.Size() / 2;
+
+  for (i = 0; i < ImageDimension; ++i)
+  {
+    m_Stride[i] = it.GetStride(i);
+  }
+
+  for (i = 0; i < ImageDimension; ++i)
+  {
+    m_ComputeCannyEdgeSlice[i] = std::slice(m_Center - m_Stride[i], 3, m_Stride[i]);
+  }
+
+  // Allocate the derivative operator.
+  m_ComputeCannyEdge1stDerivativeOper.SetDirection(0);
+  m_ComputeCannyEdge1s
