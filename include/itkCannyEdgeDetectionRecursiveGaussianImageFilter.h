@@ -315,4 +315,26 @@ private:
   /** Upper threshold value for identifying edges. */
   OutputImagePixelType m_UpperThreshold; // should be float here?
 
-  /** Lower threshold value for identifyi
+  /** Lower threshold value for identifying edges. */
+  OutputImagePixelType m_LowerThreshold; // should be float here?
+
+  /** Threshold value for identifying edges. */
+  OutputImagePixelType m_Threshold;
+
+  /** "Background" value for use in thresholding. */
+  OutputImagePixelType m_OutsideValue;
+
+  /** Update buffers used during calculation of multiple steps */
+  typename OutputImageType::Pointer m_UpdateBuffer1;
+
+  /** Gaussian filter to smooth the input image  */
+  typename GaussianImageFilterType::Pointer m_GaussianFilter;
+
+  /** Multiply image filter to multiply with the zero crossings of the second
+   *  derivative.  */
+  typename MultiplyImageFilterType::Pointer m_MultiplyImageFilter;
+
+  /** Function objects that are used in the inner loops of derivatiVex
+      calculations. */
+  DerivativeOperator<OutputImagePixelType, itkGetStaticConstMacro(ImageDimension)> m_ComputeCannyEdge1stDerivativeOper;
+  DerivativeOperator<OutputImagePixelType, itkGetStaticConstMacro(ImageDimension)> 
