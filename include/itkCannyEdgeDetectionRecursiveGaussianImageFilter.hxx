@@ -67,4 +67,32 @@ CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage,
 
   // Allocate the derivative operator.
   m_ComputeCannyEdge1stDerivativeOper.SetDirection(0);
-  m_ComputeCannyEdge1s
+  m_ComputeCannyEdge1stDerivativeOper.SetOrder(1);
+  m_ComputeCannyEdge1stDerivativeOper.CreateDirectional();
+
+  m_ComputeCannyEdge2ndDerivativeOper.SetDirection(0);
+  m_ComputeCannyEdge2ndDerivativeOper.SetOrder(2);
+  m_ComputeCannyEdge2ndDerivativeOper.CreateDirectional();
+
+  // Initialize the list
+  m_NodeStore = ListNodeStorageType::New();
+  m_NodeList = ListType::New();
+}
+
+template <typename TInputImage, typename TOutputImage>
+void
+CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::AllocateUpdateBuffer()
+{
+  // The update buffer looks just like the input.
+
+  typename TInputImage::ConstPointer input = this->GetInput();
+
+  m_UpdateBuffer1->CopyInformation(input);
+  m_UpdateBuffer1->SetRequestedRegion(input->GetRequestedRegion());
+  m_UpdateBuffer1->SetBufferedRegion(input->GetBufferedRegion());
+  m_UpdateBuffer1->Allocate();
+}
+
+template <typename TInputImage, typename TOutputImage>
+void
+CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::GenerateInputRequestedRegion() throw(
