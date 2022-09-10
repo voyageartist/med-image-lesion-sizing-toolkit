@@ -96,3 +96,32 @@ CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::Alloc
 template <typename TInputImage, typename TOutputImage>
 void
 CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::GenerateInputRequestedRegion() throw(
+  InvalidRequestedRegionError)
+{
+  // call the superclass' implementation of this method
+  Superclass::GenerateInputRequestedRegion();
+  return;
+  // get pointers to the input and output
+  typename Superclass::InputImagePointer  inputPtr = const_cast<TInputImage *>(this->GetInput());
+  typename Superclass::OutputImagePointer outputPtr = this->GetOutput();
+
+  if (!inputPtr || !outputPtr)
+  {
+    return;
+  }
+
+  // Set the kernel size.
+  unsigned long radius = 1;
+
+  // get a copy of the input requested region (should equal the output
+  // requested region)
+  typename TInputImage::RegionType inputRequestedRegion;
+  inputRequestedRegion = inputPtr->GetRequestedRegion();
+
+  // pad the input requested region by the operator radius
+  inputRequestedRegion.PadByRadius(radius);
+
+  // crop the input requested region at the input's largest possible region
+  if (inputRequestedRegion.Crop(inputPtr->GetLargestPossibleRegion()))
+  {
+    inputPtr->SetRequest
