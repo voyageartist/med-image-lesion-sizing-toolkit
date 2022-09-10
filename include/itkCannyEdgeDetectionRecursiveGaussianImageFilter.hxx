@@ -124,4 +124,32 @@ CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::Gener
   // crop the input requested region at the input's largest possible region
   if (inputRequestedRegion.Crop(inputPtr->GetLargestPossibleRegion()))
   {
-    inputPtr->SetRequest
+    inputPtr->SetRequestedRegion(inputRequestedRegion);
+    return;
+  }
+  else
+  {
+    // Couldn't crop the region (requested region is outside the largest
+    // possible region).  Throw an exception.
+
+    // store what we tried to request (prior to trying to crop)
+    inputPtr->SetRequestedRegion(inputRequestedRegion);
+
+    // build an exception
+    InvalidRequestedRegionError e(__FILE__, __LINE__);
+    std::ostringstream          msg;
+    msg << this->GetNameOfClass() << "::GenerateInputRequestedRegion()";
+    e.SetLocation(msg.str().c_str());
+    e.SetDescription("Requested region is (at least partially) outside the largest possible region.");
+    e.SetDataObject(inputPtr);
+    throw e;
+  }
+}
+
+template <typename TInputImage, typename TOutputImage>
+void
+CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::ThreadedCompute2ndDerivative(
+  const OutputImageRegionType & outputRegionForThread,
+  int                           threadId)
+{
+  ZeroFluxNeuman
