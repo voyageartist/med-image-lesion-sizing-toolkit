@@ -152,4 +152,27 @@ CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::Threa
   const OutputImageRegionType & outputRegionForThread,
   int                           threadId)
 {
-  ZeroFluxNeuman
+  ZeroFluxNeumannBoundaryCondition<TInputImage> nbc;
+
+  ImageRegionIterator<TOutputImage> it;
+
+  void * globalData = nullptr;
+
+  // Here input is the result from the gaussian filter
+  //      output is the update buffer.
+  typename OutputImageType::Pointer input = m_GaussianFilter->GetOutput();
+  typename OutputImageType::Pointer output = this->GetOutput();
+
+  // set iterator radius
+  Size<ImageDimension> radius;
+  radius.Fill(1);
+
+  // Find the data-set boundary "faces"
+  typename NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<TInputImage>::FaceListType faceList;
+  NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<TInputImage>                        bC;
+  faceList = bC(input, outputRegionForThread, radius);
+
+  typename NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<TInputImage>::FaceListType::iterator fit;
+
+  // support progress methods/callbacks
+  ProgressReporter progress(this, threadId, outputRegionForThread.GetNumberOfPixels(
