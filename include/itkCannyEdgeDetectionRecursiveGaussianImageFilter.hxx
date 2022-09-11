@@ -175,4 +175,35 @@ CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::Threa
   typename NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<TInputImage>::FaceListType::iterator fit;
 
   // support progress methods/callbacks
-  ProgressReporter progress(this, threadId, outputRegionForThread.GetNumberOfPixels(
+  ProgressReporter progress(this, threadId, outputRegionForThread.GetNumberOfPixels(), 100, 0.0f, 0.5f);
+
+  // Process the non-boundady region and then each of the boundary faces.
+  // These are N-d regions which border the edge of the buffer.
+  for (fit = faceList.begin(); fit != faceList.end(); ++fit)
+  {
+    NeighborhoodType bit(radius, input, *fit);
+
+    it = ImageRegionIterator<OutputImageType>(output, *fit);
+    bit.OverrideBoundaryCondition(&nbc);
+    bit.GoToBegin();
+
+    while (!bit.IsAtEnd())
+    {
+      it.Value() = ComputeCannyEdge(bit, globalData);
+      ++bit;
+      ++it;
+      progress.CompletedPixel();
+    }
+  }
+}
+
+template <typename TInputImage, typename TOutputImage>
+typename CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::OutputImagePixelType
+CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::ComputeCannyEdge(
+  const NeighborhoodType & it,
+  void *                   itkNotUsed(globalData))
+{
+  unsigned int                              i, j;
+  NeighborhoodInnerProduct<OutputImageType> innerProduct;
+
+  OutputImagePixelTyp
