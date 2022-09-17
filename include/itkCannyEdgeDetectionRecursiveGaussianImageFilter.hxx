@@ -232,4 +232,39 @@ CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::Compu
       dxy[k] = 0.25 * it.GetPixel(m_Center - m_Stride[i] - m_Stride[j]) -
                0.25 * it.GetPixel(m_Center - m_Stride[i] + m_Stride[j]) -
                0.25 * it.GetPixel(m_Center + m_Stride[i] - m_Stride[j]) +
-               0.25 * it.
+               0.25 * it.GetPixel(m_Center + m_Stride[i] + m_Stride[j]);
+
+      deriv += 2.0 * dx[i] * dx[j] * dxy[k];
+      k++;
+    }
+  }
+
+  gradMag = 0.0001; // alpha * alpha;
+  for (i = 0; i < ImageDimension; i++)
+  {
+    deriv += dx[i] * dx[i] * dxx[i];
+    gradMag += dx[i] * dx[i];
+  }
+
+  deriv = deriv / gradMag;
+
+  return deriv;
+}
+
+// Calculate the second derivative
+template <typename TInputImage, typename TOutputImage>
+void
+CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::Compute2ndDerivative()
+{
+  CannyThreadStruct str;
+  str.Filter = this;
+
+  this->GetMultiThreader()->SetNumberOfWorkUnits(this->GetNumberOfWorkUnits());
+  this->GetMultiThreader()->SetSingleMethod(this->Compute2ndDerivativeThreaderCallback, &str);
+
+  this->GetMultiThreader()->SingleMethodExecute();
+}
+
+template <typename TInputImage, typename TOutputImage>
+ITK_THREAD_RETURN_TYPE
+CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::Compute2ndDerivativeThread
