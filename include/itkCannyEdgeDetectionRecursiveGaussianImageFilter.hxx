@@ -267,4 +267,35 @@ CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::Compu
 
 template <typename TInputImage, typename TOutputImage>
 ITK_THREAD_RETURN_TYPE
-CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::Compute2ndDerivativeThread
+CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::Compute2ndDerivativeThreaderCallback(
+  void * arg)
+{
+  CannyThreadStruct * str;
+
+  int total, threadId, threadCount;
+
+  threadId = ((MultiThreaderBase::WorkUnitInfo *)(arg))->WorkUnitID;
+  threadCount = ((MultiThreaderBase::WorkUnitInfo *)(arg))->NumberOfWorkUnits;
+
+  str = (CannyThreadStruct *)(((MultiThreaderBase::WorkUnitInfo *)(arg))->UserData);
+
+  // Execute the actual method with appropriate output region
+  // first find out how many pieces extent can be split into.
+  // Using the SplitRequestedRegion method from itk::ImageSource.
+  OutputImageRegionType splitRegion;
+  total = str->Filter->SplitRequestedRegion(threadId, threadCount, splitRegion);
+
+  if (threadId < total)
+  {
+    str->Filter->ThreadedCompute2ndDerivative(splitRegion, threadId);
+  }
+
+  return ITK_THREAD_RETURN_DEFAULT_VALUE;
+}
+
+template <typename TInputImage, typename TOutputImage>
+void
+CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::GenerateData()
+{
+  // Allocate the output
+  
