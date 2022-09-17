@@ -206,4 +206,30 @@ CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::Compu
   unsigned int                              i, j;
   NeighborhoodInnerProduct<OutputImageType> innerProduct;
 
-  OutputImagePixelTyp
+  OutputImagePixelType dx[ImageDimension];
+  OutputImagePixelType dxx[ImageDimension];
+  OutputImagePixelType dxy[ImageDimension * (ImageDimension - 1) / 2];
+  OutputImagePixelType deriv;
+  OutputImagePixelType gradMag;
+
+  //  double alpha = 0.01;
+
+  // Calculate 1st & 2nd order derivative
+  for (i = 0; i < ImageDimension; i++)
+  {
+    dx[i] = innerProduct(m_ComputeCannyEdgeSlice[i], it, m_ComputeCannyEdge1stDerivativeOper);
+    dxx[i] = innerProduct(m_ComputeCannyEdgeSlice[i], it, m_ComputeCannyEdge2ndDerivativeOper);
+  }
+
+  deriv = NumericTraits<OutputImagePixelType>::Zero;
+  int k = 0;
+
+  // Calculate the 2nd derivative
+  for (i = 0; i < ImageDimension - 1; i++)
+  {
+    for (j = i + 1; j < ImageDimension; j++)
+    {
+      dxy[k] = 0.25 * it.GetPixel(m_Center - m_Stride[i] - m_Stride[j]) -
+               0.25 * it.GetPixel(m_Center - m_Stride[i] + m_Stride[j]) -
+               0.25 * it.GetPixel(m_Center + m_Stride[i] - m_Stride[j]) +
+               0.25 * it.
