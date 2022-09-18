@@ -298,4 +298,26 @@ void
 CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::GenerateData()
 {
   // Allocate the output
-  
+  this->GetOutput()->SetBufferedRegion(this->GetOutput()->GetRequestedRegion());
+  this->GetOutput()->Allocate();
+
+  typename InputImageType::ConstPointer input = this->GetInput();
+
+  typename ZeroCrossingImageFilter<TOutputImage, TOutputImage>::Pointer zeroCrossFilter =
+    ZeroCrossingImageFilter<TOutputImage, TOutputImage>::New();
+
+  typename GradientMagnitudeImageFilter<TOutputImage, TOutputImage>::Pointer gradMag =
+    GradientMagnitudeImageFilter<TOutputImage, TOutputImage>::New();
+
+  typename MultiplyImageFilter<TOutputImage, TOutputImage, TOutputImage>::Pointer multFilter =
+    MultiplyImageFilter<TOutputImage, TOutputImage, TOutputImage>::New();
+
+  this->AllocateUpdateBuffer();
+
+  // 1.Apply the Gaussian Filter to the input image.-------
+  m_GaussianFilter->SetSigmaArray(this->m_Sigma);
+  m_GaussianFilter->SetNormalizeAcrossScale(true);
+  m_GaussianFilter->SetInput(input);
+  m_GaussianFilter->Update();
+
+  // 2. Calculate 2nd order direct
