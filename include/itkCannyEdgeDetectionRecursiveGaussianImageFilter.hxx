@@ -320,4 +320,28 @@ CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::Gener
   m_GaussianFilter->SetInput(input);
   m_GaussianFilter->Update();
 
-  // 2. Calculate 2nd order direct
+  // 2. Calculate 2nd order directional derivative-------
+  // Calculate the 2nd order directional derivative of the smoothed image.
+  // The output of this filter will be used to store the directional
+  // derivative.
+  this->Compute2ndDerivative();
+
+  this->Compute2ndDerivativePos();
+
+  // 3. Non-maximum suppression----------
+
+  // Calculate the zero crossings of the 2nd directional derivative and write
+  // the result to output buffer.
+  zeroCrossFilter->SetInput(this->GetOutput());
+  zeroCrossFilter->Update();
+
+  // 4. Hysteresis Thresholding---------
+
+  // First get all the edges corresponding to zerocrossings
+  m_MultiplyImageFilter->SetInput1(m_UpdateBuffer1);
+  m_MultiplyImageFilter->SetInput2(zeroCrossFilter->GetOutput());
+
+  // To save memory, we will graft the output of the m_GaussianFilter,
+  // which is no longer needed, into the m_MultiplyImageFilter.
+  m_MultiplyImageFilter->GraftOutput(m_GaussianFilter->GetOutput());
+  m_Multiply
