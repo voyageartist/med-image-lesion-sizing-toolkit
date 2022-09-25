@@ -344,4 +344,38 @@ CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::Gener
   // To save memory, we will graft the output of the m_GaussianFilter,
   // which is no longer needed, into the m_MultiplyImageFilter.
   m_MultiplyImageFilter->GraftOutput(m_GaussianFilter->GetOutput());
-  m_Multiply
+  m_MultiplyImageFilter->Update();
+
+  // Then do the double threshoulding upon the edge reponses
+  this->HysteresisThresholding();
+}
+
+template <typename TInputImage, typename TOutputImage>
+void
+CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::HysteresisThresholding()
+{
+  // This is the Zero crossings of the Second derivative multiplied with the
+  // gradients of the image. HysteresisThresholding of this image should give
+  // the Canny output.
+  typename OutputImageType::Pointer input = m_MultiplyImageFilter->GetOutput();
+  float                             value;
+
+  ListNodeType * node;
+
+  ImageRegionIterator<TOutputImage> oit(input, input->GetRequestedRegion());
+
+  oit.GoToBegin();
+
+  ImageRegionIterator<TOutputImage> uit(this->GetOutput(), this->GetOutput()->GetRequestedRegion());
+  uit.GoToBegin();
+  while (!uit.IsAtEnd())
+  {
+    uit.Value() = 0;
+    ++uit;
+  }
+
+  while (!oit.IsAtEnd())
+  {
+    value = oit.Value();
+
+    
