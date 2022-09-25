@@ -378,4 +378,34 @@ CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::Hyste
   {
     value = oit.Value();
 
-    
+    if (value > m_UpperThreshold)
+    {
+      node = m_NodeStore->Borrow();
+      node->m_Value = oit.GetIndex();
+      m_NodeList->PushFront(node);
+      FollowEdge(oit.GetIndex());
+    }
+
+    ++oit;
+  }
+}
+
+template <typename TInputImage, typename TOutputImage>
+void
+CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::FollowEdge(IndexType index)
+{
+  // This is the Zero crossings of the Second derivative multiplied with the
+  // gradients of the image. HysteresisThresholding of this image should give
+  // the Canny output.
+  typename OutputImageType::Pointer input = m_MultiplyImageFilter->GetOutput();
+
+  IndexType      nIndex;
+  IndexType      cIndex;
+  ListNodeType * node;
+
+  // assign iterator radius
+  Size<ImageDimension> radius;
+  radius.Fill(1);
+
+  ConstNeighborhoodIterator<TOutputImage>    oit(radius, input, input->GetRequestedRegion());
+  ImageRegionIteratorWithIndex<TOutputImage> uit(this->GetOutput(), t
