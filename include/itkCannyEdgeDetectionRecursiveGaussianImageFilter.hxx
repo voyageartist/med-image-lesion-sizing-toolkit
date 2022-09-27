@@ -472,4 +472,31 @@ CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::InBou
 template <typename TInputImage, typename TOutputImage>
 void
 CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::ThreadedCompute2ndDerivativePos(
-  const OutputImageRegionType & output
+  const OutputImageRegionType & outputRegionForThread,
+  int                           threadId)
+{
+
+  ZeroFluxNeumannBoundaryCondition<TInputImage> nbc;
+
+  ConstNeighborhoodIterator<TInputImage> bit;
+  ConstNeighborhoodIterator<TInputImage> bit1;
+
+  ImageRegionIterator<TOutputImage> it;
+
+  // Here input is the result from the gaussian filter
+  //      input1 is the 2nd derivative result
+  //      output is the gradient of 2nd derivative
+  typename OutputImageType::Pointer input1 = this->GetOutput();
+  typename OutputImageType::Pointer input = m_GaussianFilter->GetOutput();
+
+  typename InputImageType::Pointer output = m_UpdateBuffer1;
+
+
+  // set iterator radius
+  Size<ImageDimension> radius;
+  radius.Fill(1);
+
+  // Find the data-set boundary "faces"
+  typename NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<TInputImage>::FaceListType faceList;
+  NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<TInputImage>                        bC;
+  faceList = bC(input, outpu
