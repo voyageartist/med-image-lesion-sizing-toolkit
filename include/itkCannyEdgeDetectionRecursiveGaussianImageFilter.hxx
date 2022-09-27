@@ -439,4 +439,37 @@ CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::Follo
       {
         if (oit.GetPixel(i) > m_LowerThreshold && uit.Value() != 1)
         {
-          node = m_NodeStore->Borrow(); // get a new node 
+          node = m_NodeStore->Borrow(); // get a new node struct
+          node->m_Value = nIndex;       // set its value
+          m_NodeList->PushFront(node);  // add the new node to the list
+
+          uit.SetIndex(nIndex);
+          uit.Value() = 1;
+        }
+      }
+    }
+  }
+}
+
+template <typename TInputImage, typename TOutputImage>
+bool
+CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::InBounds(IndexType index)
+{
+  typename InputImageType::ConstPointer input = this->GetInput();
+  typename InputImageType::SizeType     sz;
+  sz = (input->GetRequestedRegion()).GetSize();
+
+  for (unsigned int i = 0; i < ImageDimension; i++)
+  {
+    if (index[i] < 0 || index[i] >= static_cast<typename IndexType::IndexValueType>(sz[i]))
+    {
+      return false;
+    }
+  }
+  return true;
+}
+
+template <typename TInputImage, typename TOutputImage>
+void
+CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::ThreadedCompute2ndDerivativePos(
+  const OutputImageRegionType & output
