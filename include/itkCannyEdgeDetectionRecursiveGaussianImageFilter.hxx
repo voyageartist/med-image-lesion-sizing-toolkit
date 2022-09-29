@@ -499,4 +499,30 @@ CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::Threa
   // Find the data-set boundary "faces"
   typename NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<TInputImage>::FaceListType faceList;
   NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<TInputImage>                        bC;
-  faceList = bC(input, outpu
+  faceList = bC(input, outputRegionForThread, radius);
+
+  typename NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<TInputImage>::FaceListType::iterator fit;
+
+  // support progress methods/callbacks
+  ProgressReporter progress(this, threadId, outputRegionForThread.GetNumberOfPixels(), 100, 0.5f, 0.5f);
+
+  InputImagePixelType zero = NumericTraits<InputImagePixelType>::Zero;
+
+  OutputImagePixelType dx[ImageDimension];
+  OutputImagePixelType dx1[ImageDimension];
+
+  OutputImagePixelType directional[ImageDimension];
+  OutputImagePixelType derivPos;
+
+  OutputImagePixelType gradMag;
+
+  // Process the non-boundary region and then each of the boundary faces.
+  // These are N-d regions which border the edge of the buffer.
+
+  NeighborhoodInnerProduct<OutputImageType> IP;
+
+  for (fit = faceList.begin(); fit != faceList.end(); ++fit)
+  {
+    bit = ConstNeighborhoodIterator<InputImageType>(radius, input, *fit);
+    bit1 = ConstNeighborhoodIterator<InputImageType>(radius, input1, *fit);
+    it = ImageRegionIterator<O
