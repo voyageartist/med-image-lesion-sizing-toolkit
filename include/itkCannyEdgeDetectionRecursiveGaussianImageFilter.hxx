@@ -525,4 +525,47 @@ CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::Threa
   {
     bit = ConstNeighborhoodIterator<InputImageType>(radius, input, *fit);
     bit1 = ConstNeighborhoodIterator<InputImageType>(radius, input1, *fit);
-    it = ImageRegionIterator<O
+    it = ImageRegionIterator<OutputImageType>(output, *fit);
+    bit.OverrideBoundaryCondition(&nbc);
+    bit.GoToBegin();
+    bit1.GoToBegin();
+    it.GoToBegin();
+
+    while (!bit.IsAtEnd())
+    {
+
+      gradMag = 0.0001;
+
+      for (unsigned int i = 0; i < ImageDimension; i++)
+      {
+        dx[i] = IP(m_ComputeCannyEdgeSlice[i], bit, m_ComputeCannyEdge1stDerivativeOper);
+        gradMag += dx[i] * dx[i];
+
+        dx1[i] = IP(m_ComputeCannyEdgeSlice[i], bit1, m_ComputeCannyEdge1stDerivativeOper);
+      }
+
+      gradMag = std::sqrt((double)gradMag);
+      derivPos = zero;
+      for (unsigned int i = 0; i < ImageDimension; i++)
+      {
+
+        // First calculate the directional derivative
+
+        directional[i] = dx[i] / gradMag;
+
+        // calculate gradient of 2nd derivative
+
+        derivPos += dx1[i] * directional[i];
+      }
+
+      it.Value() = ((derivPos <= zero));
+      it.Value() = it.Get() * gradMag;
+      ++bit;
+      ++bit1;
+      ++it;
+      progress.CompletedPixel();
+    }
+  }
+}
+
+// Calcu
