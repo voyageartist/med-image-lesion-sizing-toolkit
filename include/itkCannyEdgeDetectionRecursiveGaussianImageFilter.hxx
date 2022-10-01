@@ -568,4 +568,30 @@ CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::Threa
   }
 }
 
-// Calcu
+// Calculate the second derivative
+template <typename TInputImage, typename TOutputImage>
+void
+CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::Compute2ndDerivativePos()
+{
+  CannyThreadStruct str;
+  str.Filter = this;
+
+  this->GetMultiThreader()->SetNumberOfWorkUnits(this->GetNumberOfWorkUnits());
+  this->GetMultiThreader()->SetSingleMethod(this->Compute2ndDerivativePosThreaderCallback, &str);
+
+  this->GetMultiThreader()->SingleMethodExecute();
+}
+
+template <typename TInputImage, typename TOutputImage>
+ITK_THREAD_RETURN_TYPE
+CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::Compute2ndDerivativePosThreaderCallback(
+  void * arg)
+{
+  CannyThreadStruct * str;
+
+  int total, threadId, threadCount;
+
+  threadId = ((MultiThreaderBase::WorkUnitInfo *)(arg))->WorkUnitID;
+  threadCount = ((MultiThreaderBase::WorkUnitInfo *)(arg))->NumberOfWorkUnits;
+
+  str = (CannyThreadStruct *)(((MultiThreaderBase::WorkUnitInfo *)(arg))->UserD
