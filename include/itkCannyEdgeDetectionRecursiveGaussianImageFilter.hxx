@@ -677,4 +677,12 @@ CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::Print
   os << "Center: " << m_Center << std::endl;
   os << "Stride: " << m_Stride << std::endl;
   os << "Gaussian Filter: " << std::endl;
-  m_GaussianFilter->Print(os, indent.GetNex
+  m_GaussianFilter->Print(os, indent.GetNextIndent());
+  os << "Multiply image Filter: " << std::endl;
+  m_MultiplyImageFilter->Print(os, indent.GetNextIndent());
+  os << "UpdateBuffer1: " << std::endl;
+  m_UpdateBuffer1->Print(os, indent.GetNextIndent());
+}
+
+} // namespace itk
+#endif
