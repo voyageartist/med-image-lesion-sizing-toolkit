@@ -657,4 +657,24 @@ CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::GetSi
 
 template <typename TInputImage, typename TOutputImage>
 void
-CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>
+CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::PrintSelf(std::ostream & os,
+                                                                                     Indent         indent) const
+{
+  Superclass::PrintSelf(os, indent);
+
+  os << "Sigma: " << m_Sigma << std::endl;
+  os << indent << "Threshold: " << static_cast<typename NumericTraits<OutputImagePixelType>::PrintType>(m_Threshold)
+     << std::endl;
+  os << indent
+     << "UpperThreshold: " << static_cast<typename NumericTraits<OutputImagePixelType>::PrintType>(m_UpperThreshold)
+     << std::endl;
+  os << indent
+     << "LowerThreshold: " << static_cast<typename NumericTraits<OutputImagePixelType>::PrintType>(m_LowerThreshold)
+     << std::endl;
+  os << indent
+     << "OutsideValue: " << static_cast<typename NumericTraits<OutputImagePixelType>::PrintType>(m_OutsideValue)
+     << std::endl;
+  os << "Center: " << m_Center << std::endl;
+  os << "Stride: " << m_Stride << std::endl;
+  os << "Gaussian Filter: " << std::endl;
+  m_GaussianFilter->Print(os, indent.GetNex
