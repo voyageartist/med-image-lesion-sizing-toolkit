@@ -626,4 +626,35 @@ CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::SetSi
 
 template <typename TInputImage, typename TOutputImage>
 void
-CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::SetSigmaArray(const SigmaArrayType & si
+CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::SetSigmaArray(const SigmaArrayType & sigma)
+{
+  if (this->m_Sigma != sigma)
+  {
+    this->m_Sigma = sigma;
+    this->Modified();
+  }
+}
+
+
+// Get the sigma array.
+template <typename TInputImage, typename TOutputImage>
+typename CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::SigmaArrayType
+CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::GetSigmaArray() const
+{
+  return m_Sigma;
+}
+
+
+// Get the sigma scalar. If the sigma is anisotropic, we will just
+// return the sigma along the first dimension.
+template <typename TInputImage, typename TOutputImage>
+typename CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::ScalarRealType
+CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::GetSigma() const
+{
+  return m_Sigma[0];
+}
+
+
+template <typename TInputImage, typename TOutputImage>
+void
+CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>
