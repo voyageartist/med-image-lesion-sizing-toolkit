@@ -14,4 +14,29 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *
- *==============
+ *=========================================================================*/
+#ifndef itkCannyEdgesDistanceAdvectionFieldFeatureGenerator_h
+#define itkCannyEdgesDistanceAdvectionFieldFeatureGenerator_h
+
+#include "itkFeatureGenerator.h"
+#include "itkImage.h"
+#include "itkImageSpatialObject.h"
+#include "itkCastImageFilter.h"
+#include "itkCannyEdgeDetectionRecursiveGaussianImageFilter.h"
+#include "itkSignedMaurerDistanceMapImageFilter.h"
+#include "itkGradientImageFilter.h"
+#include "itkMultiplyImageFilter.h"
+
+namespace itk
+{
+
+/** \class CannyEdgesDistanceAdvectionFieldFeatureGenerator
+ * \brief Generates an advection feature field by computing the distance
+ * map to the canny edges in the image and modulating it with the
+ * gradient vectors of the distance map.
+ *
+ * \par Overview
+ * The class generates features that can be used as the advection term for
+ * computing a canny level set. The class takes an input image
+ *
+ *    Input -> Cast
