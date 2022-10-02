@@ -594,4 +594,36 @@ CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::Compu
   threadId = ((MultiThreaderBase::WorkUnitInfo *)(arg))->WorkUnitID;
   threadCount = ((MultiThreaderBase::WorkUnitInfo *)(arg))->NumberOfWorkUnits;
 
-  str = (CannyThreadStruct *)(((MultiThreaderBase::WorkUnitInfo *)(arg))->UserD
+  str = (CannyThreadStruct *)(((MultiThreaderBase::WorkUnitInfo *)(arg))->UserData);
+
+  // Execute the actual method with appropriate output region
+  // first find out how many pieces extent can be split into.
+  // Using the SplitRequestedRegion method from itk::ImageSource.
+
+  OutputImageRegionType splitRegion;
+  total = str->Filter->SplitRequestedRegion(threadId, threadCount, splitRegion);
+
+  if (threadId < total)
+  {
+    str->Filter->ThreadedCompute2ndDerivativePos(splitRegion, threadId);
+  }
+
+  return ITK_THREAD_RETURN_DEFAULT_VALUE;
+}
+
+// Set value of Sigma (isotropic)
+
+template <typename TInputImage, typename TOutputImage>
+void
+CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::SetSigma(ScalarRealType sigma)
+{
+  SigmaArrayType sigmas(sigma);
+  this->SetSigmaArray(sigmas);
+}
+
+
+// Set value of Sigma (an-isotropic)
+
+template <typename TInputImage, typename TOutputImage>
+void
+CannyEdgeDetectionRecursiveGaussianImageFilter<TInputImage, TOutputImage>::SetSigmaArray(const SigmaArrayType & si
