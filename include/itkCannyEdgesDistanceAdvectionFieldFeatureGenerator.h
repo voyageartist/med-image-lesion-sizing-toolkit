@@ -39,4 +39,21 @@ namespace itk
  * The class generates features that can be used as the advection term for
  * computing a canny level set. The class takes an input image
  *
- *    Input -> Cast
+ *    Input -> CastToFloat -> DistanceMap  = ImageA
+ *    ImageA -> Gradient = ImageB (of covariant vectors)
+ *
+ *   Advection Field = ImageA * ImageB
+ *
+ * The resulting feature is an image of covariant vectors and is ideally used
+ * as the advection term for a level set segmentation module. The term
+ * advects the level set along the gradient of the distance map, helping it
+ * lock onto the edges (which are extracted by the canny filter).
+ *
+ * There are two parameters to this feature generator.
+ * (1) UpperThreshold/LowerThreshold: These set the thresholding values of
+ *     the Canny edge detection. The canny algorithm incorporates a
+ *     hysteresis thresholding which is applied to the gradient magnitude
+ *     of the smoothed image to find edges.
+ * (2) Variance.  Controls the smoothing paramter of the gaussian filtering
+ *     done during Canny edge detection. The first step of canny edge
+ *     detection is to smooth the input with
