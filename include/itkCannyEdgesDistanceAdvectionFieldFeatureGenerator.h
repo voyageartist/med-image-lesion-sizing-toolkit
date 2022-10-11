@@ -56,4 +56,32 @@ namespace itk
  *     of the smoothed image to find edges.
  * (2) Variance.  Controls the smoothing paramter of the gaussian filtering
  *     done during Canny edge detection. The first step of canny edge
- *     detection is to smooth the input with
+ *     detection is to smooth the input with a gaussian filter. Second
+ *     derivatives etc are computed on the smoothed image.
+ *
+ * SpatialObjects are used as inputs and outputs of this class.
+ *
+ * \ingroup SpatialObjectFilters
+ * \ingroup LesionSizingToolkit
+ */
+template <unsigned int NDimension>
+class ITK_TEMPLATE_EXPORT CannyEdgesDistanceAdvectionFieldFeatureGenerator : public FeatureGenerator<NDimension>
+{
+public:
+  ITK_DISALLOW_COPY_AND_MOVE(CannyEdgesDistanceAdvectionFieldFeatureGenerator);
+
+  /** Standard class type alias. */
+  using Self = CannyEdgesDistanceAdvectionFieldFeatureGenerator;
+  using Superclass = FeatureGenerator<NDimension>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+
+  using InternalPixelType = float;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro(Self);
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(CannyEdgesDistanceAdvectionFieldFeatureGenerator, FeatureGenerator);
+
+  /** Dimension of
