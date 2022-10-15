@@ -110,4 +110,27 @@ public:
   itkSetMacro(Sigma, double);
   itkGetMacro(Sigma, double);
   itkSetMacro(UpperThreshold, double);
-  itkGet
+  itkGetMacro(UpperThreshold, double);
+  itkSetMacro(LowerThreshold, double);
+  itkGetMacro(LowerThreshold, double);
+
+protected:
+  CannyEdgesDistanceAdvectionFieldFeatureGenerator();
+  ~CannyEdgesDistanceAdvectionFieldFeatureGenerator() override;
+  void
+  PrintSelf(std::ostream & os, Indent indent) const override;
+
+  /** Method invoked by the pipeline in order to trigger the computation of
+   * the segmentation. */
+  void
+  GenerateData() override;
+
+private:
+  using InternalImageType = Image<InternalPixelType, Dimension>;
+
+  using CastFilterType = CastImageFilter<InputImageType, InternalImageType>;
+  using CastFilterPointer = typename CastFilterType::Pointer;
+  using CannyEdgeFilterType = CannyEdgeDetectionRecursiveGaussianImageFilter<InternalImageType, InternalImageType>;
+  using CannyEdgeFilterPointer = typename CannyEdgeFilterType::Pointer;
+
+  using DistanceMapFilterType = SignedMaurerDistanceMapImageFilter<InternalImageType, In
