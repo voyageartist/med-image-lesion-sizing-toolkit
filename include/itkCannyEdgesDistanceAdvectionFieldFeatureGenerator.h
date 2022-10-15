@@ -133,4 +133,21 @@ private:
   using CannyEdgeFilterType = CannyEdgeDetectionRecursiveGaussianImageFilter<InternalImageType, InternalImageType>;
   using CannyEdgeFilterPointer = typename CannyEdgeFilterType::Pointer;
 
-  using DistanceMapFilterType = SignedMaurerDistanceMapImageFilter<InternalImageType, In
+  using DistanceMapFilterType = SignedMaurerDistanceMapImageFilter<InternalImageType, InternalImageType>;
+  using DistanceMapFilterPointer = typename DistanceMapFilterType::Pointer;
+
+  using GradientFilterType = GradientImageFilter<InternalImageType, InternalPixelType, InternalPixelType>;
+  using GradientFilterPointer = typename GradientFilterType::Pointer;
+  using CovariantVectorImageType = typename GradientFilterType::OutputImageType;
+
+  using OutputPixelType = typename CovariantVectorImageType::PixelType;
+  using OutputImageSpatialObjectType = ImageSpatialObject<NDimension, OutputPixelType>;
+  using OutputImageType = Image<OutputPixelType, Dimension>;
+
+  using MultiplyFilterType = MultiplyImageFilter<CovariantVectorImageType, InternalImageType, CovariantVectorImageType>;
+  using MultiplyFilterPointer = typename MultiplyFilterType::Pointer;
+
+  CastFilterPointer        m_CastFilter;
+  DistanceMapFilterPointer m_DistanceMapFilter;
+  CannyEdgeFilterPointer   m_CannyFilter;
+  GradientFilterPointer    m_GradientFil
