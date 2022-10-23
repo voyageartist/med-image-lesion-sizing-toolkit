@@ -150,4 +150,18 @@ private:
   CastFilterPointer        m_CastFilter;
   DistanceMapFilterPointer m_DistanceMapFilter;
   CannyEdgeFilterPointer   m_CannyFilter;
-  GradientFilterPointer    m_GradientFil
+  GradientFilterPointer    m_GradientFilter;
+  MultiplyFilterPointer    m_MultiplyFilter;
+
+  double m_UpperThreshold;
+  double m_LowerThreshold;
+  double m_Sigma;
+};
+
+} // end namespace itk
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#  include "itkCannyEdgesDistanceAdvectionFieldFeatureGenerator.hxx"
+#endif
+
+#endif
