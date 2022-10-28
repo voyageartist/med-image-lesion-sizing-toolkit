@@ -40,4 +40,24 @@ namespace itk
  *
  *    Input -> CastToFloat -> CannyEdgeFilter -> UnsignedDistanceMap
  *
- * The
+ * The resulting feature is ideally used as the speed term for a level set
+ * segmentation module. The speed feature generated is designed to lock
+ * onto edges (which are extracted by the canny filter).
+ *
+ * There are two parameters to this feature generator.
+ * (1) UpperThreshold/LowerThreshold: These set the thresholding values of
+ *     the Canny edge detection. The canny algorithm incorporates a
+ *     hysteresis thresholding which is applied to the gradient magnitude
+ *     of the smoothed image to find edges.
+ * (2) Variance.  Controls the smoothing paramter of the gaussian filtering
+ *     done during Canny edge detection. The first step of canny edge
+ *     detection is to smooth the input with a gaussian filter. Second
+ *     derivatives etc are computed on the smoothed image.
+ *
+ * SpatialObjects are used as inputs and outputs of this class.
+ *
+ * \ingroup SpatialObjectFilters
+ * \ingroup LesionSizingToolkit
+ */
+template <unsigned int NDimension>
+class ITK_TEMPLATE_EXPORT CannyEdgesDis
