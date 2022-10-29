@@ -60,4 +60,29 @@ namespace itk
  * \ingroup LesionSizingToolkit
  */
 template <unsigned int NDimension>
-class ITK_TEMPLATE_EXPORT CannyEdgesDis
+class ITK_TEMPLATE_EXPORT CannyEdgesDistanceFeatureGenerator : public FeatureGenerator<NDimension>
+{
+public:
+  ITK_DISALLOW_COPY_AND_MOVE(CannyEdgesDistanceFeatureGenerator);
+
+  /** Standard class type alias. */
+  using Self = CannyEdgesDistanceFeatureGenerator;
+  using Superclass = FeatureGenerator<NDimension>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro(Self);
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(CannyEdgesDistanceFeatureGenerator, FeatureGenerator);
+
+  /** Dimension of the space */
+  static constexpr unsigned int Dimension = NDimension;
+
+  /** Type of spatialObject that will be passed as input to this
+   * feature generator. */
+  using InputPixelType = signed short;
+  using InputImageType = Image<InputPixelType, Dimension>;
+  using InputImageSpatialObjectType = ImageSpatialObject<NDimension, InputPixelType>;
+  using InputImageSpatialObjectPointer 
