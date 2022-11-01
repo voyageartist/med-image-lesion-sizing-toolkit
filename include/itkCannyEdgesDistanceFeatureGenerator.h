@@ -85,4 +85,31 @@ public:
   using InputPixelType = signed short;
   using InputImageType = Image<InputPixelType, Dimension>;
   using InputImageSpatialObjectType = ImageSpatialObject<NDimension, InputPixelType>;
-  using InputImageSpatialObjectPointer 
+  using InputImageSpatialObjectPointer = typename InputImageSpatialObjectType::Pointer;
+  using SpatialObjectType = typename Superclass::SpatialObjectType;
+
+  using ScalarRealType = typename NumericTraits<InputPixelType>::ScalarRealType;
+  using SigmaArrayType = FixedArray<ScalarRealType, itkGetStaticConstMacro(Dimension)>;
+
+  /** Input data that will be used for generating the feature. */
+  using ProcessObject::SetInput;
+  void
+  SetInput(const SpatialObjectType * input);
+  const SpatialObjectType *
+  GetInput() const;
+
+  /** Output data that carries the feature in the form of a
+   * SpatialObject. */
+  const SpatialObjectType *
+  GetFeature() const;
+
+  /** Set Sigma value. Sigma is measured in the units of image spacing. You
+    may use the method SetSigma to set the same value across each axis or
+    use the method SetSigmaArray if you need different values along each
+    axis. */
+  void
+  SetSigmaArray(const SigmaArrayType & sigmas);
+  void
+  SetSigma(ScalarRealType sigma);
+  SigmaArrayType
+  GetSigmaArray(
