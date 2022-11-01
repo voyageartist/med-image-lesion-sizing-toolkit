@@ -112,4 +112,34 @@ public:
   void
   SetSigma(ScalarRealType sigma);
   SigmaArrayType
-  GetSigmaArray(
+  GetSigmaArray() const;
+  ScalarRealType
+  GetSigma() const;
+
+  itkSetMacro(UpperThreshold, double);
+  itkGetMacro(UpperThreshold, double);
+  itkSetMacro(LowerThreshold, double);
+  itkGetMacro(LowerThreshold, double);
+
+protected:
+  CannyEdgesDistanceFeatureGenerator();
+  ~CannyEdgesDistanceFeatureGenerator() override;
+  void
+  PrintSelf(std::ostream & os, Indent indent) const override;
+
+  /** Method invoked by the pipeline in order to trigger the computation of
+   * the segmentation. */
+  void
+  GenerateData() override;
+
+private:
+  using InternalPixelType = float;
+  using InternalImageType = Image<InternalPixelType, Dimension>;
+
+  using OutputPixelType = InternalPixelType;
+  using OutputImageType = InternalImageType;
+
+  using OutputImageSpatialObjectType = ImageSpatialObject<NDimension, OutputPixelType>;
+
+  using CastFilterType = CastImageFilter<InputImageType, InternalImageType>;
+  using CastFilterPointer = typename CastFilterTy
