@@ -142,4 +142,28 @@ private:
   using OutputImageSpatialObjectType = ImageSpatialObject<NDimension, OutputPixelType>;
 
   using CastFilterType = CastImageFilter<InputImageType, InternalImageType>;
-  using CastFilterPointer = typename CastFilterTy
+  using CastFilterPointer = typename CastFilterType::Pointer;
+  using CannyEdgeFilterType = CannyEdgeDetectionRecursiveGaussianImageFilter<InternalImageType, InternalImageType>;
+  using CannyEdgeFilterPointer = typename CannyEdgeFilterType::Pointer;
+
+  using DistanceMapFilterType = SignedMaurerDistanceMapImageFilter<InternalImageType, InternalImageType>;
+  using DistanceMapFilterPointer = typename DistanceMapFilterType::Pointer;
+
+  CastFilterPointer        m_CastFilter;
+  DistanceMapFilterPointer m_DistanceMapFilter;
+  CannyEdgeFilterPointer   m_CannyFilter;
+
+  double m_UpperThreshold;
+  double m_LowerThreshold;
+
+  /** Standard deviation of the gaussian used for smoothing */
+  SigmaArrayType m_Sigma;
+};
+
+} // end namespace itk
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#  include "itkCannyEdgesDistanceFeatureGenerator.hxx"
+#endif
+
+#endif
