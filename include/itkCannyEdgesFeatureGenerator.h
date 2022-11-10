@@ -46,4 +46,30 @@ namespace itk
  * (1) UpperThreshold/LowerThreshold: These set the thresholding values of
  *     the Canny edge detection. The canny algorithm incorporates a
  *     hysteresis thresholding which is applied to the gradient magnitude
- *     of the smoothed image to find 
+ *     of the smoothed image to find edges.
+ * (2) Sigma.  Controls the smoothing parameter of the Gaussian filtering
+ *     done during Canny edge detection. The first step of canny edge
+ *     detection is to smooth the input with a Gaussian filter. Second
+ *     derivatives etc are computed on the smoothed image.
+ *
+ * SpatialObjects are used as inputs and outputs of this class.
+ *
+ * \ingroup SpatialObjectFilters
+ * \ingroup LesionSizingToolkit
+ */
+template <unsigned int NDimension>
+class ITK_TEMPLATE_EXPORT CannyEdgesFeatureGenerator : public FeatureGenerator<NDimension>
+{
+public:
+  ITK_DISALLOW_COPY_AND_MOVE(CannyEdgesFeatureGenerator);
+
+  /** Standard class type alias. */
+  using Self = CannyEdgesFeatureGenerator;
+  using Superclass = FeatureGenerator<NDimension>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro(Self);
+
+  /** Run-time type info
