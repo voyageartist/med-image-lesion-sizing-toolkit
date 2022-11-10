@@ -22,4 +22,28 @@
 #include "itkImage.h"
 #include "itkImageSpatialObject.h"
 #include "itkCastImageFilter.h"
-#incl
+#include "itkCannyEdgeDetectionRecursiveGaussianImageFilter.h"
+#include "itkIntensityWindowingImageFilter.h"
+
+namespace itk
+{
+
+/** \class CannyEdgesFeatureGenerator
+ * \brief Generates a feature image by computing the inverse map to the canny
+ * edges in the image.
+ *
+ * \par Overview
+ * The class generates features that can be used as the speed term for
+ * computing a canny level set. The class takes an input image
+ *
+ *    Input -> CastToFloat -> CannyEdgeFilter -> InvertFilter
+ *
+ * The resulting feature is ideally used as the speed term for a level set
+ * segmentation module. The speed feature generated is designed to lock
+ * onto edges (which are extracted by the canny filter).
+ *
+ * There are two parameters to this feature generator.
+ * (1) UpperThreshold/LowerThreshold: These set the thresholding values of
+ *     the Canny edge detection. The canny algorithm incorporates a
+ *     hysteresis thresholding which is applied to the gradient magnitude
+ *     of the smoothed image to find 
