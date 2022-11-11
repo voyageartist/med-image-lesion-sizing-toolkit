@@ -93,4 +93,37 @@ public:
   using ProcessObject::SetInput;
   void
   SetInput(const SpatialObjectType * input);
-  co
+  const SpatialObjectType *
+  GetInput() const;
+
+  /** Output data that carries the feature in the form of a
+   * SpatialObject. */
+  const SpatialObjectType *
+  GetFeature() const;
+
+  /** Set Sigma value. Sigma is measured in the units of image spacing. You
+    may use the method SetSigma to set the same value across each axis or
+    use the method SetSigmaArray if you need different values along each
+    axis. */
+  void
+  SetSigmaArray(const SigmaArrayType & sigmas);
+  void
+  SetSigma(ScalarRealType sigma);
+  SigmaArrayType
+  GetSigmaArray() const;
+  ScalarRealType
+  GetSigma() const;
+
+  itkSetMacro(UpperThreshold, double);
+  itkGetMacro(UpperThreshold, double);
+  itkSetMacro(LowerThreshold, double);
+  itkGetMacro(LowerThreshold, double);
+
+protected:
+  CannyEdgesFeatureGenerator();
+  ~CannyEdgesFeatureGenerator() override;
+  void
+  PrintSelf(std::ostream & os, Indent indent) const override;
+
+  /** Method invoked by the pipeline in order to trigger the computation of
+   * the segmenta
