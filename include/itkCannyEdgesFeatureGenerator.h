@@ -72,4 +72,25 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type info
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(CannyEdgesFeatureGenerator, FeatureGenerator);
+
+  /** Dimension of the space */
+  static constexpr unsigned int Dimension = NDimension;
+
+  /** Type of spatialObject that will be passed as input to this
+   * feature generator. */
+  using InputPixelType = signed short;
+  using InputImageType = Image<InputPixelType, Dimension>;
+  using InputImageSpatialObjectType = ImageSpatialObject<NDimension, InputPixelType>;
+  using InputImageSpatialObjectPointer = typename InputImageSpatialObjectType::Pointer;
+  using SpatialObjectType = typename Superclass::SpatialObjectType;
+
+  using ScalarRealType = typename NumericTraits<InputPixelType>::ScalarRealType;
+  using SigmaArrayType = FixedArray<ScalarRealType, itkGetStaticConstMacro(Dimension)>;
+
+  /** Input data that will be used for generating the feature. */
+  using ProcessObject::SetInput;
+  void
+  SetInput(const SpatialObjectType * input);
+  co
