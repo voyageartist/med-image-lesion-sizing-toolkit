@@ -126,4 +126,27 @@ protected:
   PrintSelf(std::ostream & os, Indent indent) const override;
 
   /** Method invoked by the pipeline in order to trigger the computation of
-   * the segmenta
+   * the segmentation. */
+  void
+  GenerateData() override;
+
+private:
+  using InternalPixelType = float;
+  using InternalImageType = Image<InternalPixelType, Dimension>;
+
+  using OutputPixelType = InternalPixelType;
+  using OutputImageType = InternalImageType;
+
+  using OutputImageSpatialObjectType = ImageSpatialObject<NDimension, OutputPixelType>;
+
+  using CastFilterType = CastImageFilter<InputImageType, InternalImageType>;
+  using CastFilterPointer = typename CastFilterType::Pointer;
+  using CannyEdgeFilterType = CannyEdgeDetectionRecursiveGaussianImageFilter<InternalImageType, InternalImageType>;
+  using CannyEdgeFilterPointer = typename CannyEdgeFilterType::Pointer;
+
+  using RescaleFilterType = IntensityWindowingImageFilter<InternalImageType, InternalImageType>;
+  using RescaleFilterPointer = typename RescaleFilterType::Pointer;
+
+  CastFilterPointer      m_CastFilter;
+  RescaleFilterPointer   m_RescaleFilter;
+  Can
