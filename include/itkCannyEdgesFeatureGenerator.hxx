@@ -46,3 +46,38 @@ CannyEdgesFeatureGenerator<NDimension>::CannyEdgesFeatureGenerator()
   this->m_RescaleFilter->SetOutputMinimum(1.0);
   this->m_RescaleFilter->SetOutputMaximum(0.0);
 
+  this->m_RescaleFilter->SetWindowMinimum(0.0);
+  this->m_RescaleFilter->SetWindowMaximum(1.0);
+}
+
+
+/*
+ * Destructor
+ */
+template <unsigned int NDimension>
+CannyEdgesFeatureGenerator<NDimension>::~CannyEdgesFeatureGenerator() = default;
+
+template <unsigned int NDimension>
+void
+CannyEdgesFeatureGenerator<NDimension>::SetInput(const SpatialObjectType * spatialObject)
+{
+  // Process object is not const-correct so the const casting is required.
+  this->SetNthInput(0, const_cast<SpatialObjectType *>(spatialObject));
+}
+
+template <unsigned int NDimension>
+const typename CannyEdgesFeatureGenerator<NDimension>::SpatialObjectType *
+CannyEdgesFeatureGenerator<NDimension>::GetFeature() const
+{
+  return static_cast<const SpatialObjectType *>(this->ProcessObject::GetOutput(0));
+}
+
+
+/*
+ * PrintSelf
+ */
+template <unsigned int NDimension>
+void
+CannyEdgesFeatureGenerator<NDimension>::PrintSelf(std::ostream & os, Indent indent) const
+{
+  Supercla
