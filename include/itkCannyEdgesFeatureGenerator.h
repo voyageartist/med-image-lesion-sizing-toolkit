@@ -149,4 +149,19 @@ private:
 
   CastFilterPointer      m_CastFilter;
   RescaleFilterPointer   m_RescaleFilter;
-  Can
+  CannyEdgeFilterPointer m_CannyFilter;
+
+  double m_UpperThreshold;
+  double m_LowerThreshold;
+
+  /** Standard deviation of the gaussian used for smoothing */
+  SigmaArrayType m_Sigma;
+};
+
+} // end namespace itk
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#  include "itkCannyEdgesFeatureGenerator.hxx"
+#endif
+
+#endif
