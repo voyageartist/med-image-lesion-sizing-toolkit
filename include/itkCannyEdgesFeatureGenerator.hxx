@@ -80,4 +80,37 @@ template <unsigned int NDimension>
 void
 CannyEdgesFeatureGenerator<NDimension>::PrintSelf(std::ostream & os, Indent indent) const
 {
-  Supercla
+  Superclass::PrintSelf(os, indent);
+}
+
+
+/*
+ * Generate Data
+ */
+template <unsigned int NDimension>
+void
+CannyEdgesFeatureGenerator<NDimension>::GenerateData()
+{
+  typename InputImageSpatialObjectType::ConstPointer inputObject =
+    dynamic_cast<const InputImageSpatialObjectType *>(this->ProcessObject::GetInput(0));
+
+  if (!inputObject)
+  {
+    itkExceptionMacro("Missing input spatial object or incorrect type");
+  }
+
+  const InputImageType * inputImage = inputObject->GetImage();
+
+  if (!inputImage)
+  {
+    itkExceptionMacro("Missing input image");
+  }
+
+  this->m_CastFilter->SetInput(inputImage);
+  this->m_CannyFilter->SetInput(this->m_CastFilter->GetOutput());
+  this->m_RescaleFilter->SetInput(this->m_CannyFilter->GetOutput());
+
+  this->m_CannyFilter->SetSigmaArray(this->m_Sigma);
+  this->m_CannyFilter->SetUpperThreshold(this->m_UpperThreshold);
+  this->m_CannyFilter->SetLowerThreshold(this->m_LowerThreshold);
+  this->m_CannyFilter->SetOutsideValue(Nume
