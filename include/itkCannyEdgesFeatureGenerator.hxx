@@ -113,4 +113,46 @@ CannyEdgesFeatureGenerator<NDimension>::GenerateData()
   this->m_CannyFilter->SetSigmaArray(this->m_Sigma);
   this->m_CannyFilter->SetUpperThreshold(this->m_UpperThreshold);
   this->m_CannyFilter->SetLowerThreshold(this->m_LowerThreshold);
-  this->m_CannyFilter->SetOutsideValue(Nume
+  this->m_CannyFilter->SetOutsideValue(NumericTraits<InternalPixelType>::Zero);
+
+  this->m_RescaleFilter->Update();
+
+  typename OutputImageType::Pointer outputImage = this->m_RescaleFilter->GetOutput();
+
+  outputImage->DisconnectPipeline();
+
+  auto * outputObject = dynamic_cast<OutputImageSpatialObjectType *>(this->ProcessObject::GetOutput(0));
+
+  outputObject->SetImage(outputImage);
+}
+
+
+// Set value of Sigma (isotropic)
+
+template <unsigned int NDimension>
+void
+CannyEdgesFeatureGenerator<NDimension>::SetSigma(ScalarRealType sigma)
+{
+  SigmaArrayType sigmas(sigma);
+  this->SetSigmaArray(sigmas);
+}
+
+
+// Set value of Sigma (an-isotropic)
+
+template <unsigned int NDimension>
+void
+CannyEdgesFeatureGenerator<NDimension>::SetSigmaArray(const SigmaArrayType & sigma)
+{
+  if (this->m_Sigma != sigma)
+  {
+    this->m_Sigma = sigma;
+    this->Modified();
+  }
+}
+
+
+// Get the sigma array.
+template <unsigned int NDimension>
+typename CannyEdgesFeatureGenerator<NDimension>::SigmaArrayType
+CannyE
