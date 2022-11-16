@@ -155,4 +155,21 @@ CannyEdgesFeatureGenerator<NDimension>::SetSigmaArray(const SigmaArrayType & sig
 // Get the sigma array.
 template <unsigned int NDimension>
 typename CannyEdgesFeatureGenerator<NDimension>::SigmaArrayType
-CannyE
+CannyEdgesFeatureGenerator<NDimension>::GetSigmaArray() const
+{
+  return m_Sigma;
+}
+
+
+// Get the sigma scalar. If the sigma is anisotropic, we will just
+// return the sigma along the first dimension.
+template <unsigned int NDimension>
+typename CannyEdgesFeatureGenerator<NDimension>::ScalarRealType
+CannyEdgesFeatureGenerator<NDimension>::GetSigma() const
+{
+  return m_Sigma[0];
+}
+
+} // end namespace itk
+
+#endif
