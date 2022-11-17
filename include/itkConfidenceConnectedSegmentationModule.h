@@ -40,4 +40,25 @@ public:
   ITK_DISALLOW_COPY_AND_MOVE(ConfidenceConnectedSegmentationModule);
 
   /** Standard class type alias. */
-  using Self = ConfidenceConnectedSegmentatio
+  using Self = ConfidenceConnectedSegmentationModule;
+  using Superclass = RegionGrowingSegmentationModule<NDimension>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro(Self);
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(ConfidenceConnectedSegmentationModule, RegionGrowingSegmentationModule);
+
+  /** Dimension of the space */
+  static constexpr unsigned int Dimension = NDimension;
+
+  /** Type of spatialObject that will be passed as input and output of this
+   * segmentation method. */
+  using FeatureImageType = typename Superclass::FeatureImageType;
+  using OutputImageType = typename Superclass::OutputImageType;
+  using InputSpatialObjectType = typename Superclass::InputSpatialObjectType;
+
+  /** Factor that will be applied to the standard deviation in order to compute
+   * the intensity range from which pixel will be include
