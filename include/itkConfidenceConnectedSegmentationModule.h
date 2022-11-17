@@ -61,4 +61,29 @@ public:
   using InputSpatialObjectType = typename Superclass::InputSpatialObjectType;
 
   /** Factor that will be applied to the standard deviation in order to compute
-   * the intensity range from which pixel will be include
+   * the intensity range from which pixel will be included in the region. */
+  itkSetMacro(SigmaMultiplier, double);
+  itkGetMacro(SigmaMultiplier, double);
+
+protected:
+  ConfidenceConnectedSegmentationModule();
+  ~ConfidenceConnectedSegmentationModule() override;
+  void
+  PrintSelf(std::ostream & os, Indent indent) const override;
+
+  /** Method invoked by the pipeline in order to trigger the computation of
+   * the segmentation. */
+  void
+  GenerateData() override;
+
+private:
+  double m_SigmaMultiplier;
+};
+
+} // end namespace itk
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#  include "itkConfidenceConnectedSegmentationModule.hxx"
+#endif
+
+#endif
