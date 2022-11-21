@@ -34,4 +34,27 @@ namespace itk
  * \ingroup LesionSizingToolkit
  */
 template <unsigned int NDimension>
-class 
+class ITK_TEMPLATE_EXPORT ConnectedThresholdSegmentationModule : public RegionGrowingSegmentationModule<NDimension>
+{
+public:
+  ITK_DISALLOW_COPY_AND_MOVE(ConnectedThresholdSegmentationModule);
+
+  /** Standard class type alias. */
+  using Self = ConnectedThresholdSegmentationModule;
+  using Superclass = RegionGrowingSegmentationModule<NDimension>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro(Self);
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(ConnectedThresholdSegmentationModule, RegionGrowingSegmentationModule);
+
+  /** Dimension of the space */
+  static constexpr unsigned int Dimension = NDimension;
+
+  /** Type of spatialObject that will be passed as input and output of this
+   * segmentation method. */
+  using FeatureImageType = typename Superclass::FeatureImageType;
+  using OutputImageType = typename Superclass::Out
