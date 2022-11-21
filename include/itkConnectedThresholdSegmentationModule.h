@@ -57,4 +57,35 @@ public:
   /** Type of spatialObject that will be passed as input and output of this
    * segmentation method. */
   using FeatureImageType = typename Superclass::FeatureImageType;
-  using OutputImageType = typename Superclass::Out
+  using OutputImageType = typename Superclass::OutputImageType;
+  using InputSpatialObjectType = typename Superclass::InputSpatialObjectType;
+
+  /** Upper and Lower thresholds used to control the region growth. */
+  itkSetMacro(LowerThreshold, double);
+  itkGetMacro(LowerThreshold, double);
+  itkSetMacro(UpperThreshold, double);
+  itkGetMacro(UpperThreshold, double);
+
+protected:
+  ConnectedThresholdSegmentationModule();
+  ~ConnectedThresholdSegmentationModule() override;
+  void
+  PrintSelf(std::ostream & os, Indent indent) const override;
+
+  /** Method invoked by the pipeline in order to trigger the computation of
+   * the segmentation. */
+  void
+  GenerateData() override;
+
+private:
+  double m_LowerThreshold;
+  double m_UpperThreshold;
+};
+
+} // end namespace itk
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#  include "itkConnectedThresholdSegmentationModule.hxx"
+#endif
+
+#endif
