@@ -69,4 +69,33 @@ ConnectedThresholdSegmentationModule<NDimension>::GenerateData()
 
   const unsigned int numberOfPoints = inputSeeds->GetNumberOfPoints();
 
-  using LandmarkPointListType = typename InputSpatialO
+  using LandmarkPointListType = typename InputSpatialObjectType::LandmarkPointListType;
+  using IndexType = typename FeatureImageType::IndexType;
+
+  const LandmarkPointListType & points = inputSeeds->GetPoints();
+
+  IndexType index;
+
+  for (unsigned int i = 0; i < numberOfPoints; i++)
+  {
+    featureImage->TransformPhysicalPointToIndex(points[i].GetPositionInObjectSpace(), index);
+    filter->AddSeed(index);
+  }
+
+  filter->SetLower(this->m_LowerThreshold);
+  filter->SetUpper(this->m_UpperThreshold);
+  filter->SetReplaceValue(1.0);
+
+  // Report progress.
+  ProgressAccumulator::Pointer progress = ProgressAccumulator::New();
+  progress->SetMiniPipelineFilter(this);
+  progress->RegisterInternalFilter(filter, 1.0);
+
+  filter->Update();
+
+  this->PackOutputImageInOutputSpatialObject(filter->GetOutput());
+}
+
+} // end namespace itk
+
+#endif
