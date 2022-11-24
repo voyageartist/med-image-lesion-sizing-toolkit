@@ -29,4 +29,44 @@ namespace itk
  * Constructor
  */
 template <unsigned int NDimension>
-ConnectedThresholdSegmentationModule<NDimension>::ConnectedThresholdSegmentationModule
+ConnectedThresholdSegmentationModule<NDimension>::ConnectedThresholdSegmentationModule() = default;
+
+
+/**
+ * Destructor
+ */
+template <unsigned int NDimension>
+ConnectedThresholdSegmentationModule<NDimension>::~ConnectedThresholdSegmentationModule() = default;
+
+
+/**
+ * PrintSelf
+ */
+template <unsigned int NDimension>
+void
+ConnectedThresholdSegmentationModule<NDimension>::PrintSelf(std::ostream & os, Indent indent) const
+{
+  Superclass::PrintSelf(os, indent);
+}
+
+
+/**
+ * Generate Data
+ */
+template <unsigned int NDimension>
+void
+ConnectedThresholdSegmentationModule<NDimension>::GenerateData()
+{
+  using FilterType = ConnectedThresholdImageFilter<FeatureImageType, OutputImageType>;
+
+  typename FilterType::Pointer filter = FilterType::New();
+
+  const FeatureImageType * featureImage = this->GetInternalFeatureImage();
+
+  filter->SetInput(featureImage);
+
+  const InputSpatialObjectType * inputSeeds = this->GetInternalInputLandmarks();
+
+  const unsigned int numberOfPoints = inputSeeds->GetNumberOfPoints();
+
+  using LandmarkPointListType = typename InputSpatialO
