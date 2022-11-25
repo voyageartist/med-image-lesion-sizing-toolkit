@@ -54,4 +54,55 @@ public:
   }
   ~Sheetness() = default;
   bool
-  operator!=(const Sheetness &)
+  operator!=(const Sheetness &) const
+  {
+    return false;
+  }
+  bool
+  operator==(const Sheetness & other) const
+  {
+    return !(*this != other);
+  }
+  inline TOutput
+  operator()(const TInput & A)
+  {
+    double sheetness = 0.0;
+
+    auto a1 = static_cast<double>(A[0]);
+    auto a2 = static_cast<double>(A[1]);
+    auto a3 = static_cast<double>(A[2]);
+
+    double l1 = itk::Math::abs(a1);
+    double l2 = itk::Math::abs(a2);
+    double l3 = itk::Math::abs(a3);
+
+    //
+    // Sort the values by their absolute value.
+    // At the end of the sorting we should have
+    //
+    //          l1 <= l2 <= l3
+    //
+    if (l2 > l3)
+    {
+      double tmpl = l3;
+      l3 = l2;
+      l2 = tmpl;
+      double tmpa = a3;
+      a3 = a2;
+      a2 = tmpa;
+    }
+
+    if (l1 > l2)
+    {
+      double tmp = l1;
+      l1 = l2;
+      l2 = tmp;
+      double tmpa = a1;
+      a1 = a2;
+      a2 = tmpa;
+    }
+
+    if (l2 > l3)
+    {
+      double tmp = l3;
+      
