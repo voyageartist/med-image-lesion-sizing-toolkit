@@ -233,4 +233,23 @@ public:
   void
   SetDetectDarkSheets(bool value)
   {
-    th
+    this->GetFunctor().SetDetectDarkSheets(value);
+  }
+
+#ifdef ITK_USE_CONCEPT_CHECKING
+  /** Begin concept checking */
+  using InputPixelType = typename TInputImage::PixelType;
+  itkConceptMacro(BracketOperatorsCheck, (Concept::BracketOperator<InputPixelType, unsigned int, double>));
+  itkConceptMacro(DoubleConvertibleToOutputCheck, (Concept::Convertible<double, typename TOutputImage::PixelType>));
+  /** End concept checking */
+#endif
+
+protected:
+  DescoteauxSheetnessImageFilter() = default;
+  ~DescoteauxSheetnessImageFilter() override = default;
+};
+
+} // end namespace itk
+
+
+#endif
