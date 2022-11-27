@@ -147,4 +147,51 @@ public:
     return static_cast<TOutput>(sheetness);
   }
   void
-  SetAl
+  SetAlpha(double value)
+  {
+    this->m_Alpha = value;
+  }
+  void
+  SetGamma(double value)
+  {
+    this->m_Gamma = value;
+  }
+  void
+  SetC(double value)
+  {
+    this->m_C = value;
+  }
+  void
+  SetDetectBrightSheets(bool value)
+  {
+    this->m_DetectBrightSheets = value;
+  }
+  void
+  SetDetectDarkSheets(bool value)
+  {
+    this->m_DetectBrightSheets = !value;
+  }
+
+private:
+  double m_Alpha;
+  double m_Gamma;
+  double m_C;
+  bool   m_DetectBrightSheets;
+};
+} // namespace Function
+
+template <typename TInputImage, typename TOutputImage>
+class ITK_TEMPLATE_EXPORT DescoteauxSheetnessImageFilter
+  : public UnaryFunctorImageFilter<
+      TInputImage,
+      TOutputImage,
+      Function::Sheetness<typename TInputImage::PixelType, typename TOutputImage::PixelType>>
+{
+public:
+  ITK_DISALLOW_COPY_AND_MOVE(DescoteauxSheetnessImageFilter);
+
+  /** Standard class type alias. */
+  using Self = DescoteauxSheetnessImageFilter;
+  using Superclass =
+    UnaryFunctorImageFilter<TInputImage,
+                     
