@@ -194,4 +194,43 @@ public:
   using Self = DescoteauxSheetnessImageFilter;
   using Superclass =
     UnaryFunctorImageFilter<TInputImage,
-                     
+                            TOutputImage,
+                            Function::Sheetness<typename TInputImage::PixelType, typename TOutputImage::PixelType>>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro(Self);
+
+  /** Runtime information support. */
+  itkTypeMacro(DescoteauxSheetnessImageFilter, UnaryFunctorImageFilter);
+
+  /** Set the normalization term for sheetness */
+  void
+  SetSheetnessNormalization(double value)
+  {
+    this->GetFunctor().SetAlpha(value);
+  }
+
+  /** Set the normalization term for bloobiness. */
+  void
+  SetBloobinessNormalization(double value)
+  {
+    this->GetFunctor().SetGamma(value);
+  }
+
+  /** Set the normalization term for noise. */
+  void
+  SetNoiseNormalization(double value)
+  {
+    this->GetFunctor().SetC(value);
+  }
+  void
+  SetDetectBrightSheets(bool value)
+  {
+    this->GetFunctor().SetDetectBrightSheets(value);
+  }
+  void
+  SetDetectDarkSheets(bool value)
+  {
+    th
