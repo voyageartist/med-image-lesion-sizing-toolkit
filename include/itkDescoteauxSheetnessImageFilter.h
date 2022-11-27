@@ -105,4 +105,46 @@ public:
     if (l2 > l3)
     {
       double tmp = l3;
-      
+      l3 = l2;
+      l2 = tmp;
+      double tmpa = a3;
+      a3 = a2;
+      a2 = tmpa;
+    }
+
+    if (this->m_DetectBrightSheets)
+    {
+      if (a3 > 0.0)
+      {
+        return static_cast<TOutput>(sheetness);
+      }
+    }
+    else
+    {
+      if (a3 < 0.0)
+      {
+        return static_cast<TOutput>(sheetness);
+      }
+    }
+
+
+    //
+    // Avoid divisions by zero (or close to zero)
+    //
+    if (static_cast<double>(l3) < itk::Math::eps)
+    {
+      return static_cast<TOutput>(sheetness);
+    }
+
+    const double Rs = l2 / l3;
+    const double Rb = itk::Math::abs(l3 + l3 - l2 - l1) / l3;
+    const double Rn = std::sqrt(l3 * l3 + l2 * l2 + l1 * l1);
+
+    sheetness = std::exp(-(Rs * Rs) / (2.0 * m_Alpha * m_Alpha));
+    sheetness *= (1.0 - std::exp(-(Rb * Rb) / (2.0 * m_Gamma * m_Gamma)));
+    sheetness *= (1.0 - std::exp(-(Rn * Rn) / (2.0 * m_C * m_C)));
+
+    return static_cast<TOutput>(sheetness);
+  }
+  void
+  SetAl
