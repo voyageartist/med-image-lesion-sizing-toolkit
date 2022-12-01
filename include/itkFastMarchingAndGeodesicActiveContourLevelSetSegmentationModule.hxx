@@ -31,4 +31,38 @@ namespace itk
  */
 template <unsigned int NDimension>
 FastMarchingAndGeodesicActiveContourLevelSetSegmentationModule<
-  NDimension>::FastMarchingAndGeodesicActiveContourLevelSetSegmentati
+  NDimension>::FastMarchingAndGeodesicActiveContourLevelSetSegmentationModule()
+{
+  this->m_FastMarchingModule = FastMarchingModuleType::New();
+  this->m_FastMarchingModule->SetDistanceFromSeeds(1.0);
+  this->m_FastMarchingModule->SetStoppingValue(100.0);
+  this->m_FastMarchingModule->InvertOutputIntensitiesOff();
+  this->m_GeodesicActiveContourLevelSetModule = GeodesicActiveContourLevelSetModuleType::New();
+  this->m_GeodesicActiveContourLevelSetModule->InvertOutputIntensitiesOff();
+}
+
+
+/**
+ * Destructor
+ */
+template <unsigned int NDimension>
+FastMarchingAndGeodesicActiveContourLevelSetSegmentationModule<
+  NDimension>::~FastMarchingAndGeodesicActiveContourLevelSetSegmentationModule() = default;
+
+
+/**
+ * PrintSelf
+ */
+template <unsigned int NDimension>
+void
+FastMarchingAndGeodesicActiveContourLevelSetSegmentationModule<NDimension>::PrintSelf(std::ostream & os,
+                                                                                      Indent         indent) const
+{
+  Superclass::PrintSelf(os, indent);
+}
+
+
+/**
+ * Generate Data
+ */
+template <unsigned int ND
