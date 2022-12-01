@@ -83,4 +83,15 @@ FastMarchingAndGeodesicActiveContourLevelSetSegmentationModule<NDimension>::Gene
   m_GeodesicActiveContourLevelSetModule->SetFeature(this->GetFeature());
   m_GeodesicActiveContourLevelSetModule->SetMaximumRMSError(this->GetMaximumRMSError());
   m_GeodesicActiveContourLevelSetModule->SetMaximumNumberOfIterations(this->GetMaximumNumberOfIterations());
-  m_GeodesicActiveContourLevelSetM
+  m_GeodesicActiveContourLevelSetModule->SetPropagationScaling(this->GetPropagationScaling());
+  m_GeodesicActiveContourLevelSetModule->SetCurvatureScaling(this->GetCurvatureScaling());
+  m_GeodesicActiveContourLevelSetModule->SetAdvectionScaling(this->GetAdvectionScaling());
+  m_GeodesicActiveContourLevelSetModule->Update();
+
+  this->PackOutputImageInOutputSpatialObject(const_cast<OutputImageType *>(
+    dynamic_cast<const OutputSpatialObjectType *>(m_GeodesicActiveContourLevelSetModule->GetOutput())->GetImage()));
+}
+
+} // end namespace itk
+
+#endif
