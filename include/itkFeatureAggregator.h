@@ -52,4 +52,26 @@ public:
   /** This is an abstract class, therefore it doesn't need the itkNewMacro() */
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(FeatureAggregator, FeatureGenerator)
+  itkTypeMacro(FeatureAggregator, FeatureGenerator);
+
+  /** Dimension of the space */
+  static constexpr unsigned int Dimension = NDimension;
+
+  /** Type of spatialObject that will be passed as input and output of this
+   * segmentation method. */
+  using SpatialObjectType = SpatialObject<NDimension>;
+  using SpatialObjectPointer = typename SpatialObjectType::Pointer;
+  using SpatialObjectConstPointer = typename SpatialObjectType::ConstPointer;
+
+  /** Type of the image and specific SpatialObject produced as output */
+  using OutputPixelType = float;
+  using OutputImageType = Image<OutputPixelType, NDimension>;
+  using OutputImageSpatialObjectType = ImageSpatialObject<NDimension, OutputPixelType>;
+
+  /** Type of the class that will generate input features in the form of
+   * spatial objects. */
+  using FeatureGeneratorType = FeatureGenerator<Dimension>;
+
+  /**
+   * Method for adding a feature generator that will compute the Nth feature to
+   * be pa
