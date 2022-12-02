@@ -114,3 +114,45 @@ FastMarchingSegmentationModule<NDimension>::GenerateData()
     // the zero set will end up being placed at distance
     // = value from the seeds. That can be seen as computing
     // a distance map from the seeds.
+    node.SetValue(-this->m_DistanceFromSeeds);
+
+    node.SetIndex(index);
+    trialPoints->InsertElement(i, node);
+  }
+
+  filter->SetTrialPoints(trialPoints);
+  filter->Update();
+
+  // Rescale the values to make the output intensity fit in the expected
+  // range of [-4:4]
+  using WindowingFilterType = itk::IntensityWindowingImageFilter<OutputImageType, OutputImageType>;
+  typename WindowingFilterType::Pointer windowing = WindowingFilterType::New();
+  windowing->SetInput(filter->GetOutput());
+  windowing->SetWindowMinimum(-this->m_DistanceFromSeeds);
+  windowing->SetWindowMaximum(this->m_StoppingValue);
+  windowing->SetOutputMinimum(-4.0);
+  windowing->SetOutputMaximum(4.0);
+  windowing->InPlaceOn();
+  progress->RegisterInternalFilter(windowing, 0.1);
+  windowing->Update();
+
+  this->PackOutputImageInOutputSpatialObject(windowing->GetOutput());
+}
+
+
+/**
+ * This method is intended to be used only by the subclasses to extract the
+ * input image from the input SpatialObject.
+ */
+template <unsigned int NDimension>
+const typename FastMarchingSegmentationModule<NDimension>::InputSpatialObjectType *
+FastMarchingSegmentationModule<NDimension>::GetInternalInputLandmarks() const
+{
+  const auto * inputObject = dynamic_cast<const InputSpatialObjectType *>(this->GetInput());
+
+  return inputObject;
+}
+
+} // end namespace itk
+
+#endif
