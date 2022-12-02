@@ -20,4 +20,36 @@
 
 #include "itkFeatureGenerator.h"
 #include "itkImage.h"
-#include "itkImage
+#include "itkImageSpatialObject.h"
+#include "itkProgressAccumulator.h"
+
+namespace itk
+{
+
+/** \class FeatureAggregator
+ * \brief Class for combining multiple features into a single one.
+ *
+ * This class is the base class for specific implementation of feature
+ * mixing strategies.
+ *
+ * SpatialObjects are used as inputs and outputs of this class.
+ *
+ * \ingroup SpatialObjectFilters
+ * \ingroup LesionSizingToolkit
+ */
+template <unsigned int NDimension>
+class ITK_TEMPLATE_EXPORT FeatureAggregator : public FeatureGenerator<NDimension>
+{
+public:
+  ITK_DISALLOW_COPY_AND_MOVE(FeatureAggregator);
+
+  /** Standard class type alias. */
+  using Self = FeatureAggregator;
+  using Superclass = FeatureGenerator<NDimension>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+
+  /** This is an abstract class, therefore it doesn't need the itkNewMacro() */
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(FeatureAggregator, FeatureGenerator)
