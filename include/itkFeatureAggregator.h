@@ -107,4 +107,21 @@ protected:
 private:
   using FeatureGeneratorPointer = typename FeatureGeneratorType::Pointer;
   using FeatureGeneratorArrayType = std::vector<FeatureGeneratorPointer>;
-  using FeatureGeneratorIterator = typename Featur
+  using FeatureGeneratorIterator = typename FeatureGeneratorArrayType::iterator;
+  using FeatureGeneratorConstIterator = typename FeatureGeneratorArrayType::const_iterator;
+
+  FeatureGeneratorArrayType m_FeatureGenerators;
+
+  void
+  UpdateAllFeatureGenerators();
+
+  void virtual ConsolidateFeatures() = 0;
+};
+
+} // end namespace itk
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#  include "itkFeatureAggregator.hxx"
+#endif
+
+#endif
