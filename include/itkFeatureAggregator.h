@@ -74,4 +74,37 @@ public:
 
   /**
    * Method for adding a feature generator that will compute the Nth feature to
-   * be pa
+   * be passed to the segmentation module.
+   */
+  void
+  AddFeatureGenerator(FeatureGeneratorType * generator);
+
+  /** Check all feature generators and return consolidate MTime */
+  ModifiedTimeType
+  GetMTime() const override;
+
+protected:
+  FeatureAggregator();
+  ~FeatureAggregator() override;
+  void
+  PrintSelf(std::ostream & os, Indent indent) const override;
+
+  /** Method invoked by the pipeline in order to trigger the computation of
+   * the segmentation. */
+  void
+  GenerateData() override;
+
+  unsigned int
+  GetNumberOfInputFeatures() const;
+
+  using InputFeatureType = typename FeatureGeneratorType::SpatialObjectType;
+
+  const InputFeatureType *
+  GetInputFeature(unsigned int featureId) const;
+
+  ProgressAccumulator::Pointer m_ProgressAccumulator;
+
+private:
+  using FeatureGeneratorPointer = typename FeatureGeneratorType::Pointer;
+  using FeatureGeneratorArrayType = std::vector<FeatureGeneratorPointer>;
+  using FeatureGeneratorIterator = typename Featur
