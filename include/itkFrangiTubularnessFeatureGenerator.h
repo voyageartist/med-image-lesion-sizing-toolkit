@@ -96,3 +96,53 @@ public:
 
   /** Noise normalization value to be used in the Descoteaux sheetness filter. */
   itkSetMacro(NoiseNormalization, double);
+  itkGetMacro(NoiseNormalization, double);
+
+protected:
+  FrangiTubularnessFeatureGenerator();
+  ~FrangiTubularnessFeatureGenerator() override;
+  void
+  PrintSelf(std::ostream & os, Indent indent) const override;
+
+  /** Method invoked by the pipeline in order to trigger the computation of
+   * the segmentation. */
+  void
+  GenerateData() override;
+
+private:
+  using InternalPixelType = float;
+  using InternalImageType = Image<InternalPixelType, Dimension>;
+
+  using OutputPixelType = InternalPixelType;
+  using OutputImageType = InternalImageType;
+
+  using OutputImageSpatialObjectType = ImageSpatialObject<NDimension, OutputPixelType>;
+
+  using HessianFilterType = HessianRecursiveGaussianImageFilter<InputImageType>;
+  using HessianImageType = typename HessianFilterType::OutputImageType;
+  using HessianPixelType = typename HessianImageType::PixelType;
+
+  using EigenValueArrayType = FixedArray<double, HessianPixelType::Dimension>;
+  using EigenValueImageType = Image<EigenValueArrayType, Dimension>;
+
+  using EigenAnalysisFilterType = SymmetricEigenAnalysisImageFilter<HessianImageType, EigenValueImageType>;
+
+  using SheetnessFilterType = FrangiTubularnessImageFilter<EigenValueImageType, OutputImageType>;
+
+  typename HessianFilterType::Pointer       m_HessianFilter;
+  typename EigenAnalysisFilterType::Pointer m_EigenAnalysisFilter;
+  typename SheetnessFilterType::Pointer     m_SheetnessFilter;
+
+  double m_Sigma;
+  double m_SheetnessNormalization;
+  double m_BloobinessNormalization;
+  double m_NoiseNormalization;
+};
+
+} // end namespace itk
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#  include "itkFrangiTubularnessFeatureGenerator.hxx"
+#endif
+
+#endif
