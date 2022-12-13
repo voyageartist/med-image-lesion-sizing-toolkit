@@ -63,4 +63,36 @@ public:
   using SpatialObjectType = SpatialObject<NDimension>;
   using SpatialObjectPointer = typename SpatialObjectType::Pointer;
 
-  /** Input data that w
+  /** Input data that will be used for generating the feature. */
+  using ProcessObject::SetInput;
+  void
+  SetInput(const SpatialObjectType * input);
+  const SpatialObjectType *
+  GetInput() const;
+
+  /** Output data that carries the feature in the form of a
+   * SpatialObject. */
+  const SpatialObjectType *
+  GetFeature() const;
+
+
+protected:
+  FeatureGenerator();
+  ~FeatureGenerator() override;
+  void
+  PrintSelf(std::ostream & os, Indent indent) const override;
+
+  /** Derived classes must implement the "void  GenerateData()" method  */
+
+  /** non-const version of the method intended to be used in derived classes. */
+  SpatialObjectType *
+  GetInternalFeature();
+};
+
+} // end namespace itk
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#  include "itkFeatureGenerator.hxx"
+#endif
+
+#endif
