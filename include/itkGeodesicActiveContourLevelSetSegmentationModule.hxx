@@ -74,4 +74,23 @@ GeodesicActiveContourLevelSetSegmentationModule<NDimension>::GenerateData()
   filter->SetAdvectionScaling(this->GetAdvectionScaling());
   filter->UseImageSpacingOn();
 
-  // Prog
+  // Progress reporting - forward events from the fast marching filter.
+  ProgressAccumulator::Pointer progress = ProgressAccumulator::New();
+  progress->SetMiniPipelineFilter(this);
+  progress->RegisterInternalFilter(filter, 1.0);
+
+  filter->Update();
+
+  std::cout << std::endl;
+  std::cout << "Max. no. iterations: " << filter->GetNumberOfIterations() << std::endl;
+  std::cout << "Max. RMS error: " << filter->GetMaximumRMSError() << std::endl;
+  std::cout << std::endl;
+  std::cout << "No. elpased iterations: " << filter->GetElapsedIterations() << std::endl;
+  std::cout << "RMS change: " << filter->GetRMSChange() << std::endl;
+
+  this->PackOutputImageInOutputSpatialObject(filter->GetOutput());
+}
+
+} // end namespace itk
+
+#endif
