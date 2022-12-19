@@ -45,4 +45,33 @@ GeodesicActiveContourLevelSetSegmentationModule<NDimension>::~GeodesicActiveCont
 /**
  * PrintSelf
  */
-template <uns
+template <unsigned int NDimension>
+void
+GeodesicActiveContourLevelSetSegmentationModule<NDimension>::PrintSelf(std::ostream & os, Indent indent) const
+{
+  Superclass::PrintSelf(os, indent);
+}
+
+
+/**
+ * Generate Data
+ */
+template <unsigned int NDimension>
+void
+GeodesicActiveContourLevelSetSegmentationModule<NDimension>::GenerateData()
+{
+  using FilterType = GeodesicActiveContourLevelSetImageFilter<InputImageType, FeatureImageType, OutputPixelType>;
+
+  typename FilterType::Pointer filter = FilterType::New();
+
+  filter->SetInput(this->GetInternalInputImage());
+  filter->SetFeatureImage(this->GetInternalFeatureImage());
+
+  filter->SetMaximumRMSError(this->GetMaximumRMSError());
+  filter->SetNumberOfIterations(this->GetMaximumNumberOfIterations());
+  filter->SetPropagationScaling(this->GetPropagationScaling());
+  filter->SetCurvatureScaling(this->GetCurvatureScaling());
+  filter->SetAdvectionScaling(this->GetAdvectionScaling());
+  filter->UseImageSpacingOn();
+
+  // Prog
