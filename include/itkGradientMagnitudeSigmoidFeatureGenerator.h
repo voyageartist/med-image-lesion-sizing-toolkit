@@ -28,4 +28,31 @@ namespace itk
 {
 
 /** \class GradientMagnitudeSigmoidFeatureGenerator
- * \brief Generates a feature image by computing the gradient m
+ * \brief Generates a feature image by computing the gradient magnitude of the
+ * input image and applying a sigmoid transformation to it.
+ *
+ * The typical use of this class would be to generate the edge-map needed by a
+ * Level Set filter to internally compute its speed image.
+ *
+ * SpatialObjects are used as inputs and outputs of this class.
+ *
+ * \ingroup SpatialObjectFilters
+ * \ingroup LesionSizingToolkit
+ */
+template <unsigned int NDimension>
+class ITK_TEMPLATE_EXPORT GradientMagnitudeSigmoidFeatureGenerator : public FeatureGenerator<NDimension>
+{
+public:
+  ITK_DISALLOW_COPY_AND_MOVE(GradientMagnitudeSigmoidFeatureGenerator);
+
+  /** Standard class type alias. */
+  using Self = GradientMagnitudeSigmoidFeatureGenerator;
+  using Superclass = FeatureGenerator<NDimension>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro(Self);
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(GradientMagnitudeSigmo
