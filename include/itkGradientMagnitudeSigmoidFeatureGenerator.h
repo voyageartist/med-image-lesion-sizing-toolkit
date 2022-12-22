@@ -55,4 +55,29 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(GradientMagnitudeSigmo
+  itkTypeMacro(GradientMagnitudeSigmoidFeatureGenerator, FeatureGenerator);
+
+  /** Dimension of the space */
+  static constexpr unsigned int Dimension = NDimension;
+
+  /** Type of spatialObject that will be passed as input to this
+   * feature generator. */
+  using InputPixelType = signed short;
+  using InputImageType = Image<InputPixelType, Dimension>;
+  using InputImageSpatialObjectType = ImageSpatialObject<NDimension, InputPixelType>;
+  using InputImageSpatialObjectPointer = typename InputImageSpatialObjectType::Pointer;
+  using SpatialObjectType = typename Superclass::SpatialObjectType;
+
+  /** Input data that will be used for generating the feature. */
+  using ProcessObject::SetInput;
+  void
+  SetInput(const SpatialObjectType * input);
+  const SpatialObjectType *
+  GetInput() const;
+
+  /** Output data that carries the feature in the form of a
+   * SpatialObject. */
+  const SpatialObjectType *
+  GetFeature() const;
+
+  /** Sigma value to be used in the
