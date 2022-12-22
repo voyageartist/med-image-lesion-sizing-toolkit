@@ -80,4 +80,37 @@ public:
   const SpatialObjectType *
   GetFeature() const;
 
-  /** Sigma value to be used in the
+  /** Sigma value to be used in the Gaussian smoothing preceeding the gradient
+   * magnitude computation. */
+  itkSetMacro(Sigma, double);
+  itkGetMacro(Sigma, double);
+
+  /** Alpha value to be used in the Sigmoid filter. */
+  itkSetMacro(Alpha, double);
+  itkGetMacro(Alpha, double);
+
+  /** Beta value to be used in the Sigmoid filter. */
+  itkSetMacro(Beta, double);
+  itkGetMacro(Beta, double);
+
+protected:
+  GradientMagnitudeSigmoidFeatureGenerator();
+  ~GradientMagnitudeSigmoidFeatureGenerator() override;
+  void
+  PrintSelf(std::ostream & os, Indent indent) const override;
+
+  /** Method invoked by the pipeline in order to trigger the computation of
+   * the segmentation. */
+  void
+  GenerateData() override;
+
+private:
+  using InternalPixelType = float;
+  using InternalImageType = Image<InternalPixelType, Dimension>;
+
+  using OutputPixelType = InternalPixelType;
+  using OutputImageType = InternalImageType;
+
+  using OutputImageSpatialObjectType = ImageSpatialObject<NDimension, OutputPixelType>;
+
+  using Grad
