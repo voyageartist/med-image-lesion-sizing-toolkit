@@ -46,4 +46,30 @@ public:
   using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
 
   /** Image type alias support   */
-  usi
+  using InputImageType = TInputImage;
+  using OutputImageType = TOutputImage;
+  using OutputImagePointer = typename OutputImageType::Pointer;
+
+  /** SmartPointer type alias support  */
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+
+  /** Define pixel types. */
+  using OutputImagePixelType = typename TOutputImage::PixelType;
+  using SizeType = typename InputImageType::SizeType;
+  using SizeValueType = typename SizeType::SizeValueType;
+  using SpacingType = typename InputImageType::SpacingType;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro(Self);
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(IsotropicResamplerImageFilter, ImageToImageFilter);
+
+  /** ImageDimension constant    */
+  static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
+
+  static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
+
+  itkSetMacro(OutputSpacing, SpacingType);
+  it
