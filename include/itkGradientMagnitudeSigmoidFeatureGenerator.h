@@ -113,4 +113,24 @@ private:
 
   using OutputImageSpatialObjectType = ImageSpatialObject<NDimension, OutputPixelType>;
 
-  using Grad
+  using GradientFilterType = GradientMagnitudeRecursiveGaussianImageFilter<InputImageType, InternalImageType>;
+  using GradientFilterPointer = typename GradientFilterType::Pointer;
+
+  using SigmoidFilterType = SigmoidImageFilter<InternalImageType, OutputImageType>;
+  using SigmoidFilterPointer = typename SigmoidFilterType::Pointer;
+
+  GradientFilterPointer m_GradientFilter;
+  SigmoidFilterPointer  m_SigmoidFilter;
+
+  double m_Sigma;
+  double m_Alpha;
+  double m_Beta;
+};
+
+} // end namespace itk
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#  include "itkGradientMagnitudeSigmoidFeatureGenerator.hxx"
+#endif
+
+#endif
