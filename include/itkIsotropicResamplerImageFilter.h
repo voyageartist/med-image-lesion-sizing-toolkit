@@ -14,4 +14,36 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *
- *====================
+ *=========================================================================*/
+#ifndef itkIsotropicResamplerImageFilter_h
+#define itkIsotropicResamplerImageFilter_h
+
+#include "itkResampleImageFilter.h"
+#include "itkImage.h"
+#include "itkBSplineInterpolateImageFunction.h"
+
+namespace itk
+{
+
+/** \class IsotropicResamplerImageFilter
+ *
+ * \brief Resamples the image to an isotropic resolution.
+ *
+ * This class resamples an image using BSplineInterpolator and produces
+ * an isotropic image.
+ *
+ *\ingroup LesionSizingToolkit
+ * \ingroup LesionSizingToolkit
+ */
+template <typename TInputImage, typename TOutputImage>
+class IsotropicResamplerImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
+{
+public:
+  ITK_DISALLOW_COPY_AND_MOVE(IsotropicResamplerImageFilter);
+
+  /** Standard "Self" & Superclass type alias.  */
+  using Self = IsotropicResamplerImageFilter;
+  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
+
+  /** Image type alias support   */
+  usi
