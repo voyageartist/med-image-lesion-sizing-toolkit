@@ -98,4 +98,26 @@ public:
 protected:
   IsotropicResamplerImageFilter();
   void
-  PrintSelf(std::ostream & os, Indent indent)
+  PrintSelf(std::ostream & os, Indent indent) const override;
+
+  void
+  GenerateData() override;
+
+private:
+  ~IsotropicResamplerImageFilter() override = default;
+
+  SpacingType m_OutputSpacing;
+  using ResampleFilterType = ResampleImageFilter<TInputImage, TOutputImage>;
+  using ResampleFilterPointer = typename ResampleFilterType::Pointer;
+
+  ResampleFilterPointer m_ResampleFilter;
+  OutputImagePixelType  m_DefaultPixelValue;
+};
+
+} // end of namespace itk
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#  include "itkIsotropicResamplerImageFilter.hxx"
+#endif
+
+#endif
