@@ -62,4 +62,36 @@ public:
 
   /** Output data that carries the feature in the form of a
    * SpatialObject. */
-  const Sp
+  const SpatialObjectType *
+  GetOutput() const;
+
+  /** Set / Get the input filename */
+  itkSetStringMacro(FileName);
+  itkGetStringMacro(FileName);
+
+protected:
+  LandmarksReader();
+  ~LandmarksReader() override;
+  void
+  PrintSelf(std::ostream & os, Indent indent) const override;
+
+  void
+  GenerateData() override;
+
+private:
+  using SpatialObjectReaderType = SpatialObjectReader<NDimension, unsigned short>;
+  using SpatialObjectReaderPointer = typename SpatialObjectReaderType::Pointer;
+  using GroupType = typename SpatialObjectReaderType::GroupType;
+  using ObjectListType = typename GroupType::ObjectListType;
+
+  std::string                m_FileName;
+  SpatialObjectReaderPointer m_SpatialObjectReader;
+};
+
+} // end namespace itk
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#  include "itkLandmarksReader.hxx"
+#endif
+
+#endif
