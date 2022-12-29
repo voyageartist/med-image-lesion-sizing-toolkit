@@ -32,4 +32,34 @@ namespace itk
  * A LandmarkSpatialObject is produced as output.
  *
  * \ingroup SpatialObjectFilters
- * \ingroup L
+ * \ingroup LesionSizingToolkit
+ */
+template <unsigned int NDimension>
+class ITK_TEMPLATE_EXPORT LandmarksReader : public ProcessObject
+{
+public:
+  ITK_DISALLOW_COPY_AND_MOVE(LandmarksReader);
+
+  /** Standard class type alias. */
+  using Self = LandmarksReader;
+  using Superclass = ProcessObject;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro(Self);
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(LandmarksReader, ProcessObject);
+
+  /** Dimension of the space */
+  static constexpr unsigned int Dimension = NDimension;
+
+  /** Type of spatialObject that will be passed as input and output of this
+   * segmentation method. */
+  using SpatialObjectType = LandmarkSpatialObject<NDimension>;
+  using SpatialObjectPointer = typename SpatialObjectType::Pointer;
+
+  /** Output data that carries the feature in the form of a
+   * SpatialObject. */
+  const Sp
