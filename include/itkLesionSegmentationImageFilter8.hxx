@@ -54,4 +54,23 @@ LesionSegmentationImageFilter8<TInputImage, TOutputImage>::LesionSegmentationIma
 
   // Connect pipeline
   m_LungWallFeatureGenerator->SetInput(m_InputSpatialObject);
-  m_SigmoidFeatureGenerator->SetInput(m_InputSpatialObje
+  m_SigmoidFeatureGenerator->SetInput(m_InputSpatialObject);
+  m_VesselnessFeatureGenerator->SetInput(m_InputSpatialObject);
+  m_CannyEdgesFeatureGenerator->SetInput(m_InputSpatialObject);
+  m_FeatureAggregator->AddFeatureGenerator(m_LungWallFeatureGenerator);
+  m_FeatureAggregator->AddFeatureGenerator(m_VesselnessFeatureGenerator);
+  m_FeatureAggregator->AddFeatureGenerator(m_SigmoidFeatureGenerator);
+  m_FeatureAggregator->AddFeatureGenerator(m_CannyEdgesFeatureGenerator);
+  m_LesionSegmentationMethod->AddFeatureGenerator(m_FeatureAggregator);
+  m_LesionSegmentationMethod->SetSegmentationModule(m_SegmentationModule);
+
+  // Populate some parameters
+  m_LungWallFeatureGenerator->SetLungThreshold(-400);
+  m_VesselnessFeatureGenerator->SetSigma(1.0);
+  m_VesselnessFeatureGenerator->SetAlpha1(0.1);
+  m_VesselnessFeatureGenerator->SetAlpha2(2.0);
+  m_VesselnessFeatureGenerator->SetSigmoidAlpha(-10.0);
+  m_VesselnessFeatureGenerator->SetSigmoidBeta(40.0);
+  m_SigmoidFeatureGenerator->SetAlpha(100.0);
+  m_SigmoidFeatureGenerator->SetBeta(-500.0);
+  m_Canny
