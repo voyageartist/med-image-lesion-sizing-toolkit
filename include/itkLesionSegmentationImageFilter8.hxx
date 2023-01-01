@@ -15,4 +15,43 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef i
+#ifndef itkLesionSegmentationImageFilter8_hxx
+#define itkLesionSegmentationImageFilter8_hxx
+
+#include "itkNumericTraits.h"
+#include "itkProgressReporter.h"
+#include "itkGradientMagnitudeImageFilter.h"
+#include "itkImageFileReader.h"
+#include "itkImageFileWriter.h"
+
+namespace itk
+{
+
+template <typename TInputImage, typename TOutputImage>
+LesionSegmentationImageFilter8<TInputImage, TOutputImage>::LesionSegmentationImageFilter8()
+{
+  m_CannyEdgesFeatureGenerator = CannyEdgesFeatureGeneratorType::New();
+  m_LesionSegmentationMethod = LesionSegmentationMethodType::New();
+  m_LungWallFeatureGenerator = LungWallGeneratorType::New();
+  m_VesselnessFeatureGenerator = VesselnessGeneratorType::New();
+  m_SigmoidFeatureGenerator = SigmoidFeatureGeneratorType::New();
+  m_FeatureAggregator = FeatureAggregatorType::New();
+  m_SegmentationModule = SegmentationModuleType::New();
+  m_CropFilter = CropFilterType::New();
+  m_IsotropicResampler = IsotropicResamplerType::New();
+  m_InputSpatialObject = InputImageSpatialObjectType::New();
+
+  // Report progress.
+  m_CommandObserver = CommandType::New();
+  m_CommandObserver->SetCallbackFunction(this, &Self::ProgressUpdate);
+  m_LungWallFeatureGenerator->AddObserver(itk::ProgressEvent(), m_CommandObserver);
+  m_SigmoidFeatureGenerator->AddObserver(itk::ProgressEvent(), m_CommandObserver);
+  m_VesselnessFeatureGenerator->AddObserver(itk::ProgressEvent(), m_CommandObserver);
+  m_CannyEdgesFeatureGenerator->AddObserver(itk::ProgressEvent(), m_CommandObserver);
+  m_SegmentationModule->AddObserver(itk::ProgressEvent(), m_CommandObserver);
+  m_CropFilter->AddObserver(itk::ProgressEvent(), m_CommandObserver);
+  m_IsotropicResampler->AddObserver(itk::ProgressEvent(), m_CommandObserver);
+
+  // Connect pipeline
+  m_LungWallFeatureGenerator->SetInput(m_InputSpatialObject);
+  m_SigmoidFeatureGenerator->SetInput(m_InputSpatialObje
