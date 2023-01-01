@@ -73,4 +73,29 @@ LesionSegmentationImageFilter8<TInputImage, TOutputImage>::LesionSegmentationIma
   m_VesselnessFeatureGenerator->SetSigmoidBeta(40.0);
   m_SigmoidFeatureGenerator->SetAlpha(100.0);
   m_SigmoidFeatureGenerator->SetBeta(-500.0);
-  m_Canny
+  m_CannyEdgesFeatureGenerator->SetSigma(1.0);
+  m_CannyEdgesFeatureGenerator->SetUpperThreshold(150.0);
+  m_CannyEdgesFeatureGenerator->SetLowerThreshold(75.0);
+  m_FastMarchingStoppingTime = 5.0;
+  m_FastMarchingDistanceFromSeeds = 0.5;
+  m_SigmoidBeta = -500.0;
+  m_StatusMessage = "";
+  m_SegmentationModule->SetCurvatureScaling(1.0);
+  m_SegmentationModule->SetAdvectionScaling(0.0);
+  m_SegmentationModule->SetPropagationScaling(500.0);
+  m_SegmentationModule->SetMaximumRMSError(0.0002);
+  m_SegmentationModule->SetMaximumNumberOfIterations(300);
+  m_ResampleThickSliceData = true;
+  m_AnisotropyThreshold = 1.0;
+  m_UserSpecifiedSigmas = false;
+}
+
+template <typename TInputImage, typename TOutputImage>
+void
+LesionSegmentationImageFilter8<TInputImage, TOutputImage>::GenerateInputRequestedRegion() throw(
+  InvalidRequestedRegionError)
+{
+  // call the superclass' implementation of this method
+  Superclass::GenerateInputRequestedRegion();
+
+  if (
