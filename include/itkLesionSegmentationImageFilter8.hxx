@@ -98,4 +98,34 @@ LesionSegmentationImageFilter8<TInputImage, TOutputImage>::GenerateInputRequeste
   // call the superclass' implementation of this method
   Superclass::GenerateInputRequestedRegion();
 
-  if (
+  if (!this->GetInput())
+  {
+    typename InputImageType::Pointer inputPtr = const_cast<TInputImage *>(this->GetInput());
+
+    // Request the entire input image
+    inputPtr->SetRequestedRegion(inputPtr->GetLargestPossibleRegion());
+  }
+}
+
+template <typename TInputImage, typename TOutputImage>
+void
+LesionSegmentationImageFilter8<TInputImage, TOutputImage>::SetSigma(SigmaArrayType s)
+{
+  this->m_UserSpecifiedSigmas = true;
+  m_CannyEdgesFeatureGenerator->SetSigmaArray(s);
+}
+
+template <typename TInputImage, typename TOutputImage>
+void
+LesionSegmentationImageFilter8<TInputImage, TOutputImage>::GenerateOutputInformation()
+{
+  // get pointers to the input and output
+  typename Superclass::OutputImagePointer     outputPtr = this->GetOutput();
+  typename Superclass::InputImageConstPointer inputPtr = this->GetInput();
+  if (!outputPtr || !inputPtr)
+  {
+    return;
+  }
+
+  // Minipipeline is :
+  //   Input -> Crop -> Resample_if_too_anisotropi
