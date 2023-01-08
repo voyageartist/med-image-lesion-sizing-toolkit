@@ -128,4 +128,35 @@ LesionSegmentationImageFilter8<TInputImage, TOutputImage>::GenerateOutputInforma
   }
 
   // Minipipeline is :
-  //   Input -> Crop -> Resample_if_too_anisotropi
+  //   Input -> Crop -> Resample_if_too_anisotropic -> Segment
+
+  m_CropFilter->SetInput(inputPtr);
+  m_CropFilter->SetRegionOfInterest(m_RegionOfInterest);
+
+  // Compute the spacing after isotropic resampling.
+  double minSpacing = NumericTraits<double>::max();
+  for (unsigned int i = 0; i < ImageDimension; i++)
+  {
+    minSpacing = (minSpacing > inputPtr->GetSpacing()[i] ? inputPtr->GetSpacing()[i] : minSpacing);
+  }
+
+  // Try and reduce the anisotropy.
+  SpacingType outputSpacing = inputPtr->GetSpacing();
+  for (unsigned int i = 0; i < ImageDimension; i++)
+  {
+    if (outputSpacing[i] / minSpacing > m_AnisotropyThreshold && m_ResampleThickSliceData)
+    {
+      outputSpacing[i] = minSpacing * m_AnisotropyThreshold;
+    }
+  }
+
+  if (m_ResampleThickSliceData)
+  {
+    m_IsotropicResampler->SetInput(m_CropFilter->GetOutput());
+    m_IsotropicResampler->SetOutputSpacing(outputSpacing);
+    m_IsotropicResampler->GenerateOutputInformation();
+    outputPtr->CopyInformation(m_IsotropicResampler->GetOutput());
+  }
+  else
+  {
+    outputPtr->Co
