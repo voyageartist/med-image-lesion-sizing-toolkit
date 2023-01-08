@@ -222,4 +222,27 @@ LesionSegmentationImageFilter8<TInputImage, TOutputImage>::GenerateData()
   // Do the actual segmentation.
   m_LesionSegmentationMethod->Update();
 
-  // Graft the output
+  // Graft the output.
+  typename SpatialObjectType::Pointer segmentation = const_cast<SpatialObjectType *>(m_SegmentationModule->GetOutput());
+  typename OutputSpatialObjectType::Pointer outputObject =
+    dynamic_cast<OutputSpatialObjectType *>(segmentation.GetPointer());
+  typename OutputImageType::Pointer outputImage = const_cast<OutputImageType *>(outputObject->GetImage());
+  outputImage->DisconnectPipeline();
+  this->GraftOutput(outputImage);
+
+  /* // DEBUGGING CODE
+  using WriterType = ImageFileWriter< OutputImageType >;
+  typename WriterType::Pointer writer = WriterType::New();
+  writer->SetFileName("output.mha");
+  writer->SetInput(outputImage);
+  writer->UseCompressionOn();
+  writer->Write();*/
+}
+
+
+template <typename TInputImage, typename TOutputImage>
+void
+LesionSegmentationImageFilter8<TInputImage, TOutputImage>::ProgressUpdate(Object * caller, const EventObject & e)
+{
+  if (typeid(itk::ProgressEvent) == typeid(e))
+ 
