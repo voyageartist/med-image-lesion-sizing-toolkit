@@ -190,4 +190,36 @@ LesionSegmentationImageFilter8<TInputImage, TOutputImage>::GenerateData()
   }
   else
   {
-    inputIma
+    inputImage = m_CropFilter->GetOutput();
+  }
+
+  // Convert the output of resampling (or cropping based on
+  // m_ResampleThickSliceData) to a spatial object that can be fed into
+  // the lesion segmentation method
+
+  inputImage->DisconnectPipeline();
+  m_InputSpatialObject->SetImage(inputImage);
+
+  // Sigma for the canny is the max spacing of the original input (before
+  // resampling)
+
+  if (m_UserSpecifiedSigmas == false)
+  {
+    double maxSpacing = NumericTraits<double>::min();
+    for (unsigned int i = 0; i < ImageDimension; i++)
+    {
+      maxSpacing = (maxSpacing < input->GetSpacing()[i] ? input->GetSpacing()[i] : maxSpacing);
+    }
+    m_CannyEdgesFeatureGenerator->SetSigma(maxSpacing);
+  }
+
+  // Seeds
+
+  typename SeedSpatialObjectType::Pointer seedSpatialObject = SeedSpatialObjectType::New();
+  seedSpatialObject->SetPoints(m_Seeds);
+  m_LesionSegmentationMethod->SetInitialSegmentation(seedSpatialObject);
+
+  // Do the actual segmentation.
+  m_LesionSegmentationMethod->Update();
+
+  // Graft the output
