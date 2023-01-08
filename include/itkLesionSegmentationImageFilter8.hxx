@@ -159,4 +159,35 @@ LesionSegmentationImageFilter8<TInputImage, TOutputImage>::GenerateOutputInforma
   }
   else
   {
-    outputPtr->Co
+    outputPtr->CopyInformation(m_CropFilter->GetOutput());
+  }
+}
+
+
+template <typename TInputImage, typename TOutputImage>
+void
+LesionSegmentationImageFilter8<TInputImage, TOutputImage>::GenerateData()
+{
+  m_SigmoidFeatureGenerator->SetBeta(m_SigmoidBeta);
+  m_SegmentationModule->SetDistanceFromSeeds(m_FastMarchingDistanceFromSeeds);
+  m_SegmentationModule->SetStoppingValue(m_FastMarchingStoppingTime);
+
+  // Allocate the output
+  this->GetOutput()->SetBufferedRegion(this->GetOutput()->GetRequestedRegion());
+  this->GetOutput()->Allocate();
+
+  // Get the input image
+  typename InputImageType::ConstPointer input = this->GetInput();
+
+  // Crop and perform thin slice resampling (done only if necessary)
+  m_CropFilter->Update();
+
+  typename InputImageType::Pointer inputImage = nullptr;
+  if (m_ResampleThickSliceData)
+  {
+    m_IsotropicResampler->Update();
+    inputImage = this->m_IsotropicResampler->GetOutput();
+  }
+  else
+  {
+    inputIma
