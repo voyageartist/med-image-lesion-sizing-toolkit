@@ -245,4 +245,30 @@ void
 LesionSegmentationImageFilter8<TInputImage, TOutputImage>::ProgressUpdate(Object * caller, const EventObject & e)
 {
   if (typeid(itk::ProgressEvent) == typeid(e))
- 
+  {
+    if (dynamic_cast<CropFilterType *>(caller))
+    {
+      this->m_StatusMessage = "Cropping data..";
+      this->UpdateProgress(m_CropFilter->GetProgress());
+    }
+
+    if (dynamic_cast<IsotropicResamplerType *>(caller))
+    {
+      this->m_StatusMessage = "Isotropic resampling of data using BSpline interpolation..";
+      this->UpdateProgress(m_IsotropicResampler->GetProgress());
+    }
+
+    else if (dynamic_cast<LungWallGeneratorType *>(caller))
+    {
+      // Given its iterative nature.. a cranky heuristic here.
+      this->m_StatusMessage = "Generating lung wall feature by front propagation..";
+      this->UpdateProgress(((double)(((int)(m_LungWallFeatureGenerator->GetProgress() * 500)) % 100)) / 100.0);
+    }
+
+    else if (dynamic_cast<SigmoidFeatureGeneratorType *>(caller))
+    {
+      this->m_StatusMessage = "Generating intensity feature..";
+      this->UpdateProgress(m_SigmoidFeatureGenerator->GetProgress());
+    }
+
+    else if (dynamic_cast<CannyEdgesFeat
