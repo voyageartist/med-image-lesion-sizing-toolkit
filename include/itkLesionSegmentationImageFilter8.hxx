@@ -271,4 +271,31 @@ LesionSegmentationImageFilter8<TInputImage, TOutputImage>::ProgressUpdate(Object
       this->UpdateProgress(m_SigmoidFeatureGenerator->GetProgress());
     }
 
-    else if (dynamic_cast<CannyEdgesFeat
+    else if (dynamic_cast<CannyEdgesFeatureGeneratorType *>(caller))
+    {
+      m_StatusMessage = "Generating canny edge feature..";
+      this->UpdateProgress(m_CannyEdgesFeatureGenerator->GetProgress());
+    }
+
+    else if (dynamic_cast<VesselnessGeneratorType *>(caller))
+    {
+      m_StatusMessage = "Generating vesselness feature (Sato et al.)..";
+      this->UpdateProgress(m_LungWallFeatureGenerator->GetProgress());
+    }
+
+    else if (dynamic_cast<SegmentationModuleType *>(caller))
+    {
+      m_StatusMessage = "Segmenting using level sets..";
+      this->UpdateProgress(m_SegmentationModule->GetProgress());
+    }
+  }
+}
+
+template <typename TInputImage, typename TOutputImage>
+void
+LesionSegmentationImageFilter8<TInputImage, TOutputImage>::SetAbortGenerateData(bool abort)
+{
+  this->Superclass::SetAbortGenerateData(abort);
+  this->m_CropFilter->SetAbortGenerateData(abort);
+  this->m_IsotropicResampler->SetAbortGenerateData(abort);
+  this->m_LesionSegmen
