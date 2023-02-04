@@ -298,4 +298,23 @@ LesionSegmentationImageFilter8<TInputImage, TOutputImage>::SetAbortGenerateData(
   this->Superclass::SetAbortGenerateData(abort);
   this->m_CropFilter->SetAbortGenerateData(abort);
   this->m_IsotropicResampler->SetAbortGenerateData(abort);
-  this->m_LesionSegmen
+  this->m_LesionSegmentationMethod->SetAbortGenerateData(abort);
+}
+
+template <typename TInputImage, typename TOutputImage>
+void
+LesionSegmentationImageFilter8<TInputImage, TOutputImage>::SetUseVesselEnhancingDiffusion(bool b)
+{
+  this->m_VesselnessFeatureGenerator->SetUseVesselEnhancingDiffusion(b);
+}
+
+template <typename TInputImage, typename TOutputImage>
+void
+LesionSegmentationImageFilter8<TInputImage, TOutputImage>::PrintSelf(std::ostream & os, Indent indent) const
+{
+  Superclass::PrintSelf(os, indent);
+}
+
+} // namespace itk
+
+#endif
