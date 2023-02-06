@@ -10,4 +10,30 @@
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either exp
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+#ifndef itkMaximumFeatureAggregator_h
+#define itkMaximumFeatureAggregator_h
+
+#include "itkFeatureAggregator.h"
+
+namespace itk
+{
+
+/** \class MaximumFeatureAggregator
+ * \brief Class for combining multiple features into a single one by computing
+ * the pixel-wise maximum.
+ *
+ * This class generates a new feature object containing an image that is
+ * computed as the pixel-wise maximum of all the input feature images.
+ *
+ * \warning This class assumes that all the images have the same: origin,
+ * spacing, orientation, and that they are represented in the same image grid.
+ * mixing strategies.
+ *
+ * SpatialObjects are used as inputs and outputs of this class.
+ *
+ * \ingroup SpatialObjectFilters
