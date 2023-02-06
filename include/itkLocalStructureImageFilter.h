@@ -144,3 +144,87 @@ public:
     return 0.0;
   }
   inline double
+  WeightFunctionPhi(double ls, double lt) const
+  {
+    if (ls < 0.0 && lt <= ls)
+    {
+      return std::pow((ls / lt), m_Gamma);
+    }
+    return 0.0;
+  }
+
+  void
+  SetAlpha(double value)
+  {
+    this->m_Alpha = value;
+  }
+
+  void
+  SetGamma(double value)
+  {
+    this->m_Gamma = value;
+  }
+
+private:
+  double m_Alpha;
+  double m_Gamma;
+};
+} // namespace Function
+
+template <typename TInputImage, typename TOutputImage>
+class ITK_TEMPLATE_EXPORT LocalStructureImageFilter
+  : public UnaryFunctorImageFilter<
+      TInputImage,
+      TOutputImage,
+      Function::LocalStructure<typename TInputImage::PixelType, typename TOutputImage::PixelType>>
+{
+public:
+  ITK_DISALLOW_COPY_AND_MOVE(LocalStructureImageFilter);
+
+  /** Standard class type alias. */
+  using Self = LocalStructureImageFilter;
+  using Superclass = UnaryFunctorImageFilter<
+    TInputImage,
+    TOutputImage,
+    Function::LocalStructure<typename TInputImage::PixelType, typename TOutputImage::PixelType>>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro(Self);
+
+  /** Runtime information support. */
+  itkTypeMacro(LocalStructureImageFilter, UnaryFunctorImageFilter);
+
+  /** Set the normalization term for sheetness */
+  void
+  SetAlpha(double value)
+  {
+    this->GetFunctor().SetAlpha(value);
+  }
+
+  /** Set the normalization term for bloobiness. */
+  void
+  SetGamma(double value)
+  {
+    this->GetFunctor().SetGamma(value);
+  }
+
+
+#ifdef ITK_USE_CONCEPT_CHECKING
+  /** Begin concept checking */
+  using InputPixelType = typename TInputImage::PixelType;
+  itkConceptMacro(BracketOperatorsCheck, (Concept::BracketOperator<InputPixelType, unsigned int, double>));
+  itkConceptMacro(DoubleConvertibleToOutputCheck, (Concept::Convertible<double, typename TOutputImage::PixelType>));
+  /** End concept checking */
+#endif
+
+protected:
+  LocalStructureImageFilter() = default;
+  ~LocalStructureImageFilter() override = default;
+};
+
+} // end namespace itk
+
+
+#endif
