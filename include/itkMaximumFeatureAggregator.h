@@ -37,3 +37,30 @@ namespace itk
  * SpatialObjects are used as inputs and outputs of this class.
  *
  * \ingroup SpatialObjectFilters
+ * \ingroup LesionSizingToolkit
+ */
+template <unsigned int NDimension>
+class ITK_TEMPLATE_EXPORT MaximumFeatureAggregator : public FeatureAggregator<NDimension>
+{
+public:
+  ITK_DISALLOW_COPY_AND_MOVE(MaximumFeatureAggregator);
+
+  /** Standard class type alias. */
+  using Self = MaximumFeatureAggregator;
+  using Superclass = FeatureAggregator<NDimension>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro(Self);
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(MaximumFeatureAggregator, FeatureAggregator);
+
+  /** Dimension of the space */
+  static constexpr unsigned int Dimension = NDimension;
+
+  /** Type of the image and specific SpatialObject produced as output */
+  using OutputPixelType = typename Superclass::OutputPixelType;
+  using OutputImageType = typename Superclass::OutputImageType;
+  using OutputImageSpatialObjectType = typename Supe
