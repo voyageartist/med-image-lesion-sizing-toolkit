@@ -34,4 +34,33 @@ namespace itk
  * spacing, orientation, and that they are represented in the same image grid.
  * mixing strategies.
  *
- * SpatialObjects are used as inputs and outputs of th
+ * SpatialObjects are used as inputs and outputs of this class.
+ *
+ * \ingroup SpatialObjectFilters
+ * \ingroup LesionSizingToolkit
+ */
+template <unsigned int NDimension>
+class ITK_TEMPLATE_EXPORT MinimumFeatureAggregator : public FeatureAggregator<NDimension>
+{
+public:
+  ITK_DISALLOW_COPY_AND_MOVE(MinimumFeatureAggregator);
+
+  /** Standard class type alias. */
+  using Self = MinimumFeatureAggregator;
+  using Superclass = FeatureAggregator<NDimension>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro(Self);
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(MinimumFeatureAggregator, FeatureAggregator);
+
+  /** Dimension of the space */
+  static constexpr unsigned int Dimension = NDimension;
+
+  /** Type of the image and specific SpatialObject produced as output */
+  using OutputPixelType = typename Superclass::OutputPixelType;
+  using OutputImageType = typename Superclass::OutputImageType;
+  u
