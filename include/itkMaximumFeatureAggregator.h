@@ -63,4 +63,25 @@ public:
   /** Type of the image and specific SpatialObject produced as output */
   using OutputPixelType = typename Superclass::OutputPixelType;
   using OutputImageType = typename Superclass::OutputImageType;
-  using OutputImageSpatialObjectType = typename Supe
+  using OutputImageSpatialObjectType = typename Superclass::OutputImageSpatialObjectType;
+
+
+protected:
+  MaximumFeatureAggregator();
+  ~MaximumFeatureAggregator() override;
+  void
+  PrintSelf(std::ostream & os, Indent indent) const override;
+
+
+private:
+  void
+  ConsolidateFeatures() override;
+};
+
+} // end namespace itk
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#  include "itkMaximumFeatureAggregator.hxx"
+#endif
+
+#endif
