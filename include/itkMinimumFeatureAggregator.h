@@ -63,4 +63,25 @@ public:
   /** Type of the image and specific SpatialObject produced as output */
   using OutputPixelType = typename Superclass::OutputPixelType;
   using OutputImageType = typename Superclass::OutputImageType;
-  u
+  using OutputImageSpatialObjectType = typename Superclass::OutputImageSpatialObjectType;
+
+
+protected:
+  MinimumFeatureAggregator();
+  ~MinimumFeatureAggregator() override;
+  void
+  PrintSelf(std::ostream & os, Indent indent) const override;
+
+
+private:
+  void
+  ConsolidateFeatures() override;
+};
+
+} // end namespace itk
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#  include "itkMinimumFeatureAggregator.hxx"
+#endif
+
+#endif
