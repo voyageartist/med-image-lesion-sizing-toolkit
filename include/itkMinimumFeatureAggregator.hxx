@@ -10,4 +10,47 @@
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expre
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+#ifndef itkMinimumFeatureAggregator_hxx
+#define itkMinimumFeatureAggregator_hxx
+
+#include "itkImageSpatialObject.h"
+#include "itkImageRegionIterator.h"
+#include "itkImageFileWriter.h"
+
+
+namespace itk
+{
+
+/**
+ * Constructor
+ */
+template <unsigned int NDimension>
+MinimumFeatureAggregator<NDimension>::MinimumFeatureAggregator() = default;
+
+
+/**
+ * Destructor
+ */
+template <unsigned int NDimension>
+MinimumFeatureAggregator<NDimension>::~MinimumFeatureAggregator() = default;
+
+
+/**
+ * PrintSelf
+ */
+template <unsigned int NDimension>
+void
+MinimumFeatureAggregator<NDimension>::PrintSelf(std::ostream & os, Indent indent) const
+{
+  Superclass::PrintSelf(os, indent);
+}
+
+
+template <unsigned int NDimension>
+void
+MinimumFeatureAggregator<NDi
