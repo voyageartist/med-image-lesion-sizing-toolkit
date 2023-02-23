@@ -74,4 +74,35 @@ MinimumFeatureAggregator<NDimension>::ConsolidateFeatures()
 
   for (unsigned int i = 0; i < numberOfFeatures; i++)
   {
-    const auto * featureObject = dynamic_cast<const Feat
+    const auto * featureObject = dynamic_cast<const FeatureSpatialObjectType *>(this->GetInputFeature(i));
+
+    const FeatureImageType * featureImage = featureObject->GetImage();
+
+    using FeatureIterator = ImageRegionIterator<FeatureImageType>;
+    using FeatureConstIterator = ImageRegionConstIterator<FeatureImageType>;
+
+    FeatureIterator      dstitr(consolidatedFeatureImage, consolidatedFeatureImage->GetBufferedRegion());
+    FeatureConstIterator srcitr(featureImage, featureImage->GetBufferedRegion());
+
+    dstitr.GoToBegin();
+    srcitr.GoToBegin();
+
+    while (!srcitr.IsAtEnd())
+    {
+      if (dstitr.Get() > srcitr.Get())
+      {
+        dstitr.Set(srcitr.Get());
+      }
+      ++srcitr;
+      ++dstitr;
+    }
+  }
+
+  auto * outputObject = dynamic_cast<FeatureSpatialObjectType *>(this->ProcessObject::GetOutput(0));
+
+  outputObject->SetImage(consolidatedFeatureImage);
+}
+
+} // end namespace itk
+
+#endif
