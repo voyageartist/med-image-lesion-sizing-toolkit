@@ -53,4 +53,25 @@ MinimumFeatureAggregator<NDimension>::PrintSelf(std::ostream & os, Indent indent
 
 template <unsigned int NDimension>
 void
-MinimumFeatureAggregator<NDi
+MinimumFeatureAggregator<NDimension>::ConsolidateFeatures()
+{
+  using FeaturePixelType = float;
+  using FeatureImageType = Image<FeaturePixelType, NDimension>;
+  using FeatureSpatialObjectType = ImageSpatialObject<NDimension, FeaturePixelType>;
+
+  const auto * firstFeatureObject = dynamic_cast<const FeatureSpatialObjectType *>(this->GetInputFeature(0));
+
+  const FeatureImageType * firstFeatureImage = firstFeatureObject->GetImage();
+
+  typename FeatureImageType::Pointer consolidatedFeatureImage = FeatureImageType::New();
+
+  consolidatedFeatureImage->CopyInformation(firstFeatureImage);
+  consolidatedFeatureImage->SetRegions(firstFeatureImage->GetBufferedRegion());
+  consolidatedFeatureImage->Allocate();
+  consolidatedFeatureImage->FillBuffer(NumericTraits<FeaturePixelType>::max());
+
+  const unsigned int numberOfFeatures = this->GetNumberOfInputFeatures();
+
+  for (unsigned int i = 0; i < numberOfFeatures; i++)
+  {
+    const auto * featureObject = dynamic_cast<const Feat
