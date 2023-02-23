@@ -16,8 +16,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef itkMorphologicalOpeningFeatureGenerator_h
-#define itkMorphologicalOpeningFeatureGenerator_h
+#ifndef itkMorphologicalOpenningFeatureGenerator_h
+#define itkMorphologicalOpenningFeatureGenerator_h
 
 #include "itkFeatureGenerator.h"
 #include "itkImage.h"
@@ -31,7 +31,7 @@
 namespace itk
 {
 
-/** \class MorphologicalOpeningFeatureGenerator
+/** \class MorphologicalOpenningFeatureGenerator
  * \brief Generates a feature image based on intensity and removes small pieces from it.
  *
  * This feature generator thresholds the input image, runs an Openning
@@ -45,33 +45,31 @@ namespace itk
  * \ingroup LesionSizingToolkit
  */
 template <unsigned int NDimension>
-class ITK_TEMPLATE_EXPORT MorphologicalOpeningFeatureGenerator : public FeatureGenerator<NDimension>
+class ITK_EXPORT MorphologicalOpenningFeatureGenerator : public FeatureGenerator<NDimension>
 {
 public:
-  ITK_DISALLOW_COPY_AND_MOVE(MorphologicalOpeningFeatureGenerator);
-
-  /** Standard class type alias. */
-  using Self = MorphologicalOpeningFeatureGenerator;
-  using Superclass = FeatureGenerator<NDimension>;
-  using Pointer = SmartPointer<Self>;
-  using ConstPointer = SmartPointer<const Self>;
+  /** Standard class typedefs. */
+  typedef MorphologicalOpenningFeatureGenerator Self;
+  typedef FeatureGenerator<NDimension>          Superclass;
+  typedef SmartPointer<Self>                    Pointer;
+  typedef SmartPointer<const Self>              ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(MorphologicalOpeningFeatureGenerator, FeatureGenerator);
+  itkTypeMacro(MorphologicalOpenningFeatureGenerator, FeatureGenerator);
 
   /** Dimension of the space */
-  static constexpr unsigned int Dimension = NDimension;
+  itkStaticConstMacro(Dimension, unsigned int, NDimension);
 
   /** Type of spatialObject that will be passed as input to this
    * feature generator. */
-  using InputPixelType = signed short;
-  using InputImageType = Image<InputPixelType, Dimension>;
-  using InputImageSpatialObjectType = ImageSpatialObject<NDimension, InputPixelType>;
-  using InputImageSpatialObjectPointer = typename InputImageSpatialObjectType::Pointer;
-  using SpatialObjectType = typename Superclass::SpatialObjectType;
+  typedef signed short                                   InputPixelType;
+  typedef Image<InputPixelType, Dimension>               InputImageType;
+  typedef ImageSpatialObject<NDimension, InputPixelType> InputImageSpatialObjectType;
+  typedef typename InputImageSpatialObjectType::Pointer  InputImageSpatialObjectPointer;
+  typedef typename Superclass::SpatialObjectType         SpatialObjectType;
 
   /** Input data that will be used for generating the feature. */
   using ProcessObject::SetInput;
@@ -90,37 +88,41 @@ public:
   itkGetMacro(LungThreshold, InputPixelType);
 
 protected:
-  MorphologicalOpeningFeatureGenerator();
-  ~MorphologicalOpeningFeatureGenerator() override;
+  MorphologicalOpenningFeatureGenerator();
+  virtual ~MorphologicalOpenningFeatureGenerator();
   void
-  PrintSelf(std::ostream & os, Indent indent) const override;
+  PrintSelf(std::ostream & os, Indent indent) const;
 
   /** Method invoked by the pipeline in order to trigger the computation of
    * the segmentation. */
   void
-  GenerateData() override;
+  GenerateData();
 
 private:
-  using InternalPixelType = unsigned char;
-  using InternalImageType = Image<InternalPixelType, Dimension>;
+  MorphologicalOpenningFeatureGenerator(const Self &); // purposely not implemented
+  void
+  operator=(const Self &); // purposely not implemented
 
-  using OutputPixelType = float;
-  using OutputImageType = Image<OutputPixelType, Dimension>;
+  typedef unsigned char                       InternalPixelType;
+  typedef Image<InternalPixelType, Dimension> InternalImageType;
 
-  using OutputImageSpatialObjectType = ImageSpatialObject<NDimension, OutputPixelType>;
+  typedef float                             OutputPixelType;
+  typedef Image<OutputPixelType, Dimension> OutputImageType;
 
-  using ThresholdFilterType = BinaryThresholdImageFilter<InputImageType, InternalImageType>;
-  using ThresholdFilterPointer = typename ThresholdFilterType::Pointer;
+  typedef ImageSpatialObject<NDimension, OutputPixelType> OutputImageSpatialObjectType;
 
-  using KernelType = BinaryBallStructuringElement<InternalPixelType, Dimension>;
-  using OpenningFilterType = BinaryMorphologicalOpeningImageFilter<InternalImageType, InternalImageType, KernelType>;
-  using OpenningFilterPointer = typename OpenningFilterType::Pointer;
+  typedef BinaryThresholdImageFilter<InputImageType, InternalImageType> ThresholdFilterType;
+  typedef typename ThresholdFilterType::Pointer                         ThresholdFilterPointer;
 
-  using VotingHoleFillingFilterType = VotingBinaryHoleFillFloodingImageFilter<InternalImageType, InternalImageType>;
-  using VotingHoleFillingFilterPointer = typename VotingHoleFillingFilterType::Pointer;
+  typedef BinaryBallStructuringElement<InternalPixelType, Dimension>                              KernelType;
+  typedef BinaryMorphologicalOpeningImageFilter<InternalImageType, InternalImageType, KernelType> OpenningFilterType;
+  typedef typename OpenningFilterType::Pointer                                                    OpenningFilterPointer;
 
-  using CastingFilterType = CastImageFilter<InternalImageType, OutputImageType>;
-  using CastingFilterPointer = typename CastingFilterType::Pointer;
+  typedef VotingBinaryHoleFillFloodingImageFilter<InternalImageType, InternalImageType> VotingHoleFillingFilterType;
+  typedef typename VotingHoleFillingFilterType::Pointer                                 VotingHoleFillingFilterPointer;
+
+  typedef CastImageFilter<InternalImageType, OutputImageType> CastingFilterType;
+  typedef typename CastingFilterType::Pointer                 CastingFilterPointer;
 
 
   ThresholdFilterPointer         m_ThresholdFilter;
@@ -134,7 +136,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#  include "itkMorphologicalOpeningFeatureGenerator.hxx"
+#  include "itkMorphologicalOpenningFeatureGenerator.hxx"
 #endif
 
 #endif
