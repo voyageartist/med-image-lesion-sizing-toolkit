@@ -10,4 +10,33 @@
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CO
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+#ifndef itkMorphologicalOpenningFeatureGenerator_hxx
+#define itkMorphologicalOpenningFeatureGenerator_hxx
+
+#include "itkProgressAccumulator.h"
+
+
+namespace itk
+{
+
+/**
+ * Constructor
+ */
+template <unsigned int NDimension>
+MorphologicalOpenningFeatureGenerator<NDimension>::MorphologicalOpenningFeatureGenerator()
+{
+  this->SetNumberOfRequiredInputs(1);
+  this->SetNumberOfRequiredOutputs(1);
+
+  this->m_ThresholdFilter = ThresholdFilterType::New();
+  this->m_OpenningFilter = OpenningFilterType::New();
+  this->m_VotingHoleFillingFilter = VotingHoleFillingFilterType::New();
+  this->m_CastingFilter = CastingFilterType::New();
+
+  this->m_ThresholdFilter->ReleaseDataFlagOn();
+  this->m_OpenningFilt
