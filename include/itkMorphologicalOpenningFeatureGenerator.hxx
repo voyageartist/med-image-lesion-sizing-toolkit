@@ -68,4 +68,50 @@ MorphologicalOpenningFeatureGenerator<NDimension>::SetInput(const SpatialObjectT
 
 template <unsigned int NDimension>
 const typename MorphologicalOpenningFeatureGenerator<NDimension>::SpatialObjectType *
-MorphologicalOpenningFeatureGenerat
+MorphologicalOpenningFeatureGenerator<NDimension>::GetFeature() const
+{
+  if (this->GetNumberOfOutputs() < 1)
+  {
+    return 0;
+  }
+
+  return static_cast<const SpatialObjectType *>(this->ProcessObject::GetOutput(0));
+}
+
+
+/*
+ * PrintSelf
+ */
+template <unsigned int NDimension>
+void
+MorphologicalOpenningFeatureGenerator<NDimension>::PrintSelf(std::ostream & os, Indent indent) const
+{
+  Superclass::PrintSelf(os, indent);
+  os << indent << "Lung threshold " << this->m_ThresholdFilter << std::endl;
+}
+
+
+/*
+ * Generate Data
+ */
+template <unsigned int NDimension>
+void
+MorphologicalOpenningFeatureGenerator<NDimension>::GenerateData()
+{
+  typename InputImageSpatialObjectType::ConstPointer inputObject =
+    dynamic_cast<const InputImageSpatialObjectType *>(this->ProcessObject::GetInput(0));
+
+  if (!inputObject)
+  {
+    itkExceptionMacro("Missing input spatial object");
+  }
+
+  const InputImageType * inputImage = inputObject->GetImage();
+
+  if (!inputImage)
+  {
+    itkExceptionMacro("Missing input image");
+  }
+
+  // Report progress.
+  ProgressAccu
