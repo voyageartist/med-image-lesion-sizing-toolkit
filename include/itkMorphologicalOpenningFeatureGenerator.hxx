@@ -39,4 +39,33 @@ MorphologicalOpenningFeatureGenerator<NDimension>::MorphologicalOpenningFeatureG
   this->m_CastingFilter = CastingFilterType::New();
 
   this->m_ThresholdFilter->ReleaseDataFlagOn();
-  this->m_OpenningFilt
+  this->m_OpenningFilter->ReleaseDataFlagOn();
+  this->m_VotingHoleFillingFilter->ReleaseDataFlagOn();
+  this->m_CastingFilter->ReleaseDataFlagOn();
+
+  typename OutputImageSpatialObjectType::Pointer outputObject = OutputImageSpatialObjectType::New();
+
+  this->ProcessObject::SetNthOutput(0, outputObject.GetPointer());
+
+  this->m_LungThreshold = -400;
+}
+
+
+/*
+ * Destructor
+ */
+template <unsigned int NDimension>
+MorphologicalOpenningFeatureGenerator<NDimension>::~MorphologicalOpenningFeatureGenerator()
+{}
+
+template <unsigned int NDimension>
+void
+MorphologicalOpenningFeatureGenerator<NDimension>::SetInput(const SpatialObjectType * spatialObject)
+{
+  // Process object is not const-correct so the const casting is required.
+  this->SetNthInput(0, const_cast<SpatialObjectType *>(spatialObject));
+}
+
+template <unsigned int NDimension>
+const typename MorphologicalOpenningFeatureGenerator<NDimension>::SpatialObjectType *
+MorphologicalOpenningFeatureGenerat
