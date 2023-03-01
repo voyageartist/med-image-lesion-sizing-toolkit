@@ -114,4 +114,25 @@ MorphologicalOpenningFeatureGenerator<NDimension>::GenerateData()
   }
 
   // Report progress.
-  ProgressAccu
+  ProgressAccumulator::Pointer progress = ProgressAccumulator::New();
+  progress->SetMiniPipelineFilter(this);
+  progress->RegisterInternalFilter(this->m_ThresholdFilter, 0.1);
+  progress->RegisterInternalFilter(this->m_OpenningFilter, 0.2);
+  progress->RegisterInternalFilter(this->m_VotingHoleFillingFilter, 0.6);
+  progress->RegisterInternalFilter(this->m_CastingFilter, 0.1);
+
+  this->m_ThresholdFilter->SetInput(inputImage);
+  this->m_OpenningFilter->SetInput(this->m_ThresholdFilter->GetOutput());
+  this->m_VotingHoleFillingFilter->SetInput(this->m_OpenningFilter->GetOutput());
+  this->m_CastingFilter->SetInput(this->m_VotingHoleFillingFilter->GetOutput());
+
+  this->m_ThresholdFilter->SetLowerThreshold(this->m_LungThreshold);
+  this->m_ThresholdFilter->SetUpperThreshold(3000);
+
+  this->m_ThresholdFilter->SetInsideValue(1.0);
+  this->m_ThresholdFilter->SetOutsideValue(0.0);
+
+
+  typename InternalImageType::SizeType ballManhattanRadius;
+
+  ballManhattanRadius.Fil
