@@ -135,4 +135,28 @@ MorphologicalOpenningFeatureGenerator<NDimension>::GenerateData()
 
   typename InternalImageType::SizeType ballManhattanRadius;
 
-  ballManhattanRadius.Fil
+  ballManhattanRadius.Fill(1);
+
+  KernelType                    ball;
+  typename KernelType::SizeType ballSize;
+  ballSize.Fill(1);
+  ball.SetRadius(ballSize);
+  ball.CreateStructuringElement();
+
+  this->m_OpenningFilter->SetKernel(ball);
+  this->m_OpenningFilter->SetBackgroundValue(0);
+  this->m_OpenningFilter->SetForegroundValue(1);
+
+  this->m_VotingHoleFillingFilter->SetRadius(ballManhattanRadius);
+  this->m_VotingHoleFillingFilter->SetBackgroundValue(0);
+  this->m_VotingHoleFillingFilter->SetForegroundValue(1);
+  this->m_VotingHoleFillingFilter->SetMajorityThreshold(1);
+  this->m_VotingHoleFillingFilter->SetMaximumNumberOfIterations(1000);
+
+  this->m_CastingFilter->Update();
+
+  std::cout << "Used " << this->m_VotingHoleFillingFilter->GetCurrentIterationNumber() << " iterations " << std::endl;
+  std::cout << "Changed " << this->m_VotingHoleFillingFilter->GetTotalNumberOfPixelsChanged() << " pixels "
+            << std::endl;
+
+  typename OutputImageType::Pointer outputImage = this->m_Cast
