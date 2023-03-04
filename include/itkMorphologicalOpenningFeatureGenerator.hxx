@@ -159,4 +159,16 @@ MorphologicalOpenningFeatureGenerator<NDimension>::GenerateData()
   std::cout << "Changed " << this->m_VotingHoleFillingFilter->GetTotalNumberOfPixelsChanged() << " pixels "
             << std::endl;
 
-  typename OutputImageType::Pointer outputImage = this->m_Cast
+  typename OutputImageType::Pointer outputImage = this->m_CastingFilter->GetOutput();
+
+  outputImage->DisconnectPipeline();
+
+  OutputImageSpatialObjectType * outputObject =
+    dynamic_cast<OutputImageSpatialObjectType *>(this->ProcessObject::GetOutput(0));
+
+  outputObject->SetImage(outputImage);
+}
+
+} // end namespace itk
+
+#endif
