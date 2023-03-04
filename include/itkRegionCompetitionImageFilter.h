@@ -44,3 +44,26 @@ class RegionCompetitionImageFilter : public ImageToImageFilter<TInputImage, TOut
 public:
   ITK_DISALLOW_COPY_AND_MOVE(RegionCompetitionImageFilter);
 
+  /** Standard class type alias. */
+  using Self = RegionCompetitionImageFilter;
+  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro(Self);
+
+  /** Run-time type information (and related methods).  */
+  itkTypeMacro(RegionCompetitionImageFilter, ImageToImageFilter);
+
+  using InputImageType = TInputImage;
+  using InputImagePointer = typename InputImageType::Pointer;
+  using InputImageConstPointer = typename InputImageType::ConstPointer;
+  using InputImageRegionType = typename InputImageType::RegionType;
+  using InputSizeType = typename InputImageType::SizeType;
+  using InputImagePixelType = typename InputImageType::PixelType;
+  using IndexType = typename InputImageType::IndexType;
+  using OffsetValueType = typename InputImageType::OffsetValueType;
+
+  using OutputImageType = TOutputImage;
+  using OutputImage
