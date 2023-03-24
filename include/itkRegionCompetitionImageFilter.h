@@ -66,4 +66,29 @@ public:
   using OffsetValueType = typename InputImageType::OffsetValueType;
 
   using OutputImageType = TOutputImage;
-  using OutputImage
+  using OutputImagePointer = typename OutputImageType::Pointer;
+  using OutputImageRegionType = typename OutputImageType::RegionType;
+  using OutputImagePixelType = typename OutputImageType::PixelType;
+
+
+  /** Image dimension constants */
+  static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
+  static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
+
+  /** Set/Get the maximum number of iterations that will be applied to the
+   * propagating front */
+  itkSetMacro(MaximumNumberOfIterations, unsigned int);
+  itkGetMacro(MaximumNumberOfIterations, unsigned int);
+
+  /** Returned the number of iterations used so far. */
+  itkGetMacro(CurrentIterationNumber, unsigned int);
+
+  /** Returned the number of pixels changed in total. */
+  itkGetMacro(TotalNumberOfPixelsChanged, unsigned int);
+
+  /** Input Labels */
+  void
+  SetInputLabels(const TOutputImage * inputLabelImage);
+
+#ifdef ITK_USE_CONCEPT_CHECKING
+  
