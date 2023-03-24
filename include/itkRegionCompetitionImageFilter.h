@@ -91,4 +91,29 @@ public:
   SetInputLabels(const TOutputImage * inputLabelImage);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
+  /** Begin concept checking */
+  itkConceptMacro(OutputEqualityComparableCheck, (Concept::EqualityComparable<OutputImagePixelType>));
+  itkConceptMacro(InputEqualityComparableCheck, (Concept::EqualityComparable<InputImagePixelType>));
+  itkConceptMacro(InputConvertibleToOutputCheck, (Concept::Convertible<InputImagePixelType, OutputImagePixelType>));
+  itkConceptMacro(SameDimensionCheck, (Concept::SameDimension<InputImageDimension, OutputImageDimension>));
+  itkConceptMacro(IntConvertibleToInputCheck, (Concept::Convertible<int, InputImagePixelType>));
+  itkConceptMacro(OutputOStreamWritableCheck, (Concept::OStreamWritable<OutputImagePixelType>));
+  /** End concept checking */
+#endif
+
+protected:
+  RegionCompetitionImageFilter();
+  ~RegionCompetitionImageFilter() override;
+
+  void
+  GenerateData() override;
+
+  void
+  PrintSelf(std::ostream & os, Indent indent) const override;
+
+private:
+  void
+  AllocateOutputImageWorkingMemory();
+
+  void
   
