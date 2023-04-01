@@ -116,4 +116,56 @@ private:
   AllocateOutputImageWorkingMemory();
 
   void
-  
+  AllocateFrontsWorkingMemory();
+
+  void
+  ComputeNumberOfInputLabels();
+
+  void
+  InitializeNeighborhood();
+
+  void
+  FindAllPixelsInTheBoundaryAndAddThemAsSeeds();
+
+  void
+  IterateFrontPropagations();
+
+  void
+  VisitAllSeedsAndTransitionTheirState();
+
+  void
+  PasteNewSeedValuesToOutputImage();
+
+  void
+  SwapSeedArrays();
+
+  void
+  ClearSecondSeedArray();
+
+  bool
+  TestForAvailabilityAtCurrentPixel() const;
+
+  void
+  PutCurrentPixelNeighborsIntoSeedArray();
+
+  void
+  ComputeArrayOfNeighborhoodBufferOffsets();
+
+  void
+  ComputeBirthThreshold();
+
+  itkSetMacro(CurrentPixelIndex, IndexType);
+  itkGetConstReferenceMacro(CurrentPixelIndex, IndexType);
+
+  using SeedArrayType = std::vector<IndexType>;
+
+  SeedArrayType * m_SeedArray1;
+  SeedArrayType * m_SeedArray2;
+
+  InputImageRegionType m_InternalRegion;
+
+  using SeedNewValuesArrayType = std::vector<OutputImagePixelType>;
+
+  SeedNewValuesArrayType * m_SeedsNewValues;
+
+  unsigned int m_CurrentIt
