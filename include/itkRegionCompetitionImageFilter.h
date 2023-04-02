@@ -168,4 +168,38 @@ private:
 
   SeedNewValuesArrayType * m_SeedsNewValues;
 
-  unsigned int m_CurrentIt
+  unsigned int m_CurrentIterationNumber;
+  unsigned int m_MaximumNumberOfIterations;
+  unsigned int m_NumberOfPixelsChangedInLastIteration;
+  unsigned int m_TotalNumberOfPixelsChanged;
+
+  IndexType m_CurrentPixelIndex;
+
+  //
+  // Variables used for addressing the Neighbors.
+  // This could be factorized into a helper class.
+  //
+  OffsetValueType m_OffsetTable[InputImageDimension + 1];
+
+  using NeighborOffsetArrayType = std::vector<OffsetValueType>;
+
+  NeighborOffsetArrayType m_NeighborBufferOffset;
+
+
+  //
+  // Helper cache variables
+  //
+  const InputImageType *  m_InputImage;
+  const OutputImageType * m_inputLabelsImage;
+  OutputImageType *       m_OutputImage;
+
+  using SeedMaskImageType = itk::Image<unsigned char, InputImageDimension>;
+  using SeedMaskImagePointer = typename SeedMaskImageType::Pointer;
+
+  SeedMaskImagePointer m_SeedsMask;
+
+  using NeighborhoodType = itk::Neighborhood<InputImagePixelType, InputImageDimension>;
+
+  NeighborhoodType m_Neighborhood;
+
+  mutable unsigned int m_
