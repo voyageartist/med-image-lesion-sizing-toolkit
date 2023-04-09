@@ -16,24 +16,26 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef itkSatoLocalStructureFeatureGenerator_h
-#define itkSatoLocalStructureFeatureGenerator_h
+#ifndef itkSatoVesselnessFeatureGenerator_h
+#define itkSatoVesselnessFeatureGenerator_h
 
 #include "itkFeatureGenerator.h"
 #include "itkImage.h"
 #include "itkImageSpatialObject.h"
+#include "itkHessian3DToVesselnessMeasureImageFilter.h"
 #include "itkHessianRecursiveGaussianImageFilter.h"
 #include "itkSymmetricSecondRankTensor.h"
-#include "itkSymmetricEigenAnalysisImageFilter.h"
-#include "itkLocalStructureImageFilter.h"
+#include "itkVesselEnhancingDiffusion3DImageFilter.h"
 
 namespace itk
 {
 
-/** \class SatoLocalStructureFeatureGenerator
- * \brief Generates a feature image by computing measures based on the Hessian Eigenvalues.
+/** \class SatoVesselnessFeatureGenerator
+ * \brief Generates a feature image by computing the Sato Vesselness measure of
+ * the input image.
  *
- * The typical use of this class would be to generate a map of {blobs, tubes, sheets}.
+ * The typical use of this class would be to generate the Vesselness-map needed
+ * by a Level Set filter to internally compute its speed image.
  *
  * SpatialObjects are used as inputs and outputs of this class.
  *
@@ -41,13 +43,13 @@ namespace itk
  * \ingroup LesionSizingToolkit
  */
 template <unsigned int NDimension>
-class ITK_TEMPLATE_EXPORT SatoLocalStructureFeatureGenerator : public FeatureGenerator<NDimension>
+class ITK_TEMPLATE_EXPORT SatoVesselnessFeatureGenerator : public FeatureGenerator<NDimension>
 {
 public:
-  ITK_DISALLOW_COPY_AND_MOVE(SatoLocalStructureFeatureGenerator);
+  ITK_DISALLOW_COPY_AND_MOVE(SatoVesselnessFeatureGenerator);
 
   /** Standard class type alias. */
-  using Self = SatoLocalStructureFeatureGenerator;
+  using Self = SatoVesselnessFeatureGenerator;
   using Superclass = FeatureGenerator<NDimension>;
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
@@ -56,7 +58,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(SatoLocalStructureFeatureGenerator, FeatureGenerator);
+  itkTypeMacro(SatoVesselnessFeatureGenerator, FeatureGenerator);
 
   /** Dimension of the space */
   static constexpr unsigned int Dimension = NDimension;
@@ -86,17 +88,22 @@ public:
   itkSetMacro(Sigma, double);
   itkGetMacro(Sigma, double);
 
-  /** Alpha value to be used in the Sato Vesselness filter. */
-  itkSetMacro(Alpha, double);
-  itkGetMacro(Alpha, double);
+  /** Alpha1 value to be used in the Sato Vesselness filter. */
+  itkSetMacro(Alpha1, double);
+  itkGetMacro(Alpha1, double);
 
-  /** Gamma value to be used in the Sato Vesselness filter. */
-  itkSetMacro(Gamma, double);
-  itkGetMacro(Gamma, double);
+  /** Alpha2 value to be used in the Sato Vesselness filter. */
+  itkSetMacro(Alpha2, double);
+  itkGetMacro(Alpha2, double);
+
+  /** Use vessel enhancing diffusion ? Defaults to false. */
+  itkSetMacro(UseVesselEnhancingDiffusion, bool);
+  itkGetMacro(UseVesselEnhancingDiffusion, bool);
+  itkBooleanMacro(UseVesselEnhancingDiffusion);
 
 protected:
-  SatoLocalStructureFeatureGenerator();
-  ~SatoLocalStructureFeatureGenerator() override;
+  SatoVesselnessFeatureGenerator();
+  ~SatoVesselnessFeatureGenerator() override;
   void
   PrintSelf(std::ostream & os, Indent indent) const override;
 
@@ -115,29 +122,23 @@ private:
   using OutputImageSpatialObjectType = ImageSpatialObject<NDimension, OutputPixelType>;
 
   using HessianFilterType = HessianRecursiveGaussianImageFilter<InputImageType>;
-  using HessianImageType = typename HessianFilterType::OutputImageType;
-  using HessianPixelType = typename HessianImageType::PixelType;
+  using VesselnessMeasureFilterType = Hessian3DToVesselnessMeasureImageFilter<InternalPixelType>;
+  using VesselEnhancingDiffusionFilterType = VesselEnhancingDiffusion3DImageFilter<InputPixelType, Dimension>;
 
-  using EigenValueArrayType = FixedArray<double, HessianPixelType::Dimension>;
-  using EigenValueImageType = Image<EigenValueArrayType, Dimension>;
-
-  using EigenAnalysisFilterType = SymmetricEigenAnalysisImageFilter<HessianImageType, EigenValueImageType>;
-
-  using LocalStructureFilterType = LocalStructureImageFilter<EigenValueImageType, OutputImageType>;
-
-  typename HessianFilterType::Pointer        m_HessianFilter;
-  typename EigenAnalysisFilterType::Pointer  m_EigenAnalysisFilter;
-  typename LocalStructureFilterType::Pointer m_LocalStructureFilter;
+  typename HessianFilterType::Pointer                  m_HessianFilter;
+  typename VesselnessMeasureFilterType::Pointer        m_VesselnessFilter;
+  typename VesselEnhancingDiffusionFilterType::Pointer m_VesselEnhancingDiffusionFilter;
 
   double m_Sigma;
-  double m_Alpha;
-  double m_Gamma;
+  double m_Alpha1;
+  double m_Alpha2;
+  bool   m_UseVesselEnhancingDiffusion;
 };
 
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#  include "itkSatoLocalStructureFeatureGenerator.hxx"
+#  include "itkSatoVesselnessFeatureGenerator.hxx"
 #endif
 
 #endif
