@@ -35,4 +35,42 @@ SatoVesselnessSigmoidFeatureGenerator<NDimension>::SatoVesselnessSigmoidFeatureG
   this->m_SigmoidFilter->ReleaseDataFlagOn();
 
   this->m_SigmoidAlpha = -1.0;
-  this->m_SigmoidBeta =
+  this->m_SigmoidBeta = 90.0;
+}
+
+
+/*
+ * Destructor
+ */
+template <unsigned int NDimension>
+SatoVesselnessSigmoidFeatureGenerator<NDimension>::~SatoVesselnessSigmoidFeatureGenerator() = default;
+
+
+/**
+ * PrintSelf
+ */
+template <unsigned int NDimension>
+void
+SatoVesselnessSigmoidFeatureGenerator<NDimension>::PrintSelf(std::ostream & os, Indent indent) const
+{
+  Superclass::PrintSelf(os, indent);
+  os << indent << "Sigmoid Alpha " << this->m_SigmoidAlpha << std::endl;
+  os << indent << "Sigmoid Beta " << this->m_SigmoidBeta << std::endl;
+}
+
+
+/*
+ * Generate Data
+ */
+template <unsigned int NDimension>
+void
+SatoVesselnessSigmoidFeatureGenerator<NDimension>::GenerateData()
+{
+  this->Superclass::GenerateData();
+
+  // Report progress. Actually, the superclass will report upto 1 in
+  // the superclass's generate data method. This will start again
+  // from 0, but that's ok. :)
+  ProgressAccumulator::Pointer progress = ProgressAccumulator::New();
+  progress->SetMiniPipelineFilter(this);
+  progress->Regi
