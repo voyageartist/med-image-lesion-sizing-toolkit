@@ -202,4 +202,13 @@ private:
 
   NeighborhoodType m_Neighborhood;
 
-  mutable unsigned int m_
+  mutable unsigned int m_NumberOfLabels;
+};
+
+} // end namespace itk
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#  include "itkRegionCompetitionImageFilter.hxx"
+#endif
+
+#endif
