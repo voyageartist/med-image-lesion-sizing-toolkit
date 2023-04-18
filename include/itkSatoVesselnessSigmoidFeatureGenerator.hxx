@@ -73,4 +73,33 @@ SatoVesselnessSigmoidFeatureGenerator<NDimension>::GenerateData()
   // from 0, but that's ok. :)
   ProgressAccumulator::Pointer progress = ProgressAccumulator::New();
   progress->SetMiniPipelineFilter(this);
-  progress->Regi
+  progress->RegisterInternalFilter(this->m_SigmoidFilter, 1.0);
+
+  //
+  // Take the output of the superclass, and do further processing on it.
+  //
+  typename OutputImageSpatialObjectType::Pointer outputObject =
+    dynamic_cast<OutputImageSpatialObjectType *>(this->GetInternalFeature());
+
+  const OutputImageType * inputImage = outputObject->GetImage();
+
+  this->m_SigmoidFilter->SetInput(inputImage);
+
+  this->m_SigmoidFilter->SetAlpha(this->m_SigmoidAlpha);
+  this->m_SigmoidFilter->SetBeta(this->m_SigmoidBeta);
+
+  this->m_SigmoidFilter->SetOutputMinimum(0.0);
+  this->m_SigmoidFilter->SetOutputMaximum(1.0);
+
+  this->m_SigmoidFilter->Update();
+
+  typename OutputImageType::Pointer outputImage = this->m_SigmoidFilter->GetOutput();
+
+  outputImage->DisconnectPipeline();
+
+  outputObject->SetImage(outputImage);
+}
+
+} // end namespace itk
+
+#endif
