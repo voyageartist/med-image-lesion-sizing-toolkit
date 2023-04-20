@@ -58,4 +58,36 @@ public:
   /** Dimension of the space */
   static constexpr unsigned int Dimension = NDimension;
 
-  /** Type of spatialObject that will be passed as input and output
+  /** Type of spatialObject that will be passed as input and output of this
+   * segmentation method. */
+  using SpatialObjectType = SpatialObject<NDimension>;
+  using SpatialObjectPointer = typename SpatialObjectType::Pointer;
+
+  /** Input data that will be used for generating the feature. */
+  using ProcessObject::SetInput;
+  void
+  SetInput(const SpatialObjectType * input);
+  const SpatialObjectType *
+  GetInput() const;
+
+  /** Input data that carries the feature in the form of a
+   * SpatialObject. */
+  void
+  SetFeature(const SpatialObjectType * feature);
+  const SpatialObjectType *
+  GetFeature() const;
+
+  /** Output segmentation represented as a SpatialObject. */
+  const SpatialObjectType *
+  GetOutput() const;
+
+  /** Returns the number of features that are expected by this Segmentation
+   * Module. This method will be overloaded in derived classes. */
+  unsigned int
+  GetExpectedNumberOfFeatures() const;
+
+protected:
+  SegmentationModule();
+  ~SegmentationModule() override;
+  void
+  PrintSelf(std::ostream & os, Indent indent
