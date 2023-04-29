@@ -90,4 +90,20 @@ protected:
   SegmentationModule();
   ~SegmentationModule() override;
   void
-  PrintSelf(std::ostream & os, Indent indent
+  PrintSelf(std::ostream & os, Indent indent) const override;
+
+  /* Derived classes MUST implement the "void  GenerateData ()" method */
+
+  /** Output segmentation represented as a SpatialObject. Non-const version
+   * only for internal use. */
+  SpatialObjectType *
+  GetInternalOutput();
+};
+
+} // end namespace itk
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#  include "itkSegmentationModule.hxx"
+#endif
+
+#endif
