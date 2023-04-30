@@ -11,4 +11,41 @@
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+#ifndef itkSegmentationModule_hxx
+#define itkSegmentationModule_hxx
+
+
+
+namespace itk
+{
+
+/**
+ * Constructor
+ */
+template <unsigned int NDimension>
+SegmentationModule<NDimension>::SegmentationModule()
+{
+  this->SetNumberOfRequiredOutputs(1);
+}
+
+
+/**
+ * Destructor
+ */
+template <unsigned int NDimension>
+SegmentationModule<NDimension>::~SegmentationModule() = default;
+
+template <unsigned int NDimension>
+void
+SegmentationModule<NDimension>::SetInput(const SpatialObjectType * spatialObject)
+{
+  // Process object is not const-correct so the const casting is required.
+  this->SetNthInput(0, const_cast<SpatialObjectType *>(spatialObject));
+}
+
+template <unsigned int NDimension>
+const typename SegmentationModule<NDimension>::SpatialObjectType *
