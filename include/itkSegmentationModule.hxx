@@ -78,4 +78,51 @@ SegmentationModule<NDimension>::GetFeature() const
 
 template <unsigned int NDimension>
 unsigned int
-SegmentationModule<NDimension>::GetExpectedNumber
+SegmentationModule<NDimension>::GetExpectedNumberOfFeatures() const
+{
+  return 1;
+}
+
+
+template <unsigned int NDimension>
+const typename SegmentationModule<NDimension>::SpatialObjectType *
+SegmentationModule<NDimension>::GetOutput() const
+{
+  if (this->GetNumberOfOutputs() < 1)
+  {
+    return nullptr;
+  }
+
+  return static_cast<const SpatialObjectType *>(this->ProcessObject::GetOutput(0));
+}
+
+
+/** This non-const version is intended only for the internal use in the derived
+ * classes. */
+template <unsigned int NDimension>
+typename SegmentationModule<NDimension>::SpatialObjectType *
+SegmentationModule<NDimension>::GetInternalOutput()
+{
+  if (this->GetNumberOfOutputs() < 1)
+  {
+    return 0;
+  }
+
+  return static_cast<SpatialObjectType *>(this->ProcessObject::GetOutput(0));
+}
+
+
+/*
+ * PrintSelf
+ */
+template <unsigned int NDimension>
+void
+SegmentationModule<NDimension>::PrintSelf(std::ostream & os, Indent indent) const
+{
+  Superclass::PrintSelf(os, indent);
+}
+
+
+} // end namespace itk
+
+#endif
