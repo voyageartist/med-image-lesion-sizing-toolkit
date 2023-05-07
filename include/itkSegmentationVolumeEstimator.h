@@ -20,4 +20,36 @@
 
 #include "itkImage.h"
 #include "itkImageSpatialObject.h"
-#
+#include "itkSimpleDataObjectDecorator.h"
+
+namespace itk
+{
+
+/** \class SegmentationVolumeEstimator
+ * \brief Class for estimating the volume of a segmentation stored in a SpatialObject
+ *
+ * This class is the base class for specific implementation of volume estimators.
+ *
+ * SpatialObjects are used as input of this class.
+ *
+ * \ingroup SpatialObjectFilters
+ * \ingroup LesionSizingToolkit
+ */
+template <unsigned int NDimension>
+class ITK_TEMPLATE_EXPORT SegmentationVolumeEstimator : public ProcessObject
+{
+public:
+  ITK_DISALLOW_COPY_AND_MOVE(SegmentationVolumeEstimator);
+
+  /** Standard class type alias. */
+  using Self = SegmentationVolumeEstimator;
+  using Superclass = ProcessObject;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+
+  /** This is an abstract class, therefore it doesn't need the itkNewMacro() */
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(SegmentationVolumeEstimator, FeatureGenerator);
+
+  /** Dimension of 
