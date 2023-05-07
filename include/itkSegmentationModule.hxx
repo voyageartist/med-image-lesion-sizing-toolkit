@@ -49,3 +49,33 @@ SegmentationModule<NDimension>::SetInput(const SpatialObjectType * spatialObject
 
 template <unsigned int NDimension>
 const typename SegmentationModule<NDimension>::SpatialObjectType *
+SegmentationModule<NDimension>::GetInput() const
+{
+  // Process object is not const-correct so the const casting is required.
+  const auto * input = dynamic_cast<const SpatialObjectType *>(this->ProcessObject::GetInput(0));
+  return input;
+}
+
+
+template <unsigned int NDimension>
+void
+SegmentationModule<NDimension>::SetFeature(const SpatialObjectType * spatialObject)
+{
+  // Process object is not const-correct so the const casting is required.
+  this->SetNthInput(1, const_cast<SpatialObjectType *>(spatialObject));
+}
+
+
+template <unsigned int NDimension>
+const typename SegmentationModule<NDimension>::SpatialObjectType *
+SegmentationModule<NDimension>::GetFeature() const
+{
+  // Process object is not const-correct so the const casting is required.
+  const auto * feature = dynamic_cast<const SpatialObjectType *>(this->ProcessObject::GetInput(1));
+  return feature;
+}
+
+
+template <unsigned int NDimension>
+unsigned int
+SegmentationModule<NDimension>::GetExpectedNumber
