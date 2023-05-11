@@ -74,4 +74,29 @@ public:
   /** Return the computed Volume. The volume units will be relative to the
    * spacing units used by the input spatial object. For example, if the input
    * spatial object is using millimeters as the units of spacing then the units
-   * of the volume computed in this class will be cubic millimete
+   * of the volume computed in this class will be cubic millimeters. */
+  RealType
+  GetVolume() const;
+  const RealObjectType *
+  GetVolumeOutput() const;
+
+
+protected:
+  SegmentationVolumeEstimator();
+  ~SegmentationVolumeEstimator() override;
+  void
+  PrintSelf(std::ostream & os, Indent indent) const override;
+
+  /** Method invoked by the pipeline in order to trigger the computation of
+   * the segmentation. */
+  void
+  GenerateData() override;
+};
+
+} // end namespace itk
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#  include "itkSegmentationVolumeEstimator.hxx"
+#endif
+
+#endif
