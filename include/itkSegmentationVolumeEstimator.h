@@ -52,4 +52,26 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(SegmentationVolumeEstimator, FeatureGenerator);
 
-  /** Dimension of 
+  /** Dimension of the space */
+  static constexpr unsigned int Dimension = NDimension;
+
+  /** Type of spatialObject that will be passed as input and output of this
+   * segmentation method. */
+  using SpatialObjectType = SpatialObject<NDimension>;
+  using SpatialObjectPointer = typename SpatialObjectType::Pointer;
+  using SpatialObjectConstPointer = typename SpatialObjectType::ConstPointer;
+
+  /** Set the input SpatialObject representing the segmentation whose volume
+   * will be estimated */
+  using ProcessObject::SetInput;
+  void
+  SetInput(const SpatialObjectType * inputSpatialObject);
+
+  /** Type of DataObjects used for scalar outputs */
+  using RealType = double;
+  using RealObjectType = SimpleDataObjectDecorator<RealType>;
+
+  /** Return the computed Volume. The volume units will be relative to the
+   * spacing units used by the input spatial object. For example, if the input
+   * spatial object is using millimeters as the units of spacing then the units
+   * of the volume computed in this class will be cubic millimete
