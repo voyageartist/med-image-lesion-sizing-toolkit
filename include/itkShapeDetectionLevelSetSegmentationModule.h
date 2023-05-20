@@ -58,4 +58,30 @@ public:
   /** Type of spatialObject that will be passed as input and output of this
    * segmentation method. */
   using SpatialObjectType = typename Superclass::SpatialObjectType;
-  using SpatialObjectPointer = typen
+  using SpatialObjectPointer = typename Superclass::SpatialObjectPointer;
+
+  /** Types of images and spatial objects inherited from the superclass. */
+  using OutputPixelType = typename Superclass::OutputPixelType;
+  using InputImageType = typename Superclass::InputImageType;
+  using FeatureImageType = typename Superclass::FeatureImageType;
+  using OutputImageType = typename Superclass::OutputImageType;
+  using InputSpatialObjectType = typename Superclass::InputSpatialObjectType;
+  using FeatureSpatialObjectType = typename Superclass::FeatureSpatialObjectType;
+  using OutputSpatialObjectType = typename Superclass::OutputSpatialObjectType;
+
+
+protected:
+  ShapeDetectionLevelSetSegmentationModule();
+  ~ShapeDetectionLevelSetSegmentationModule() override;
+  void
+  PrintSelf(std::ostream & os, Indent indent) const override;
+
+  /** Method invoked by the pipeline in order to trigger the computation of
+   * the segmentation. */
+  void
+  GenerateData() override;
+};
+
+} // end namespace itk
+
+#ifndef ITK_MANU
