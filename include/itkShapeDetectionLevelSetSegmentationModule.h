@@ -34,4 +34,28 @@ namespace itk
  * \ingroup LesionSizingToolkit
  */
 template <unsigned int NDimension>
-class ITK_TEMPLATE_EXPOR
+class ITK_TEMPLATE_EXPORT ShapeDetectionLevelSetSegmentationModule
+  : public SinglePhaseLevelSetSegmentationModule<NDimension>
+{
+public:
+  ITK_DISALLOW_COPY_AND_MOVE(ShapeDetectionLevelSetSegmentationModule);
+
+  /** Standard class type alias. */
+  using Self = ShapeDetectionLevelSetSegmentationModule;
+  using Superclass = SinglePhaseLevelSetSegmentationModule<NDimension>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro(Self);
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(ShapeDetectionLevelSetSegmentationModule, SinglePhaseLevelSetSegmentationModule);
+
+  /** Dimension of the space */
+  static constexpr unsigned int Dimension = NDimension;
+
+  /** Type of spatialObject that will be passed as input and output of this
+   * segmentation method. */
+  using SpatialObjectType = typename Superclass::SpatialObjectType;
+  using SpatialObjectPointer = typen
