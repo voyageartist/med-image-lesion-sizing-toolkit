@@ -84,4 +84,8 @@ protected:
 
 } // end namespace itk
 
-#ifndef ITK_MANU
+#ifndef ITK_MANUAL_INSTANTIATION
+#  include "itkShapeDetectionLevelSetSegmentationModule.hxx"
+#endif
+
+#endif
