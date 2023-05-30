@@ -15,4 +15,48 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef itkShapeDetectionLevelSetSegment
+#ifndef itkShapeDetectionLevelSetSegmentationModule_hxx
+#define itkShapeDetectionLevelSetSegmentationModule_hxx
+
+#include "itkShapeDetectionLevelSetImageFilter.h"
+
+
+namespace itk
+{
+
+
+/**
+ * Constructor
+ */
+template <unsigned int NDimension>
+ShapeDetectionLevelSetSegmentationModule<NDimension>::ShapeDetectionLevelSetSegmentationModule() = default;
+
+
+/**
+ * Destructor
+ */
+template <unsigned int NDimension>
+ShapeDetectionLevelSetSegmentationModule<NDimension>::~ShapeDetectionLevelSetSegmentationModule() = default;
+
+
+/**
+ * PrintSelf
+ */
+template <unsigned int NDimension>
+void
+ShapeDetectionLevelSetSegmentationModule<NDimension>::PrintSelf(std::ostream & os, Indent indent) const
+{
+  Superclass::PrintSelf(os, indent);
+}
+
+
+/**
+ * Generate Data
+ */
+template <unsigned int NDimension>
+void
+ShapeDetectionLevelSetSegmentationModule<NDimension>::GenerateData()
+{
+  using FilterType = ShapeDetectionLevelSetImageFilter<InputImageType, FeatureImageType, OutputPixelType>;
+
+  
