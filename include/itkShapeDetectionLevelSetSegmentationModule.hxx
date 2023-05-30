@@ -80,3 +80,11 @@ ShapeDetectionLevelSetSegmentationModule<NDimension>::GenerateData()
   std::cout << "Max. no. iterations: " << filter->GetNumberOfIterations() << std::endl;
   std::cout << "Max. RMS error: " << filter->GetMaximumRMSError() << std::endl;
   std::cout << "No. elpased iterations: " << filter->GetElapsedIterations() << std::endl;
+  std::cout << "RMS change: " << filter->GetRMSChange() << std::endl;
+
+  this->PackOutputImageInOutputSpatialObject(filter->GetOutput());
+}
+
+} // end namespace itk
+
+#endif
