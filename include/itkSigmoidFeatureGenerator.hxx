@@ -53,4 +53,39 @@ SigmoidFeatureGenerator<NDimension>::~SigmoidFeatureGenerator() = default;
 
 template <unsigned int NDimension>
 void
-SigmoidFeat
+SigmoidFeatureGenerator<NDimension>::SetInput(const SpatialObjectType * spatialObject)
+{
+  // Process object is not const-correct so the const casting is required.
+  this->SetNthInput(0, const_cast<SpatialObjectType *>(spatialObject));
+}
+
+template <unsigned int NDimension>
+const typename SigmoidFeatureGenerator<NDimension>::SpatialObjectType *
+SigmoidFeatureGenerator<NDimension>::GetFeature() const
+{
+  return static_cast<const SpatialObjectType *>(this->ProcessObject::GetOutput(0));
+}
+
+
+/*
+ * PrintSelf
+ */
+template <unsigned int NDimension>
+void
+SigmoidFeatureGenerator<NDimension>::PrintSelf(std::ostream & os, Indent indent) const
+{
+  Superclass::PrintSelf(os, indent);
+}
+
+
+/*
+ * Generate Data
+ */
+template <unsigned int NDimension>
+void
+SigmoidFeatureGenerator<NDimension>::GenerateData()
+{
+  // Report progress.
+  ProgressAccumulator::Pointer progress = ProgressAccumulator::New();
+  progress->SetMiniPipelineFilter(this);
+  progress->RegisterInternalFilter(this->m_SigmoidFilter, 1.0);
