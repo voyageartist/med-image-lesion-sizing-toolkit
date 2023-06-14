@@ -89,3 +89,34 @@ SigmoidFeatureGenerator<NDimension>::GenerateData()
   ProgressAccumulator::Pointer progress = ProgressAccumulator::New();
   progress->SetMiniPipelineFilter(this);
   progress->RegisterInternalFilter(this->m_SigmoidFilter, 1.0);
+
+  typename InputImageSpatialObjectType::ConstPointer inputObject =
+    dynamic_cast<const InputImageSpatialObjectType *>(this->ProcessObject::GetInput(0));
+
+  if (!inputObject)
+  {
+    itkExceptionMacro("Missing input spatial object or incorrect type");
+  }
+
+  const InputImageType * inputImage = inputObject->GetImage();
+
+  if (!inputImage)
+  {
+    itkExceptionMacro("Missing input image");
+  }
+
+  this->m_SigmoidFilter->SetInput(inputImage);
+  this->m_SigmoidFilter->SetAlpha(this->m_Alpha);
+  this->m_SigmoidFilter->SetBeta(this->m_Beta);
+  this->m_SigmoidFilter->SetOutputMinimum(0.0);
+  this->m_SigmoidFilter->SetOutputMaximum(1.0);
+
+  this->m_SigmoidFilter->Update();
+
+  typename OutputImageType::Pointer outputImage = this->m_SigmoidFilter->GetOutput();
+
+  outputImage->DisconnectPipeline();
+
+  auto * outputObject = dynamic_cast<OutputImageSpatialObjectType *>(this->ProcessObject::GetOutput(0));
+
+  outputObject->SetImage(outputImage);
