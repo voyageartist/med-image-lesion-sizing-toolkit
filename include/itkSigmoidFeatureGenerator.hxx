@@ -120,3 +120,8 @@ SigmoidFeatureGenerator<NDimension>::GenerateData()
   auto * outputObject = dynamic_cast<OutputImageSpatialObjectType *>(this->ProcessObject::GetOutput(0));
 
   outputObject->SetImage(outputImage);
+}
+
+} // end namespace itk
+
+#endif
