@@ -422,3 +422,317 @@ VesselEnhancingDiffusion3DImageFilter<PixelType, NDimension>::MaxVesselResponse(
 
   m_Dxy = PrecisionImageType::New();
   m_Dxy->SetOrigin(im->GetOrigin());
+  m_Dxy->SetSpacing(im->GetSpacing());
+  m_Dxy->SetDirection(im->GetDirection());
+  m_Dxy->SetRegions(im->GetLargestPossibleRegion());
+  m_Dxy->Allocate();
+  m_Dxy->FillBuffer(NumericTraits<Precision>::Zero);
+
+  m_Dxz = PrecisionImageType::New();
+  m_Dxz->SetOrigin(im->GetOrigin());
+  m_Dxz->SetSpacing(im->GetSpacing());
+  m_Dxz->SetDirection(im->GetDirection());
+  m_Dxz->SetRegions(im->GetLargestPossibleRegion());
+  m_Dxz->Allocate();
+  m_Dxz->FillBuffer(NumericTraits<Precision>::Zero);
+
+  m_Dyy = PrecisionImageType::New();
+  m_Dyy->SetOrigin(im->GetOrigin());
+  m_Dyy->SetSpacing(im->GetSpacing());
+  m_Dyy->SetDirection(im->GetDirection());
+  m_Dyy->SetRegions(im->GetLargestPossibleRegion());
+  m_Dyy->Allocate();
+  m_Dyy->FillBuffer(NumericTraits<Precision>::One);
+
+  m_Dyz = PrecisionImageType::New();
+  m_Dyz->SetOrigin(im->GetOrigin());
+  m_Dyz->SetSpacing(im->GetSpacing());
+  m_Dyz->SetDirection(im->GetDirection());
+  m_Dyz->SetRegions(im->GetLargestPossibleRegion());
+  m_Dyz->Allocate();
+  m_Dyz->FillBuffer(NumericTraits<Precision>::Zero);
+
+  m_Dzz = PrecisionImageType::New();
+  m_Dzz->SetOrigin(im->GetOrigin());
+  m_Dzz->SetSpacing(im->GetSpacing());
+  m_Dzz->SetDirection(im->GetDirection());
+  m_Dzz->SetRegions(im->GetLargestPossibleRegion());
+  m_Dzz->Allocate();
+  m_Dzz->FillBuffer(NumericTraits<Precision>::One);
+
+
+  // create temp vesselness image to store maxvessel
+  typename PrecisionImageType::Pointer vi = PrecisionImageType::New();
+
+  vi->SetOrigin(im->GetOrigin());
+  vi->SetSpacing(im->GetSpacing());
+  vi->SetDirection(im->GetDirection());
+  vi->SetRegions(im->GetLargestPossibleRegion());
+  vi->Allocate();
+  vi->FillBuffer(NumericTraits<Precision>::Zero);
+
+
+  for (float & m_Scale : m_Scales)
+  {
+    using HessianType = HessianRecursiveGaussianImageFilter<PrecisionImageType>;
+    typename HessianType::Pointer hessian = HessianType::New();
+    hessian->SetInput(im);
+    hessian->SetNormalizeAcrossScale(true);
+    hessian->SetSigma(m_Scale);
+    hessian->Update();
+
+    ImageRegionIterator<PrecisionImageType> itxx(m_Dxx, m_Dxx->GetLargestPossibleRegion());
+    ImageRegionIterator<PrecisionImageType> itxy(m_Dxy, m_Dxy->GetLargestPossibleRegion());
+    ImageRegionIterator<PrecisionImageType> itxz(m_Dxz, m_Dxz->GetLargestPossibleRegion());
+    ImageRegionIterator<PrecisionImageType> ityy(m_Dyy, m_Dyy->GetLargestPossibleRegion());
+    ImageRegionIterator<PrecisionImageType> ityz(m_Dyz, m_Dyz->GetLargestPossibleRegion());
+    ImageRegionIterator<PrecisionImageType> itzz(m_Dzz, m_Dzz->GetLargestPossibleRegion());
+    ImageRegionIterator<PrecisionImageType> vit(vi, vi->GetLargestPossibleRegion());
+
+    ImageRegionConstIterator<typename HessianType::OutputImageType> hit(
+      hessian->GetOutput(), hessian->GetOutput()->GetLargestPossibleRegion());
+
+    for (itxx.GoToBegin(),
+         itxy.GoToBegin(),
+         itxz.GoToBegin(),
+         ityy.GoToBegin(),
+         ityz.GoToBegin(),
+         itzz.GoToBegin(),
+         vit.GoToBegin(),
+         hit.GoToBegin();
+         !vit.IsAtEnd();
+         ++itxx, ++itxy, ++itxz, ++ityy, ++ityz, ++itzz, ++hit, ++vit)
+    {
+      vnl_matrix<Precision> H(3, 3);
+
+      H(0, 0) = hit.Value()(0, 0);
+      H(0, 1) = H(1, 0) = hit.Value()(0, 1);
+      H(0, 2) = H(2, 0) = hit.Value()(0, 2);
+      H(1, 1) = hit.Value()(1, 1);
+      H(1, 2) = H(2, 1) = hit.Value()(1, 2);
+      H(2, 2) = hit.Value()(2, 2);
+
+      vnl_symmetric_eigensystem<Precision> ES(H);
+      vnl_vector<Precision>                ev(3);
+
+      ev[0] = ES.get_eigenvalue(0);
+      ev[1] = ES.get_eigenvalue(1);
+      ev[2] = ES.get_eigenvalue(2);
+
+      if (itk::Math::abs(ev[0]) > itk::Math::abs(ev[1]))
+        std::swap(ev[0], ev[1]);
+      if (itk::Math::abs(ev[1]) > itk::Math::abs(ev[2]))
+        std::swap(ev[1], ev[2]);
+      if (itk::Math::abs(ev[0]) > itk::Math::abs(ev[1]))
+        std::swap(ev[0], ev[1]);
+
+      const Precision vesselness = VesselnessFunction3D(ev[0], ev[1], ev[2]);
+
+      if (vesselness > 0 && vesselness > vit.Value())
+      {
+        vit.Value() = vesselness;
+
+        itxx.Value() = hit.Value()(0, 0);
+        itxy.Value() = hit.Value()(0, 1);
+        itxz.Value() = hit.Value()(0, 2);
+        ityy.Value() = hit.Value()(1, 1);
+        ityz.Value() = hit.Value()(1, 2);
+        itzz.Value() = hit.Value()(2, 2);
+      }
+    }
+  }
+}
+
+// vesselnessfunction
+template <typename PixelType, unsigned int NDimension>
+typename VesselEnhancingDiffusion3DImageFilter<PixelType, NDimension>::Precision
+VesselEnhancingDiffusion3DImageFilter<PixelType, NDimension>::VesselnessFunction3D(const Precision l1,
+                                                                                   const Precision l2,
+                                                                                   const Precision l3)
+{
+  Precision vesselness;
+  if ((m_DarkObjectLightBackground && ((l2 <= 0) || (l3 <= 0))) ||
+      (!m_DarkObjectLightBackground && ((l2 >= 0) || (l3 >= 0))))
+  {
+    vesselness = NumericTraits<Precision>::Zero;
+  }
+  else
+  {
+    const Precision smoothC = 1E-5;
+
+    const Precision va2 = 2.0 * m_Alpha * m_Alpha;
+    const Precision vb2 = 2.0 * m_Beta * m_Beta;
+    const Precision vc2 = 2.0 * m_Gamma * m_Gamma;
+
+    const Precision Ra2 = (l2 * l2) / (l3 * l3);
+    const Precision Rb2 = (l1 * l1) / itk::Math::abs(l2 * l3);
+    const Precision S2 = (l1 * l1) + (l2 * l2) + (l3 * l3);
+    const Precision T = std::exp(-(2 * smoothC * smoothC) / (itk::Math::abs(l2) * l3 * l3));
+
+    vesselness = T * (1.0 - std::exp(-Ra2 / va2)) * std::exp(-Rb2 / vb2) * (1.0 - std::exp(-S2 / vc2));
+  }
+
+  return vesselness;
+}
+
+// diffusiontensor
+template <typename PixelType, unsigned int NDimension>
+void
+VesselEnhancingDiffusion3DImageFilter<PixelType, NDimension>::DiffusionTensor()
+{
+  ImageRegionIterator<PrecisionImageType> itxx(m_Dxx, m_Dxx->GetLargestPossibleRegion());
+  ImageRegionIterator<PrecisionImageType> itxy(m_Dxy, m_Dxy->GetLargestPossibleRegion());
+  ImageRegionIterator<PrecisionImageType> itxz(m_Dxz, m_Dxz->GetLargestPossibleRegion());
+  ImageRegionIterator<PrecisionImageType> ityy(m_Dyy, m_Dyy->GetLargestPossibleRegion());
+  ImageRegionIterator<PrecisionImageType> ityz(m_Dyz, m_Dyz->GetLargestPossibleRegion());
+  ImageRegionIterator<PrecisionImageType> itzz(m_Dzz, m_Dzz->GetLargestPossibleRegion());
+
+  for (itxx.GoToBegin(), itxy.GoToBegin(), itxz.GoToBegin(), ityy.GoToBegin(), ityz.GoToBegin(), itzz.GoToBegin();
+       !itxx.IsAtEnd();
+       ++itxx, ++itxy, ++itxz, ++ityy, ++ityz, ++itzz)
+  {
+    vnl_matrix<Precision> H(3, 3);
+    H(0, 0) = itxx.Value();
+    H(0, 1) = H(1, 0) = itxy.Value();
+    H(0, 2) = H(2, 0) = itxz.Value();
+    H(1, 1) = ityy.Value();
+    H(1, 2) = H(2, 1) = ityz.Value();
+    H(2, 2) = itzz.Value();
+
+    vnl_symmetric_eigensystem<Precision> ES(H);
+
+    vnl_matrix<Precision> EV(3, 3);
+    EV.set_column(0, ES.get_eigenvector(0));
+    EV.set_column(1, ES.get_eigenvector(1));
+    EV.set_column(2, ES.get_eigenvector(2));
+
+    vnl_vector<Precision> ev(3);
+    ev[0] = ES.get_eigenvalue(0);
+    ev[1] = ES.get_eigenvalue(1);
+    ev[2] = ES.get_eigenvalue(2);
+
+    if (itk::Math::abs(ev[0]) > itk::Math::abs(ev[1]))
+      std::swap(ev[0], ev[1]);
+    if (itk::Math::abs(ev[1]) > itk::Math::abs(ev[2]))
+      std::swap(ev[1], ev[2]);
+    if (itk::Math::abs(ev[0]) > itk::Math::abs(ev[1]))
+      std::swap(ev[0], ev[1]);
+
+    const Precision       V = VesselnessFunction3D(ev[0], ev[1], ev[2]);
+    vnl_vector<Precision> evn(3);
+
+    // adjusting eigenvalues
+    // static_cast required to prevent error with gcc 4.1.2
+    evn[0] = 1.0 + (m_Epsilon - 1.0) * std::pow(V, static_cast<Precision>(1.0 / m_Sensitivity));
+    evn[1] = 1.0 + (m_Epsilon - 1.0) * std::pow(V, static_cast<Precision>(1.0 / m_Sensitivity));
+    evn[2] = 1.0 + (m_Omega - 1.0) * std::pow(V, static_cast<Precision>(1.0 / m_Sensitivity));
+
+    vnl_matrix<Precision> LAM(3, 3);
+    LAM.fill(0);
+    LAM(0, 0) = evn[0];
+    LAM(1, 1) = evn[1];
+    LAM(2, 2) = evn[2];
+
+    const vnl_matrix<Precision> HN = EV * LAM * EV.transpose();
+
+    itxx.Value() = HN(0, 0);
+    itxy.Value() = HN(0, 1);
+    itxz.Value() = HN(0, 2);
+    ityy.Value() = HN(1, 1);
+    ityz.Value() = HN(1, 2);
+    itzz.Value() = HN(2, 2);
+  }
+}
+
+// generatedata
+template <typename PixelType, unsigned int NDimension>
+void
+VesselEnhancingDiffusion3DImageFilter<PixelType, NDimension>::GenerateData()
+{
+  if (m_Verbose)
+  {
+    std::cout << std::endl << "begin vesselenhancingdiffusion3Dimagefilter ... " << std::endl;
+  }
+
+  using MinMaxType = MinimumMaximumImageFilter<ImageType>;
+  typename MinMaxType::Pointer minmax = MinMaxType::New();
+
+  minmax->SetInput(this->GetInput());
+  minmax->Update();
+
+  const typename ImageType::SpacingType ispacing = this->GetInput()->GetSpacing();
+  const Precision                       htmax =
+    0.5 / (1.0 / (ispacing[0] * ispacing[0]) + 1.0 / (ispacing[1] * ispacing[1]) + 1.0 / (ispacing[2] * ispacing[2]));
+
+  if (m_TimeStep == NumericTraits<Precision>::Zero)
+  {
+    m_TimeStep = htmax;
+  }
+
+  if (m_TimeStep > htmax)
+  {
+    std::cerr << "the time step size is too large!" << std::endl;
+    this->AllocateOutputs();
+    return;
+  }
+
+  if (m_Verbose)
+  {
+    std::cout << "min/max             \t" << minmax->GetMinimum() << " " << minmax->GetMaximum() << std::endl;
+    std::cout << "iterations/timestep \t" << m_Iterations << " " << m_TimeStep << std::endl;
+    std::cout << "recalc v            \t" << m_RecalculateVesselness << std::endl;
+    std::cout << "scales              \t";
+    for (float m_Scale : m_Scales)
+    {
+      std::cout << m_Scale << " ";
+    }
+    std::cout << std::endl;
+    std::cout << "alpha/beta/gamma    \t" << m_Alpha << " " << m_Beta << " " << m_Gamma << std::endl;
+    std::cout << "eps/omega/sens      \t" << m_Epsilon << " " << m_Omega << " " << m_Sensitivity << std::endl;
+  }
+
+  // cast to precision
+  using CT = CastImageFilter<ImageType, PrecisionImageType>;
+  typename CT::Pointer cast = CT::New();
+  cast->SetInput(this->GetInput());
+  cast->Update();
+
+  typename PrecisionImageType::Pointer ci = cast->GetOutput();
+
+
+  if (m_Verbose)
+  {
+    std::cout << "start algorithm ... " << std::endl;
+  }
+
+  for (m_CurrentIteration = 1; m_CurrentIteration <= m_Iterations; m_CurrentIteration++)
+  {
+    VED3DSingleIteration(ci);
+  }
+
+  using MMT = MinimumMaximumImageFilter<PrecisionImageType>;
+  typename MMT::Pointer mm = MMT::New();
+  mm->SetInput(ci);
+  mm->Update();
+
+  if (m_Verbose)
+  {
+    std::cout << std::endl;
+    std::cout << "min/max             \t" << mm->GetMinimum() << " " << mm->GetMaximum() << std::endl;
+    std::cout << "end vesselenhancingdiffusion3Dimagefilter" << std::endl;
+  }
+
+  // cast back to pixeltype
+  this->AllocateOutputs();
+  using CTI = CastImageFilter<PrecisionImageType, ImageType>;
+  typename CTI::Pointer casti = CTI::New();
+  casti->SetInput(ci);
+  casti->GraftOutput(this->GetOutput());
+  casti->Update();
+  this->GraftOutput(casti->GetOutput());
+}
+
+
+} // end namespace itk
+
+#endif
