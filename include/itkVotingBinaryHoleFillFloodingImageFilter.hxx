@@ -402,3 +402,68 @@ VotingBinaryHoleFillFloodingImageFilter<TInputImage, TOutputImage>::PutCurrentPi
 template <typename TInputImage, typename TOutputImage>
 unsigned int
 VotingBinaryHoleFillFloodingImageFilter<TInputImage, TOutputImage>::GetNeighborhoodSize() const
+{
+  return this->m_Neighborhood.Size();
+}
+
+
+template <typename TInputImage, typename TOutputImage>
+void
+VotingBinaryHoleFillFloodingImageFilter<TInputImage, TOutputImage>::ComputeArrayOfNeighborhoodBufferOffsets()
+{
+  //
+  // Copy the offsets from the Input image.
+  // We assume that they are the same for the output image.
+  //
+  const size_t sizeOfOffsetTableInBytes = (InputImageDimension + 1) * sizeof(unsigned long);
+
+  memcpy(this->m_OffsetTable, this->m_OutputImage->GetOffsetTable(), sizeOfOffsetTableInBytes);
+
+
+  //
+  // Allocate the proper amount of buffer offsets.
+  //
+  const unsigned int neighborhoodSize = this->m_Neighborhood.Size();
+
+  this->m_NeighborBufferOffset.resize(neighborhoodSize);
+
+
+  //
+  // Visit the offset of each neighbor in Index space and convert it to linear
+  // buffer offsets that can be used for pixel access
+  //
+  using NeighborOffsetType = typename NeighborhoodType::OffsetType;
+
+  for (unsigned int i = 0; i < neighborhoodSize; i++)
+  {
+    NeighborOffsetType offset = this->m_Neighborhood.GetOffset(i);
+
+    signed int bufferOffset = 0; // must be a signed number
+
+    for (unsigned int d = 0; d < InputImageDimension; d++)
+    {
+      bufferOffset += offset[d] * this->m_OffsetTable[d];
+    }
+    this->m_NeighborBufferOffset[i] = bufferOffset;
+  }
+}
+
+template <typename TInputImage, typename TOutputImage>
+void
+VotingBinaryHoleFillFloodingImageFilter<TInputImage, TOutputImage>::ComputeBirthThreshold()
+{
+  const unsigned int neighborhoodSize = this->GetNeighborhoodSize();
+
+  // Take the number of neighbors, discount the central pixel, and take half of them.
+  auto threshold = static_cast<unsigned int>((neighborhoodSize - 1) / 2.0);
+
+  // add the majority threshold.
+  threshold += this->GetMajorityThreshold();
+
+  // Set that number as the Birth Threshold
+  this->SetBirthThreshold(threshold);
+}
+
+} // end namespace itk
+
+#endif
