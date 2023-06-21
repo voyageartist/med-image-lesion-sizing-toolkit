@@ -49,4 +49,30 @@ public:
 
   /** Standard class type alias. */
   using Self = WeightedSumFeatureAggregator;
-  using Superclass = FeatureAggregator<NDi
+  using Superclass = FeatureAggregator<NDimension>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro(Self);
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(WeightedSumFeatureAggregator, FeatureAggregator);
+
+  /** Dimension of the space */
+  static constexpr unsigned int Dimension = NDimension;
+
+  /** Add the weight that will be used to multiply the corresponding feature
+   * when computing the weighted sum. */
+  void virtual AddWeight(double weight);
+
+  /** Type of the image and specific SpatialObject produced as output */
+  using OutputPixelType = typename Superclass::OutputPixelType;
+  using OutputImageType = typename Superclass::OutputImageType;
+  using OutputImageSpatialObjectType = typename Superclass::OutputImageSpatialObjectType;
+
+protected:
+  WeightedSumFeatureAggregator();
+  ~WeightedSumFeatureAggregator() override;
+  void
+  PrintSelf(std::ostream & os, Indent indent) cons
