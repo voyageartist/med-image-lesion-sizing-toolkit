@@ -24,4 +24,29 @@ namespace itk
 {
 
 /** \class WeightedSumFeatureAggregator
- * \b
+ * \brief Class for combining multiple features into a single one by computing
+ * a pixel-wise weighted sum that is normalized to produce a number between 0
+ * and 1.
+ *
+ * This class generates a new feature object containing an image that is
+ * computed as the pixel-wise weighted sum of all the input feature images.
+ * The user must provide the weight to be used.
+ *
+ * \warning This class assumes that all the images have the same: origin,
+ * spacing, orientation, and that they are represented in the same image grid.
+ * mixing strategies.
+ *
+ * SpatialObjects are used as inputs and outputs of this class.
+ *
+ * \ingroup SpatialObjectFilters
+ * \ingroup LesionSizingToolkit
+ */
+template <unsigned int NDimension>
+class ITK_TEMPLATE_EXPORT WeightedSumFeatureAggregator : public FeatureAggregator<NDimension>
+{
+public:
+  ITK_DISALLOW_COPY_AND_MOVE(WeightedSumFeatureAggregator);
+
+  /** Standard class type alias. */
+  using Self = WeightedSumFeatureAggregator;
+  using Superclass = FeatureAggregator<NDi
