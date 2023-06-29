@@ -20,3 +20,29 @@ classifiers = [
     "Intended Audience :: Developers",
     "Intended Audience :: Education",
     "Intended Audience :: Healthcare Industry",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: Android",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX",
+    "Operating System :: Unix",
+    "Programming Language :: C++",
+    "Programming Language :: Python",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+    "Topic :: Software Development :: Libraries",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "itk == 5.4.*",
+]
+
+[project.urls]
+Download = "https://github.com/InsightSoftwareConsortium/LesionSizingToolkit"
+Homepage = "https://github.com/InsightSoftwareConsortium/LesionSizingToolkit"
+
+[tool.scikit-build]
+# The versions of CMake to allow. If CMake is not present on the system or does
+# not pass this specifier, it will be download
