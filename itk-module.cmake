@@ -8,4 +8,25 @@ file(READ "${MY_CURRENT_DIR}/README.rst" DOCUMENTATION)
 # By convention those modules outside of ITK are not prefixed with
 # ITK.
 
-# define the dependencies of the in
+# define the dependencies of the include module and the tests
+itk_module(LesionSizingToolkit
+  DEPENDS
+    ITKImageFeature
+    ITKLevelSets
+    ITKStatistics
+    ITKRegionGrowing
+    ITKLabelVoting
+    ITKMathematicalMorphology
+    ITKVtkGlue
+    ITKIOSpatialObjects
+    ITKCommon
+    ITKIOGDCM
+    ITKIOPNG
+    ITKIOMeta
+  TEST_DEPENDS
+    ITKTestKernel
+  DESCRIPTION
+    "${DOCUMENTATION}"
+  EXCLUDE_FROM_DEFAULT
+  # Header only libraries do not use ENABLE_SHARED
+)

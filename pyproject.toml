@@ -1,0 +1,22 @@
+[build-system]
+requires = ["scikit-build-core"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "lesionsizingtoolkit"
+version = "1.0.0"
+description = "A generic and extensible ITK module for lesion segmentation"
+readme = "README.rst"
+license = {file = "LICENSE"}
+authors = [
+    { name = "Xiao Xiao Liu", email = "itk+community@discourse.itk.org" },
+]
+keywords = [
+    "itk",
+    "InsightToolkit",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Healthcare Industry",
