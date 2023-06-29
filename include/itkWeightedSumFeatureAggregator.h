@@ -75,4 +75,21 @@ protected:
   WeightedSumFeatureAggregator();
   ~WeightedSumFeatureAggregator() override;
   void
-  PrintSelf(std::ostream & os, Indent indent) cons
+  PrintSelf(std::ostream & os, Indent indent) const override;
+
+private:
+  void
+  ConsolidateFeatures() override;
+
+  using WeightsArrayType = std::vector<double>;
+
+  WeightsArrayType m_Weights;
+};
+
+} // end namespace itk
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#  include "itkWeightedSumFeatureAggregator.hxx"
+#endif
+
+#endif
