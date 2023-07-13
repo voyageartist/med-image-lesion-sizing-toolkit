@@ -72,4 +72,34 @@ cmake.source-dir = "."
 # string will disable this check.
 ninja.version = ">=1.11"
 
-# The logging level to displ
+# The logging level to display, "DEBUG", "INFO", "WARNING", and "ERROR" are
+# possible options.
+logging.level = "INFO"
+
+# Files to include in the SDist even if they are skipped by default. Supports
+# gitignore syntax.
+sdist.include = []
+
+# Files to exclude from the SDist even if they are included by default. Supports
+# gitignore syntax.
+sdist.exclude = []
+
+# A list of license files to include in the wheel. Supports glob patterns.
+wheel.license-files = ["LICEN[CS]E*",]
+
+# Target the platlib or the purelib. If not set, the default is to target the
+# platlib if wheel.cmake is true, and the purelib otherwise.
+wheel.platlib = "false"
+
+# If CMake is less than this value, backport a copy of FindPython. Set to 0
+# disable this, or the empty string.
+backport.find-python = "3.26.1"
+
+# Select the editable mode to use. Can be "redirect" (default) or "inplace".
+editable.mode = "redirect"
+
+# Rebuild the project when the package is imported. The build-directory must be
+# set.
+editable.rebuild = false
+
+# If set, thi
