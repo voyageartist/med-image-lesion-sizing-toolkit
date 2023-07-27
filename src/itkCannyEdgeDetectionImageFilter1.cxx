@@ -67,4 +67,29 @@ main(int argc, char * argv[])
     lowerThreshold = std::stod(argv[5]);
   }
 
-  using InputPixelTy
+  using InputPixelType = signed short;
+  using RealPixelType = float;
+  using OutputPixelType = float;
+  constexpr unsigned int Dimension = 3;
+
+  using InputImageType = itk::Image<InputPixelType, Dimension>;
+  using RealImageType = itk::Image<RealPixelType, Dimension>;
+  using OutputImageType = itk::Image<OutputPixelType, Dimension>;
+
+  using ReaderType = itk::ImageFileReader<InputImageType>;
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
+
+  using CastToRealFilterType = itk::CastImageFilter<InputImageType, RealImageType>;
+  using CannyFilter = itk::CannyEdgeDetectionImageFilter<RealImageType, OutputImageType>;
+
+  ReaderType::Pointer reader = ReaderType::New();
+  WriterType::Pointer writer = WriterType::New();
+
+  CastToRealFilterType::Pointer toReal = CastToRealFilterType::New();
+
+  CannyFilter::Pointer cannyFilter = CannyFilter::New();
+
+  reader->SetFileName(inputFilename);
+  writer->SetFileName(outputFilename);
+
+  toReal->SetInput
