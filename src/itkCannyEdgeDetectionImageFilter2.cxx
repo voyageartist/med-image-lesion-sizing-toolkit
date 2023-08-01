@@ -64,3 +64,75 @@ main(int argc, char * argv[])
   }
 
   if (argc > 5)
+  {
+    lowerThreshold = std::stod(argv[5]);
+  }
+
+  using InputPixelType = signed short;
+  using RealPixelType = float;
+  using OutputPixelType = float;
+  constexpr unsigned int Dimension = 3;
+
+  using InputImageType = itk::Image<InputPixelType, Dimension>;
+  using RealImageType = itk::Image<RealPixelType, Dimension>;
+  using OutputImageType = itk::Image<OutputPixelType, Dimension>;
+
+  using ReaderType = itk::ImageFileReader<InputImageType>;
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
+
+  using CastToRealFilterType = itk::CastImageFilter<InputImageType, RealImageType>;
+  using CannyFilter = itk::CannyEdgeDetectionRecursiveGaussianImageFilter<RealImageType, OutputImageType>;
+
+  ReaderType::Pointer reader = ReaderType::New();
+  WriterType::Pointer writer = WriterType::New();
+
+  CastToRealFilterType::Pointer toReal = CastToRealFilterType::New();
+
+  CannyFilter::Pointer cannyFilter = CannyFilter::New();
+
+  reader->SetFileName(inputFilename);
+  writer->SetFileName(outputFilename);
+
+  toReal->SetInput(reader->GetOutput());
+
+  cannyFilter->SetInput(toReal->GetOutput());
+
+  cannyFilter->SetSigma(sigma);
+  cannyFilter->SetUpperThreshold(upperThreshold);
+  cannyFilter->SetLowerThreshold(lowerThreshold);
+  cannyFilter->SetOutsideValue(255);
+
+  writer->SetInput(cannyFilter->GetOutput());
+  writer->UseCompressionOn();
+
+  try
+  {
+    writer->Update();
+  }
+  catch (itk::ExceptionObject & err)
+  {
+    std::cout << "ExceptionObject caught !" << std::endl;
+    std::cout << err << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  if (argc > 6)
+  {
+    writer->SetInput(cannyFilter->GetNonMaximumSuppressionImage());
+    writer->SetFileName(argv[6]);
+
+    try
+    {
+      writer->Update();
+    }
+    catch (itk::ExceptionObject & err)
+    {
+      std::cout << "ExceptionObject caught !" << std::endl;
+      std::cout << err << std::endl;
+      return EXIT_FAILURE;
+    }
+  }
+
+
+  return EXIT_SUCCESS;
+}
