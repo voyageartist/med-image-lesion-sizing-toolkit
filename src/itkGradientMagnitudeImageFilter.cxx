@@ -15,4 +15,44 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#
+#if defined(_MSC_VER)
+#  pragma warning(disable : 4786)
+#endif
+
+#ifdef __BORLANDC__
+#  define ITK_LEAN_AND_MEAN
+#endif
+
+#include "itkIncludeRequiredIOFactories.h"
+#include "itkImage.h"
+#include "itkImageFileReader.h"
+#include "itkImageFileWriter.h"
+#include "itkRescaleIntensityImageFilter.h"
+#include "itkGradientMagnitudeImageFilter.h"
+
+int
+main(int argc, char * argv[])
+{
+
+  RegisterRequiredFactories();
+
+  if (argc < 3)
+  {
+    std::cerr << "Usage: " << std::endl;
+    std::cerr << argv[0] << "  inputImageFile  outputImageFile " << std::endl;
+    return EXIT_FAILURE;
+  }
+
+
+  using InputPixelType = float;
+  using OutputPixelType = float;
+
+  constexpr unsigned int Dimension = 3;
+
+  using InputImageType = itk::Image<InputPixelType, Dimension>;
+  using OutputImageType = itk::Image<OutputPixelType, Dimension>;
+
+
+  using ReaderType = itk::ImageFileReader<InputImageType>;
+
+  using FilterType = itk::GradientMagnitudeImageFilte
