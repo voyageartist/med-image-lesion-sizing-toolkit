@@ -55,4 +55,32 @@ main(int argc, char * argv[])
 
   using ReaderType = itk::ImageFileReader<InputImageType>;
 
-  using FilterType = itk::GradientMagnitudeImageFilte
+  using FilterType = itk::GradientMagnitudeImageFilter<InputImageType, OutputImageType>;
+
+
+  ReaderType::Pointer reader = ReaderType::New();
+  reader->SetFileName(argv[1]);
+
+  FilterType::Pointer filter = FilterType::New();
+
+  filter->SetInput(reader->GetOutput());
+
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
+  WriterType::Pointer writer = WriterType::New();
+  writer->SetFileName(argv[2]);
+
+  writer->SetInput(filter->GetOutput());
+
+  try
+  {
+    writer->Update();
+  }
+  catch (itk::ExceptionObject & err)
+  {
+    std::cout << "ExceptionObject caught !" << std::endl;
+    std::cout << err << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  return EXIT_SUCCESS;
+}
