@@ -20,4 +20,42 @@
 #endif
 
 #ifdef __BORLANDC__
-#  define ITK_LEAN_A
+#  define ITK_LEAN_AND_MEAN
+#endif
+
+
+#include "itkIncludeRequiredIOFactories.h"
+#include "itkImageFileReader.h"
+#include "itkImageFileWriter.h"
+#include "itkRegionOfInterestImageFilter.h"
+#include "itkLandmarksReader.h"
+#include "itkEllipseSpatialObject.h"
+#include "itkImage.h"
+
+#include <string>
+
+
+int
+main(int argc, char ** argv)
+{
+
+  RegisterRequiredFactories();
+
+  // Verify the number of parameters in the command line
+  if (argc < 5)
+  {
+    std::cerr << "Usage: " << std::endl;
+    std::cerr << argv[0] << " inputImageFile  outputImageFile " << std::endl;
+    std::cerr << " landmarksFile radius" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+
+  using InputPixelType = signed short;
+  using OutputPixelType = signed short;
+  constexpr unsigned int Dimension = 3;
+
+  using InputImageType = itk::Image<InputPixelType, Dimension>;
+  using OutputImageType = itk::Image<OutputPixelType, Dimension>;
+
+  using Read
