@@ -43,4 +43,44 @@ main(int argc, char * argv[])
   }
 
 
-  using I
+  using InputPixelType = float;
+  using OutputPixelType = float;
+
+  constexpr unsigned Dimension = 3;
+
+  using InputImageType = itk::Image<InputPixelType, Dimension>;
+  using OutputImageType = itk::Image<OutputPixelType, Dimension>;
+
+
+  using ReaderType = itk::ImageFileReader<InputImageType>;
+
+
+  using FilterType = itk::GradientMagnitudeRecursiveGaussianImageFilter<InputImageType, OutputImageType>;
+
+
+  ReaderType::Pointer reader = ReaderType::New();
+  reader->SetFileName(argv[1]);
+
+  FilterType::Pointer filter = FilterType::New();
+
+  filter->SetInput(reader->GetOutput());
+
+  const double sigma = std::stod(argv[3]);
+
+  filter->SetSigma(sigma);
+
+  filter->Update();
+
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
+
+  WriterType::Pointer writer = WriterType::New();
+
+  writer->SetFileName(argv[2]);
+
+  writer->SetInput(filter->GetOutput());
+
+  try
+  {
+    writer->Update();
+  }
+  catch (itk::ExceptionObjec
