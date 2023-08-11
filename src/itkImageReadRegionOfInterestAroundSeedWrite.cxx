@@ -58,4 +58,30 @@ main(int argc, char ** argv)
   using InputImageType = itk::Image<InputPixelType, Dimension>;
   using OutputImageType = itk::Image<OutputPixelType, Dimension>;
 
-  using Read
+  using ReaderType = itk::ImageFileReader<InputImageType>;
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
+
+  using FilterType = itk::RegionOfInterestImageFilter<InputImageType, OutputImageType>;
+
+  using LandmarksReaderType = itk::LandmarksReader<Dimension>;
+
+  LandmarksReaderType::Pointer landmarksReader = LandmarksReaderType::New();
+
+  landmarksReader->SetFileName(argv[3]);
+  landmarksReader->Update();
+
+  using InputSpatialObjectType = itk::LandmarkSpatialObject<Dimension>;
+  const InputSpatialObjectType * inputSeeds = landmarksReader->GetOutput();
+  const unsigned int             numberOfPoints = inputSeeds->GetNumberOfPoints();
+
+  if (numberOfPoints < 1)
+  {
+    std::cerr << "Seed points file is empty !" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  using LandmarkPointListType = InputSpatialObjectType::LandmarkPointListType;
+
+  const LandmarkPointListType & points = inputSeeds->GetPoints();
+
+  InputImageType::Po
