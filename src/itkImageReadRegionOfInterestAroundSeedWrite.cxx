@@ -84,4 +84,38 @@ main(int argc, char ** argv)
 
   const LandmarkPointListType & points = inputSeeds->GetPoints();
 
-  InputImageType::Po
+  InputImageType::PointType seedPoint = points[0].GetPositionInObjectSpace();
+
+  FilterType::Pointer filter = FilterType::New();
+
+  ReaderType::Pointer reader = ReaderType::New();
+  WriterType::Pointer writer = WriterType::New();
+
+  const char * inputFilename = argv[1];
+  const char * outputFilename = argv[2];
+
+  reader->SetFileName(inputFilename);
+  writer->SetFileName(outputFilename);
+
+  filter->SetInput(reader->GetOutput());
+  writer->SetInput(filter->GetOutput());
+  writer->UseCompressionOn();
+
+  try
+  {
+    reader->Update();
+  }
+  catch (itk::ExceptionObject & err)
+  {
+    std::cerr << "ExceptionObject caught !" << std::endl;
+    std::cerr << err << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  const InputImageType * inputImage = reader->GetOutput();
+
+  InputImageType::IndexType centralIndex;
+
+  inputImage->TransformPhysicalPointToIndex(seedPoint, centralIndex);
+
+  InputImageType::SpacingType spacing = inputIma
