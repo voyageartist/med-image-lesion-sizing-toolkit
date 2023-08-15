@@ -118,4 +118,32 @@ main(int argc, char ** argv)
 
   inputImage->TransformPhysicalPointToIndex(seedPoint, centralIndex);
 
-  InputImageType::SpacingType spacing = inputIma
+  InputImageType::SpacingType spacing = inputImage->GetSpacing();
+
+  InputImageType::IndexType originIndex;
+
+  const double radius = std::stod(argv[4]);
+
+  originIndex[0] = centralIndex[0] - radius / spacing[0];
+  originIndex[1] = centralIndex[1] - radius / spacing[1];
+  originIndex[2] = centralIndex[2] - radius / spacing[2];
+
+  InputImageType::SizeType regionSize;
+
+  regionSize[0] = 2.0 * radius / spacing[0];
+  regionSize[1] = 2.0 * radius / spacing[1];
+  regionSize[2] = 2.0 * radius / spacing[2];
+
+  OutputImageType::RegionType desiredRegion;
+
+  desiredRegion.SetIndex(originIndex);
+  desiredRegion.SetSize(regionSize);
+
+  desiredRegion.PadByRadius(2);
+
+  desiredRegion.Crop(inputImage->GetBufferedRegion());
+
+  filter->SetRegionOfInterest(desiredRegion);
+  std::cout << "Desired region: " << desiredRegion << std::endl;
+  std::cout << "ImageLargestPossibleRegion: " << inputImage->GetLargestPossibleRegion() << std::endl;
+  std::cout << "Seed is at : " << seedPoint << " Index: " << centralIndex << std::endl;
