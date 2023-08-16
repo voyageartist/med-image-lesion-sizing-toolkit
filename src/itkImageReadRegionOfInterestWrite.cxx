@@ -1,3 +1,4 @@
+
 /*=========================================================================
  *
  *  Copyright NumFOCUS
@@ -28,8 +29,6 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkRegionOfInterestImageFilter.h"
-#include "itkLandmarksReader.h"
-#include "itkEllipseSpatialObject.h"
 #include "itkImage.h"
 
 #include <string>
@@ -42,11 +41,11 @@ main(int argc, char ** argv)
   RegisterRequiredFactories();
 
   // Verify the number of parameters in the command line
-  if (argc < 5)
+  if (argc < 9)
   {
     std::cerr << "Usage: " << std::endl;
     std::cerr << argv[0] << " inputImageFile  outputImageFile " << std::endl;
-    std::cerr << " landmarksFile radius" << std::endl;
+    std::cerr << " startX startY startZ sizeX sizeY sizeZ" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -63,30 +62,24 @@ main(int argc, char ** argv)
 
   using FilterType = itk::RegionOfInterestImageFilter<InputImageType, OutputImageType>;
 
-  using LandmarksReaderType = itk::LandmarksReader<Dimension>;
-
-  LandmarksReaderType::Pointer landmarksReader = LandmarksReaderType::New();
-
-  landmarksReader->SetFileName(argv[3]);
-  landmarksReader->Update();
-
-  using InputSpatialObjectType = itk::LandmarkSpatialObject<Dimension>;
-  const InputSpatialObjectType * inputSeeds = landmarksReader->GetOutput();
-  const unsigned int             numberOfPoints = inputSeeds->GetNumberOfPoints();
-
-  if (numberOfPoints < 1)
-  {
-    std::cerr << "Seed points file is empty !" << std::endl;
-    return EXIT_FAILURE;
-  }
-
-  using LandmarkPointListType = InputSpatialObjectType::LandmarkPointListType;
-
-  const LandmarkPointListType & points = inputSeeds->GetPoints();
-
-  InputImageType::PointType seedPoint = points[0].GetPositionInObjectSpace();
-
   FilterType::Pointer filter = FilterType::New();
+
+  OutputImageType::IndexType start;
+  start[0] = std::stoi(argv[3]);
+  start[1] = std::atoi(argv[4]);
+  start[2] = std::atoi(argv[5]);
+
+  OutputImageType::SizeType size;
+  size[0] = std::atoi(argv[6]);
+  size[1] = std::atoi(argv[7]);
+  size[2] = std::atoi(argv[8]);
+
+
+  OutputImageType::RegionType desiredRegion;
+  desiredRegion.SetSize(size);
+  desiredRegion.SetIndex(start);
+
+  filter->SetRegionOfInterest(desiredRegion);
 
   ReaderType::Pointer reader = ReaderType::New();
   WriterType::Pointer writer = WriterType::New();
@@ -100,53 +93,6 @@ main(int argc, char ** argv)
   filter->SetInput(reader->GetOutput());
   writer->SetInput(filter->GetOutput());
   writer->UseCompressionOn();
-
-  try
-  {
-    reader->Update();
-  }
-  catch (itk::ExceptionObject & err)
-  {
-    std::cerr << "ExceptionObject caught !" << std::endl;
-    std::cerr << err << std::endl;
-    return EXIT_FAILURE;
-  }
-
-  const InputImageType * inputImage = reader->GetOutput();
-
-  InputImageType::IndexType centralIndex;
-
-  inputImage->TransformPhysicalPointToIndex(seedPoint, centralIndex);
-
-  InputImageType::SpacingType spacing = inputImage->GetSpacing();
-
-  InputImageType::IndexType originIndex;
-
-  const double radius = std::stod(argv[4]);
-
-  originIndex[0] = centralIndex[0] - radius / spacing[0];
-  originIndex[1] = centralIndex[1] - radius / spacing[1];
-  originIndex[2] = centralIndex[2] - radius / spacing[2];
-
-  InputImageType::SizeType regionSize;
-
-  regionSize[0] = 2.0 * radius / spacing[0];
-  regionSize[1] = 2.0 * radius / spacing[1];
-  regionSize[2] = 2.0 * radius / spacing[2];
-
-  OutputImageType::RegionType desiredRegion;
-
-  desiredRegion.SetIndex(originIndex);
-  desiredRegion.SetSize(regionSize);
-
-  desiredRegion.PadByRadius(2);
-
-  desiredRegion.Crop(inputImage->GetBufferedRegion());
-
-  filter->SetRegionOfInterest(desiredRegion);
-  std::cout << "Desired region: " << desiredRegion << std::endl;
-  std::cout << "ImageLargestPossibleRegion: " << inputImage->GetLargestPossibleRegion() << std::endl;
-  std::cout << "Seed is at : " << seedPoint << " Index: " << centralIndex << std::endl;
 
   try
   {
