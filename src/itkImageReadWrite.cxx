@@ -50,4 +50,28 @@ main(int argc, char ** argv)
   using ReaderType = itk::ImageFileReader<ImageType>;
   using WriterType = itk::ImageFileWriter<ImageType>;
 
-  ReaderType::Pointer reader = Reader
+  ReaderType::Pointer reader = ReaderType::New();
+  WriterType::Pointer writer = WriterType::New();
+
+  const char * inputFilename = argv[1];
+  const char * outputFilename = argv[2];
+
+  reader->SetFileName(inputFilename);
+  writer->SetFileName(outputFilename);
+
+  writer->SetInput(reader->GetOutput());
+  writer->UseCompressionOn();
+
+  try
+  {
+    writer->Update();
+  }
+  catch (itk::ExceptionObject & err)
+  {
+    std::cerr << "ExceptionObject caught !" << std::endl;
+    std::cerr << err << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  return EXIT_SUCCESS;
+}
