@@ -73,4 +73,17 @@ main(int argc, char * argv[])
   catch (itk::ExceptionObject & err)
   {
     std::cout << "ExceptionObject caught !" << std::endl;
-    std::cout << 
+    std::cout << err << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
+
+  WriterType::Pointer writer = WriterType::New();
+
+  writer->SetInput(laplacian->GetOutput());
+  writer->SetFileName(argv[2]);
+  writer->Update();
+
+  return EXIT_SUCCESS;
+}
