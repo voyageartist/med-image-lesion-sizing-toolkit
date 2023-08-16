@@ -37,4 +37,40 @@ main(int argc, char * argv[])
   if (argc < 4)
   {
     std::cerr << "Usage: " << std::endl;
-    std::cerr 
+    std::cerr << argv[0] << "  inputImageFile  outputImageFile  sigma " << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  using InputPixelType = float;
+  using OutputPixelType = float;
+
+  constexpr unsigned int Dimension = 3;
+
+  using InputImageType = itk::Image<InputPixelType, Dimension>;
+  using OutputImageType = itk::Image<OutputPixelType, Dimension>;
+
+  using ReaderType = itk::ImageFileReader<InputImageType>;
+
+  using FilterType = itk::LaplacianRecursiveGaussianImageFilter<InputImageType, OutputImageType>;
+
+  ReaderType::Pointer reader = ReaderType::New();
+  reader->SetFileName(argv[1]);
+
+  FilterType::Pointer laplacian = FilterType::New();
+
+  laplacian->SetNormalizeAcrossScale(false);
+
+  laplacian->SetInput(reader->GetOutput());
+
+  const double sigma = std::stod(argv[3]);
+
+  laplacian->SetSigma(sigma);
+
+  try
+  {
+    laplacian->Update();
+  }
+  catch (itk::ExceptionObject & err)
+  {
+    std::cout << "ExceptionObject caught !" << std::endl;
+    std::cout << 
