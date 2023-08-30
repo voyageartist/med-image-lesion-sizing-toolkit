@@ -460,3 +460,44 @@ itk_add_test(NAME itkSatoVesselnessSigmoidFeatureGeneratorMultiScaleTest1
   COMMAND LesionSizingToolkitTestDriver itkSatoVesselnessSigmoidFeatureGeneratorMultiScaleTest1
   ${TEST_DATA_ROOT}/Input/PartSolidLesionCropped.mha
   ${TEMP}/SatoVesselnessSigmoidFeatureGeneratorMultiScaleTest1_1.mha
+  1.0  # First Sigma
+  0.5  # Alpha 1
+  2.0  # Alpha 2
+  -10  # Sigmoid Alpha
+  80   # Sigmoid Bets
+ )
+
+itk_add_test(NAME itkWeightedSumFeatureAggregatorTest1
+  COMMAND LesionSizingToolkitTestDriver itkWeightedSumFeatureAggregatorTest1
+  ${TEST_DATA_ROOT}/Input/PartSolidLesionCroppedSeeds1.txt
+  ${TEST_DATA_ROOT}/Input/PartSolidLesionCropped.mha
+  ${TEMP}/WeightedSumFeatureAggregatorTest1_1.mha
+  0.5
+  1.0
+ )
+
+endif(TEST_CORNELL_DATA_ROOT)
+
+if(TEST_CORNELL_COLLECTION)
+  if(TEST_CORNELL_DATA_ROOT)
+    include(CornellCollectionTests.cmake)
+  endif(TEST_CORNELL_DATA_ROOT)
+endif(TEST_CORNELL_COLLECTION)
+
+if(TEST_NIST_PHANTOM_COLLECTION)
+  if(TEST_NIST_DATA_ROOT)
+    include(NISTPhantomCollectionTests.cmake)
+  endif(TEST_NIST_DATA_ROOT)
+endif(TEST_NIST_PHANTOM_COLLECTION)
+
+if(TEST_FDA_PHANTOM_COLLECTION)
+  if(TEST_FDA_DATA_ROOT)
+    include(FDAPhantomCollectionTests.cmake)
+  endif(TEST_FDA_DATA_ROOT)
+endif(TEST_FDA_PHANTOM_COLLECTION)
+
+if(TEST_VOLCANO_DATA_COLLECTION)
+  if(TEST_VOLCANO_DATA_ROOT)
+    include(VOLCANOCollectionTests.cmake)
+  endif(TEST_VOLCANO_DATA_ROOT)
+endif(TEST_VOLCANO_DATA_COLLECTION)
