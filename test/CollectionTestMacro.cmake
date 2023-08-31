@@ -134,4 +134,41 @@ add_test(BTFG_${DATASET_ID}
 
 # Lung Wall Feature Generator
 add_test(LWFG_${DATASET_ID}
-  ${CXX_TEST_PATH}/itkLungWallFeatureGenera
+  ${CXX_TEST_PATH}/itkLungWallFeatureGeneratorTest1
+  ${DATASET_ROI}
+  ${TEMP}/LWFG_Test${DATASET_ID}.mha
+  -400.0 # Lung Threshold
+  )
+
+# Morphological Openning Feature Generator
+add_test(MOFG_${DATASET_ID}
+  ${CXX_TEST_PATH}/itkMorphologicalOpenningFeatureGeneratorTest1
+  ${DATASET_ROI}
+  ${TEMP}/MOFG_Test${DATASET_ID}.mha
+  -400.0 # Lung Threshold
+  )
+
+# Canny Edges Feature Generator
+add_test(CEFG_${DATASET_ID}
+  ${CXX_TEST_PATH}/itkCannyEdgesFeatureGeneratorTest1
+  ${DATASET_ROI}
+  ${TEMP}/CEFG_Test${DATASET_ID}.mha
+    1.0 # Sigma
+  150.0 # Upper threshold
+   75.0 # Lower threshold
+  )
+
+# Canny Edges Feature Generator
+add_test(CEDFG_${DATASET_ID}
+  ${CXX_TEST_PATH}/itkCannyEdgesDistanceFeatureGeneratorTest1
+  ${DATASET_ROI}
+  ${TEMP}/CEDFG_Test${DATASET_ID}.mha
+    1.0 # Sigma
+  150.0 # Upper threshold
+   75.0 # Lower threshold
+  )
+
+# Sato Vesselness Feature Generator
+add_test(SVFG_${DATASET_ID}
+  ${CXX_TEST_PATH}/itkSatoVesselnessSigmoidFeatureGeneratorTest1
+  ${DATA
