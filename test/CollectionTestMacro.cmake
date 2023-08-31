@@ -92,4 +92,46 @@ set(DATASET_ROI ${TEMP}/${DATASET_ID}_ROI.mha)
 # Extract Region of Interest
 add_test(ROI_${DATASET_ID}
   ${CXX_TEST_PATH}/ImageReadRegionOfInterestWrite
-  ${TEMP}/${MASTER_DATASET_ID}
+  ${TEMP}/${MASTER_DATASET_ID}.mha
+  ${DATASET_ROI}
+  ${ROI_X} ${ROI_Y} ${ROI_Z} 
+  ${ROI_DX} ${ROI_DY} ${ROI_DZ} 
+  )
+
+endmacro(EXTRACT_REGION_OF_INTEREST)
+
+
+macro(GENERATE_FEATURES DATASET_ID)
+
+set(DATASET_ROI ${TEMP}/${DATASET_ID}_ROI.mha)
+
+# Gradient Magnitude Sigmoid Feature Generator
+add_test(GMSFG_${DATASET_ID}
+  ${CXX_TEST_PATH}/itkGradientMagnitudeSigmoidFeatureGeneratorTest1
+  ${DATASET_ROI}
+  ${TEMP}/GMSFG_Test${DATASET_ID}.mha
+  0.7    # Sigma
+  -0.1   # Alpha
+  150.0  # Beta
+  )
+
+# Sigmoid Feature Generator
+add_test(SFG_${DATASET_ID}
+  ${CXX_TEST_PATH}/itkSigmoidFeatureGeneratorTest1
+  ${DATASET_ROI}
+  ${TEMP}/SFG_Test${DATASET_ID}.mha
+   100.0 # Alpha
+  -500.0 # Beta: Lung Threshold
+  )
+
+# Binary Threshold Feature Generator
+add_test(BTFG_${DATASET_ID}
+  ${CXX_TEST_PATH}/itkBinaryThresholdFeatureGeneratorTest1
+  ${DATASET_ROI}
+  ${TEMP}/BTFG_Test${DATASET_ID}.mha
+  -200.0 # Beta: Lung Threshold
+  )
+
+# Lung Wall Feature Generator
+add_test(LWFG_${DATASET_ID}
+  ${CXX_TEST_PATH}/itkLungWallFeatureGenera
