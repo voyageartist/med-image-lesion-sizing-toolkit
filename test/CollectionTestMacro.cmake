@@ -171,4 +171,46 @@ add_test(CEDFG_${DATASET_ID}
 # Sato Vesselness Feature Generator
 add_test(SVFG_${DATASET_ID}
   ${CXX_TEST_PATH}/itkSatoVesselnessSigmoidFeatureGeneratorTest1
-  ${DATA
+  ${DATASET_ROI}
+  ${TEMP}/SVFG_Test${DATASET_ID}.mha
+  1.0   # Sigma
+  0.5   # Vesselness Alpha1
+  2.0   # Vesselness Alpha2
+  )
+
+# Sato Vesselness Sigmoid Feature Generator
+add_test(SVSFG_${DATASET_ID}
+  ${CXX_TEST_PATH}/itkSatoVesselnessSigmoidFeatureGeneratorTest1
+  ${DATASET_ROI}
+  ${TEMP}/SVSFG_Test${DATASET_ID}.mha
+  1.0   # Sigma
+  0.1   # Vesselness Alpha1
+  2.0   # Vesselness Alpha2
+  -10.0 # Sigmoid Alpha
+  80.0  # Sigmoid Beta
+  )
+
+# Vessel enhancing diffusion test
+add_test(VED_${DATASET_ID}
+  ${CXX_TEST_PATH}/itkVEDTest
+  ${DATASET_ROI}
+  ${TEMP}/VED_Test${DATASET_ID}.mha  )
+
+add_test(SLSFG_${DATASET_ID}
+  ${CXX_TEST_PATH}/itkSatoLocalStructureFeatureGeneratorTest1
+  ${DATASET_ROI}
+  ${TEMP}/SLSFG_Test${DATASET_ID}.mha
+  1.0  # Sigma
+  0.5  # Alpha
+  2.0  # Gamma
+  )
+
+add_test(DSFG_${DATASET_ID}
+  ${CXX_TEST_PATH}/itkDescoteauxSheetnessFeatureGeneratorTest1
+  ${DATASET_ROI}
+  ${TEMP}/DSFG_Test${DATASET_ID}.mha
+  1      # Search for Bright sheets
+  1.0    # Sigma
+  100.0  # Sheetness
+  100.0  # Bloobiness
+  100.0  
