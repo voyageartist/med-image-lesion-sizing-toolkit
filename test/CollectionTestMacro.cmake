@@ -275,4 +275,36 @@ PARSE_ARGUMENTS( COMPUTE_SEGMENTATIONS_OPTIONS "" "AROUND_SEED" ${ARGN} )
 set(DATASET_OBJECT_ID ${DATASET_ID}_${OBJECT_ID})
 set(SEEDS_FILE ${TEST_DATA_ROOT}/Input/${DATASET_OBJECT_ID}_Seeds.txt)
 
-set(DATASET_ROI ${TEMP}/${DATASET_ID}_ROI.mha
+set(DATASET_ROI ${TEMP}/${DATASET_ID}_ROI.mha )
+set(DATASET_ROI_SEED ${TEMP}/${DATASET_OBJECT_ID}_ROI.mha)
+set(REGION_RADIUS 10)  # in millimeters
+
+add_test(ROIS_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/ImageReadRegionOfInterestAroundSeedWrite
+  ${TEMP}/${DATASET_ID}_ROI.mha
+  ${DATASET_ROI_SEED}
+  ${SEEDS_FILE}
+  ${REGION_RADIUS}
+  )
+
+if ( COMPUTE_SEGMENTATIONS_OPTIONS_AROUND_SEED )
+  set(DATASET_ROI ${DATASET_ROI_SEED} )  
+endif( COMPUTE_SEGMENTATIONS_OPTIONS_AROUND_SEED )
+
+# Resample to isotropic with different interpolation kernels
+add_test(RVTI_BSpline_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/ResampleVolumeToBeIsotropic
+  ${DATASET_ROI}
+  ${TEMP}/RVTI_Test${DATASET_OBJECT_ID}_BSpline_Isotropic.mha
+  0.2 # 0.2mm
+  0   # BSpline interpolation  
+  )
+add_test(RVTI_HWSinc_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/ResampleVolumeToBeIsotropic
+  ${DATASET_ROI}
+  ${TEMP}/RVTI_Test${DATASET_OBJECT_ID}_HWSinc_Isotropic.mha
+  0.2 # 0.2mm
+  1   # HammingWindowedSinc
+  )
+add_test(RVTI_Linear_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/ResampleVol
