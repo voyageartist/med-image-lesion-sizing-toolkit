@@ -333,4 +333,32 @@ add_test(CEFG_HWSinc_${DATASET_OBJECT_ID}
 add_test(CEFG_Linear_${DATASET_OBJECT_ID}
   ${CXX_TEST_PATH}/itkCannyEdgesFeatureGeneratorTest1
   ${TEMP}/RVTI_Test${DATASET_OBJECT_ID}_Linear_Isotropic.mha
-  ${TEMP}/CEFG_Test${DATASET_OBJE
+  ${TEMP}/CEFG_Test${DATASET_OBJECT_ID}_Linear_Isotropic_Sigma0.47.mha
+    .47 # Sigma
+  150.0 # Upper threshold
+   75.0 # Lower threshold
+  )
+
+add_test(LFG_BSpline_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/LaplacianRecursiveGaussianImageFilter
+  ${TEMP}/RVTI_Test${DATASET_OBJECT_ID}_BSpline_Isotropic.mha
+  ${TEMP}/LFG_Test${DATASET_OBJECT_ID}_BSpline_Isotropic_Sigma0.47.mha
+    .47 # Sigma
+  150.0 # Upper threshold
+   75.0 # Lower threshold
+  )
+add_test(LFG_HWSinc_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/LaplacianRecursiveGaussianImageFilter
+  ${TEMP}/RVTI_Test${DATASET_OBJECT_ID}_HWSinc_Isotropic.mha
+  ${TEMP}/LFG_Test${DATASET_OBJECT_ID}_HWSinc_Isotropic_Sigma0.47.mha
+    .47 # Sigma
+  150.0 # Upper threshold
+   75.0 # Lower threshold
+  )
+add_test(LFG_Linear_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/LaplacianRecursiveGaussianImageFilter
+  ${TEMP}/RVTI_Test${DATASET_OBJECT_ID}_Linear_Isotropic.mha
+  ${TEMP}/LFG_Test${DATASET_OBJECT_ID}_Linear_Isotropic_Sigma0.47.mha
+    0.47 # Sigma
+  150.0 # Upper threshold
+   75.0 # Lower threshold
