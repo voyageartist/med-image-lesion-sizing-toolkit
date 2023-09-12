@@ -362,3 +362,35 @@ add_test(LFG_Linear_${DATASET_OBJECT_ID}
     0.47 # Sigma
   150.0 # Upper threshold
    75.0 # Lower threshold
+  )
+
+# Sigmoid Feature Generator
+add_test(SFG_BSpline_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/itkSigmoidFeatureGeneratorTest1
+  ${TEMP}/RVTI_Test${DATASET_OBJECT_ID}_BSpline_Isotropic.mha
+  ${TEMP}/SFG_BSpline_Test${DATASET_OBJECT_ID}.mha
+   100.0 # Alpha
+  -500.0 # Beta: Lung Threshold
+  )
+
+# Sato Vesselness Sigmoid Feature Generator
+add_test(SVSFG_BSpline_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/itkSatoVesselnessSigmoidFeatureGeneratorTest1
+  ${TEMP}/RVTI_Test${DATASET_OBJECT_ID}_BSpline_Isotropic.mha
+  ${TEMP}/SVSFG_BSpline_Test${DATASET_OBJECT_ID}.mha
+  1.0   # Sigma
+  0.1   # Vesselness Alpha1
+  2.0   # Vesselness Alpha2
+  -10.0 # Sigmoid Alpha
+  40.0  # Sigmoid Beta
+  )
+
+add_test(LWFG_BSpline_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/itkLungWallFeatureGeneratorTest1
+  ${TEMP}/RVTI_Test${DATASET_OBJECT_ID}_BSpline_Isotropic.mha
+  ${TEMP}/LWFG_BSpline_Test${DATASET_OBJECT_ID}.mha
+  -400.0 # Lung Threshold
+  )
+
+
+add_test(CTRG_${DATASET_OBJECT_
