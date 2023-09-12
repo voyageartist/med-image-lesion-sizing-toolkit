@@ -393,4 +393,38 @@ add_test(LWFG_BSpline_${DATASET_OBJECT_ID}
   )
 
 
-add_test(CTRG_${DATASET_OBJECT_
+add_test(CTRG_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/itkConnectedThresholdSegmentationModuleTest1
+  ${SEEDS_FILE}
+  ${DATASET_ROI}
+  ${TEMP}/CTRG_Test${DATASET_OBJECT_ID}.mha
+  -700  # Lower Threshold
+  500   # Upper Threshold
+  )
+
+add_test(LSMT3_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/itkLesionSegmentationMethodTest3
+  ${SEEDS_FILE}
+  ${DATASET_ROI}
+  ${TEMP}/LSMT3_Test${DATASET_OBJECT_ID}.mha
+  0.5  # Lower Threshold
+  1.0  # Upper Threshold
+  )
+
+add_test(LSMT4_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/itkLesionSegmentationMethodTest4
+  ${SEEDS_FILE}
+  ${DATASET_ROI}
+  ${TEMP}/LSMT4_Test${DATASET_OBJECT_ID}.mha
+  500   # Stopping time for Fast Marching termination
+    5   # Distance from seeds for Fast Marching initialization
+  )
+
+add_test(LSMT5_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/itkLesionSegmentationMethodTest5
+  ${TEMP}/LSMT4_Test${DATASET_OBJECT_ID}.mha
+  ${DATASET_ROI}
+  ${TEMP}/LSMT5_Test${DATASET_OBJECT_ID}.mha
+  0.0002  # RMS maximum error
+  300     # Maximum number of iterations
+   1.0   
