@@ -427,4 +427,39 @@ add_test(LSMT5_${DATASET_OBJECT_ID}
   ${TEMP}/LSMT5_Test${DATASET_OBJECT_ID}.mha
   0.0002  # RMS maximum error
   300     # Maximum number of iterations
-   1.0   
+   1.0    # Curvature scaling
+  10.0    # Propagation scaling
+  )
+
+add_test(LSMT6_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/itkLesionSegmentationMethodTest6
+  ${SEEDS_FILE}
+  ${DATASET_ROI}
+  ${TEMP}/LSMT6_Test${DATASET_OBJECT_ID}.mha
+  0.0002  # RMS maximum error
+  300     # Maximum number of iterations
+   1.0    # Curvature scaling
+  10.0    # Propagation scaling
+  500     # Stopping time for Fast Marching termination
+    5     # Distance from seeds for Fast Marching initialization
+  )
+
+add_test(LSMT7_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/itkLesionSegmentationMethodTest7
+  ${SEEDS_FILE}
+  ${DATASET_ROI}
+  ${TEMP}/LSMT7_Test${DATASET_OBJECT_ID}.mha
+  )
+
+add_test(LSMT8_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/itkLesionSegmentationMethodTest8
+  ${SEEDS_FILE}
+  ${DATASET_ROI}
+  ${TEMP}/LSMT8_Test${DATASET_OBJECT_ID}.mha
+  )
+
+add_test(LSMT8b_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/itkLesionSegmentationMethodTest8b
+  ${SEEDS_FILE}
+  ${DATASET_ROI}
+  ${T
