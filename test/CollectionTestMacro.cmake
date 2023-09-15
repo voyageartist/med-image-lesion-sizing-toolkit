@@ -462,4 +462,39 @@ add_test(LSMT8b_${DATASET_OBJECT_ID}
   ${CXX_TEST_PATH}/itkLesionSegmentationMethodTest8b
   ${SEEDS_FILE}
   ${DATASET_ROI}
-  ${T
+  ${TEMP}/LSMT8b_Test${DATASET_OBJECT_ID}.mha
+  -200  # Threshold used for solid lesions
+  )
+
+add_test(LSMT8c_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/itkLesionSegmentationMethodTest8b
+  ${SEEDS_FILE}
+  ${DATASET_ROI}
+  ${TEMP}/LSMT8c_Test${DATASET_OBJECT_ID}.mha
+  -500  # Threshold used for part-solid lesions
+  )
+
+add_test(LSMT8d_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/itkLesionSegmentationMethodTest8b
+  ${SEEDS_FILE}
+  ${DATASET_ROI}
+  ${TEMP}/LSMT8d_Test${DATASET_OBJECT_ID}.mha
+  -200  # Threshold used for solid lesions
+  -ResampleThickSliceData     # Supersample
+  )
+
+add_test(LSMT8e_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/itkLesionSegmentationMethodTest8b
+  ${SEEDS_FILE}
+  ${DATASET_ROI}
+  ${TEMP}/LSMT8e_Test${DATASET_OBJECT_ID}.mha
+  -500  # Threshold used for part-solid lesions
+  -ResampleThickSliceData     # Supersample
+  )
+
+add_test(LSMT8dVED_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/itkLesionSegmentationMethodTest8b
+  ${SEEDS_FILE}
+  ${DATASET_ROI}
+  ${TEMP}/LSMT8dVED_Test${DATASET_OBJECT_ID}.mha
+  -200  #
