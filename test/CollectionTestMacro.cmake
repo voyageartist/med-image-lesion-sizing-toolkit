@@ -497,4 +497,38 @@ add_test(LSMT8dVED_${DATASET_OBJECT_ID}
   ${SEEDS_FILE}
   ${DATASET_ROI}
   ${TEMP}/LSMT8dVED_Test${DATASET_OBJECT_ID}.mha
-  -200  #
+  -200  # Threshold used for solid lesions
+  -ResampleThickSliceData     # Supersample
+  -UseVesselEnhancingDiffusion
+  )
+
+add_test(LSMT8eVED_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/itkLesionSegmentationMethodTest8b
+  ${SEEDS_FILE}
+  ${DATASET_ROI}
+  ${TEMP}/LSMT8eVED_Test${DATASET_OBJECT_ID}.mha
+  -500  # Threshold used for part-solid lesions
+  -ResampleThickSliceData     # Supersample
+  -UseVesselEnhancingDiffusion
+  )
+
+
+add_test(LSMT9_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/itkLesionSegmentationMethodTest9
+  ${SEEDS_FILE}
+  ${DATASET_ROI}
+  ${TEMP}/LSMT9_Test${DATASET_OBJECT_ID}.mha
+  )
+
+# Supersampled version
+add_test(LSMT10_${DATASET_OBJECT_ID}
+  ${CXX_TEST_PATH}/itkLesionSegmentationMethodTest10
+  ${SEEDS_FILE}
+  ${DATASET_ROI_SEED}
+  ${TEMP}/LSMTS8_Test${DATASET_OBJECT_ID}.mha
+  )
+
+
+VOLUME_ESTIMATION_A( ${DATASET_ID} ${OBJECT_ID} 3 ${EXPECTED_VOLUME} )
+VOLUME_ESTIMATION_A( ${DATASET_ID} ${OBJECT_ID} 4 ${EXPECTED_VOLUME} )
+VOLUME_ESTIMATION_A( ${DATASET_ID} ${OBJECT_ID} 5 ${EXPECTED_
