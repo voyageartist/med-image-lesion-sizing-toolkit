@@ -191,4 +191,27 @@ TEST_CORNELL_DATASET(CornellZeroChange-ST0113-S00A05Full ST0113-S00A05
   )
 
 
-# Part solid ca
+# Part solid case
+TEST_CORNELL_DATASET(CornellZeroChange-ST0114-S02A01Full ST0114-S02A01
+  "Cornell\ Zero\ Change\ Data/PRST-20080922/ST0114/1.2.826.0.1.3680043.2.656.4.1.1.1444/S02A01"
+  159  265  32 
+  86 91 56
+  3317.62  ) # solid volume was 2489.7mm^3
+
+# Data characteristics completely different from its pair above such as being 5mm slice thickness etc..
+# and having a very thin slab instead of the full dataset.. its unlikely that this is a fair comparison
+TEST_CORNELL_DATASET(CornellZeroChange-ST0114-S02A02Full ST0114-S02A02
+  "Cornell\ Zero\ Change\ Data/PRST-20080922/ST0114/1.2.826.0.1.3680043.2.656.4.1.1.1444/S02A02"
+  185  244  0
+  72 70 5
+  2864.81  ) # solid volume was 2120.05mm^3
+
+
+
+TEST_CORNELL_DATASET(CornellZeroChange-ST0115-S02A01Full ST0115-S02A01
+  "Cornell\ Zero\ Change\ Data/PRST-20080922/ST0115/11.2.826.0.1.3680043.2.656.4.1.1.1491/S02A01"
+  176  224  198
+  54 52 34
+  332.478  ) 
+
+# Pair omitted.. its
