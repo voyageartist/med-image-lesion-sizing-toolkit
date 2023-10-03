@@ -214,4 +214,28 @@ TEST_CORNELL_DATASET(CornellZeroChange-ST0115-S02A01Full ST0115-S02A01
   54 52 34
   332.478  ) 
 
-# Pair omitted.. its
+# Pair omitted.. its characteristics are very different.
+
+
+
+# Data characteristics are very different... 
+TEST_CORNELL_DATASET(CornellZeroChange-ST0117-S02A04Full ST0117-S02A04
+  "Cornell\ Zero\ Change\ Data/PRST-20080922/ST0117/1.2.826.0.1.3680043.2.656.4.1.1.2012/S02A04"
+  130  283   0
+  58 53 5
+  422.54  ) 
+TEST_CORNELL_DATASET(CornellZeroChange-ST0117-S02A01Full ST0117-S02A01
+  "Cornell\ Zero\ Change\ Data/PRST-20080922/ST0117/1.2.826.0.1.3680043.2.656.4.1.1.2012/S02A01"
+  122  282  104
+  57 59 34
+  224.425  )
+
+
+
+# Part solid case
+TEST_CORNELL_DATASET(CornellZeroChange-ST0118-S02A03Full ST0118-S02A03
+  "Cornell\ Zero\ Change\ Data/PRST-20080922/ST0118/1.2.826.0.1.3680043.2.656.4.1.1.2012/S02A03"
+  383  242  0
+  53 59 10
+  1310.26  ) # solid part is 543.606
+
