@@ -74,4 +74,33 @@ itkConfidenceConnectedSegmentationModuleTest1(int argc, char * argv[])
 
   FeatureImageType::Pointer featureImage = featureReader->GetOutput();
 
-  
+  featureImage->DisconnectPipeline();
+
+  featureObject->SetImage(featureImage);
+
+  segmentationModule->SetFeature(featureObject);
+  segmentationModule->SetInput(landmarksReader->GetOutput());
+
+
+  double sigmaMultiplier = 2.0;
+  if (argc > 4)
+  {
+    sigmaMultiplier = std::stod(argv[4]);
+  }
+  segmentationModule->SetSigmaMultiplier(sigmaMultiplier);
+  ITK_TEST_SET_GET_VALUE(sigmaMultiplier, segmentationModule->GetSigmaMultiplier());
+
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(segmentationModule->Update());
+
+  using SpatialObjectType = SegmentationModuleType::SpatialObjectType;
+  SpatialObjectType::ConstPointer segmentation = segmentationModule->GetOutput();
+
+  OutputSpatialObjectType::ConstPointer outputObject =
+    dynamic_cast<const OutputSpatialObjectType *>(segmentation.GetPointer());
+
+  OutputImageType::ConstPointer outputImage = outputObject->GetImage();
+
+  OutputWriterType::Pointer writer = OutputWriterType::New();
+
+  writer->SetFileName(argv[
