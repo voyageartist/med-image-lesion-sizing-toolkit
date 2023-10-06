@@ -1,7 +1,8 @@
+
 /*=========================================================================
 
   Program:   Lesion Sizing Toolkit
-  Module:    itkConfidenceConnectedSegmentationModuleTest1.cxx
+  Module:    itkConnectedThresholdSegmentationModuleTest1.cxx
 
   Copyright (c) Kitware Inc.
   All rights reserved.
@@ -13,7 +14,7 @@
 
 =========================================================================*/
 
-#include "itkConfidenceConnectedSegmentationModule.h"
+#include "itkConnectedThresholdSegmentationModule.h"
 #include "itkImage.h"
 #include "itkSpatialObject.h"
 #include "itkImageSpatialObject.h"
@@ -24,21 +25,21 @@
 
 
 int
-itkConfidenceConnectedSegmentationModuleTest1(int argc, char * argv[])
+itkConnectedThresholdSegmentationModuleTest1(int argc, char * argv[])
 {
   if (argc < 3)
   {
     std::cerr << "Missing parameters." << std::endl;
     std::cerr << "Usage: " << argv[0];
     std::cerr << " landmarksFile featureImage outputImage ";
-    std::cerr << " [sigmaMultiplier] " << std::endl;
+    std::cerr << " [lowerThreshold upperThreshold] " << std::endl;
     return EXIT_FAILURE;
   }
 
 
   constexpr unsigned int Dimension = 3;
 
-  using SegmentationModuleType = itk::ConfidenceConnectedSegmentationModule<Dimension>;
+  using SegmentationModuleType = itk::ConnectedThresholdSegmentationModule<Dimension>;
 
   using FeatureImageType = SegmentationModuleType::FeatureImageType;
   using OutputImageType = SegmentationModuleType::OutputImageType;
@@ -51,7 +52,8 @@ itkConfidenceConnectedSegmentationModuleTest1(int argc, char * argv[])
   LandmarksReaderType::Pointer landmarksReader = LandmarksReaderType::New();
 
   landmarksReader->SetFileName(argv[1]);
-  landmarksReader->Update();
+  ITK_TRY_EXPECT_NO_EXCEPTION(landmarksReader->Update());
+
 
   FeatureReaderType::Pointer featureReader = FeatureReaderType::New();
 
@@ -63,7 +65,7 @@ itkConfidenceConnectedSegmentationModuleTest1(int argc, char * argv[])
   SegmentationModuleType::Pointer segmentationModule = SegmentationModuleType::New();
 
   ITK_EXERCISE_BASIC_OBJECT_METHODS(
-    segmentationModule, ConfidenceConnectedSegmentationModule, RegionGrowingSegmentationModule);
+    segmentationModule, ConnectedThresholdSegmentationModule, RegionGrowingSegmentationModule);
 
   using InputSpatialObjectType = SegmentationModuleType::InputSpatialObjectType;
   using FeatureSpatialObjectType = SegmentationModuleType::FeatureSpatialObjectType;
@@ -82,13 +84,21 @@ itkConfidenceConnectedSegmentationModuleTest1(int argc, char * argv[])
   segmentationModule->SetInput(landmarksReader->GetOutput());
 
 
-  double sigmaMultiplier = 2.0;
+  double lowerThreshold = 700;
   if (argc > 4)
   {
-    sigmaMultiplier = std::stod(argv[4]);
+    lowerThreshold = std::stod(argv[4]);
   }
-  segmentationModule->SetSigmaMultiplier(sigmaMultiplier);
-  ITK_TEST_SET_GET_VALUE(sigmaMultiplier, segmentationModule->GetSigmaMultiplier());
+  segmentationModule->SetLowerThreshold(lowerThreshold);
+  ITK_TEST_SET_GET_VALUE(lowerThreshold, segmentationModule->GetLowerThreshold());
+
+  double upperThreshold = 1000;
+  if (argc > 5)
+  {
+    upperThreshold = std::stod(argv[5]);
+  }
+  segmentationModule->SetUpperThreshold(upperThreshold);
+  ITK_TEST_SET_GET_VALUE(upperThreshold, segmentationModule->GetUpperThreshold());
 
 
   ITK_TRY_EXPECT_NO_EXCEPTION(segmentationModule->Update());
@@ -105,10 +115,8 @@ itkConfidenceConnectedSegmentationModuleTest1(int argc, char * argv[])
 
   writer->SetFileName(argv[3]);
   writer->SetInput(outputImage);
-  writer->UseCompressionOn();
 
   ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
-
 
   std::cout << "Test finished." << std::endl;
   return EXIT_SUCCESS;
