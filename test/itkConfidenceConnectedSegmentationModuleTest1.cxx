@@ -48,4 +48,30 @@ itkConfidenceConnectedSegmentationModuleTest1(int argc, char * argv[])
 
   using LandmarksReaderType = itk::LandmarksReader<Dimension>;
 
-  LandmarksReaderType::Pointer landmarksReader = La
+  LandmarksReaderType::Pointer landmarksReader = LandmarksReaderType::New();
+
+  landmarksReader->SetFileName(argv[1]);
+  landmarksReader->Update();
+
+  FeatureReaderType::Pointer featureReader = FeatureReaderType::New();
+
+  featureReader->SetFileName(argv[2]);
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(featureReader->Update());
+
+
+  SegmentationModuleType::Pointer segmentationModule = SegmentationModuleType::New();
+
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(
+    segmentationModule, ConfidenceConnectedSegmentationModule, RegionGrowingSegmentationModule);
+
+  using InputSpatialObjectType = SegmentationModuleType::InputSpatialObjectType;
+  using FeatureSpatialObjectType = SegmentationModuleType::FeatureSpatialObjectType;
+  using OutputSpatialObjectType = SegmentationModuleType::OutputSpatialObjectType;
+
+  InputSpatialObjectType::Pointer   inputObject = InputSpatialObjectType::New();
+  FeatureSpatialObjectType::Pointer featureObject = FeatureSpatialObjectType::New();
+
+  FeatureImageType::Pointer featureImage = featureReader->GetOutput();
+
+  
