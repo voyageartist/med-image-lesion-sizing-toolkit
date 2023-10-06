@@ -17,4 +17,35 @@
 #include "itkImage.h"
 #include "itkSpatialObject.h"
 #include "itkImageSpatialObject.h"
-#include "itkImageFileRe
+#include "itkImageFileReader.h"
+#include "itkImageFileWriter.h"
+#include "itkLandmarksReader.h"
+#include "itkTestingMacros.h"
+
+
+int
+itkConfidenceConnectedSegmentationModuleTest1(int argc, char * argv[])
+{
+  if (argc < 3)
+  {
+    std::cerr << "Missing parameters." << std::endl;
+    std::cerr << "Usage: " << argv[0];
+    std::cerr << " landmarksFile featureImage outputImage ";
+    std::cerr << " [sigmaMultiplier] " << std::endl;
+    return EXIT_FAILURE;
+  }
+
+
+  constexpr unsigned int Dimension = 3;
+
+  using SegmentationModuleType = itk::ConfidenceConnectedSegmentationModule<Dimension>;
+
+  using FeatureImageType = SegmentationModuleType::FeatureImageType;
+  using OutputImageType = SegmentationModuleType::OutputImageType;
+
+  using FeatureReaderType = itk::ImageFileReader<FeatureImageType>;
+  using OutputWriterType = itk::ImageFileWriter<OutputImageType>;
+
+  using LandmarksReaderType = itk::LandmarksReader<Dimension>;
+
+  LandmarksReaderType::Pointer landmarksReader = La
