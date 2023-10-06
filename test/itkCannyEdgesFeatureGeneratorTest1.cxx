@@ -2,7 +2,7 @@
 /*=========================================================================
 
   Program:   Lesion Sizing Toolkit
-  Module:    itkCannyEdgesDistanceFeatureGeneratorTest1.cxx
+  Module:    itkCannyEdgesFeatureGeneratorTest1.cxx
 
   Copyright (c) Kitware Inc.
   All rights reserved.
@@ -14,7 +14,7 @@
 
 =========================================================================*/
 
-#include "itkCannyEdgesDistanceFeatureGenerator.h"
+#include "itkCannyEdgesFeatureGenerator.h"
 #include "itkImage.h"
 #include "itkSpatialObject.h"
 #include "itkImageSpatialObject.h"
@@ -24,7 +24,7 @@
 
 
 int
-itkCannyEdgesDistanceFeatureGeneratorTest1(int argc, char * argv[])
+itkCannyEdgesFeatureGeneratorTest1(int argc, char * argv[])
 {
   if (argc < 3)
   {
@@ -53,13 +53,12 @@ itkCannyEdgesDistanceFeatureGeneratorTest1(int argc, char * argv[])
 
   ITK_TRY_EXPECT_NO_EXCEPTION(reader->Update());
 
+  using CannyEdgesFeatureGeneratorType = itk::CannyEdgesFeatureGenerator<Dimension>;
+  using SpatialObjectType = CannyEdgesFeatureGeneratorType::SpatialObjectType;
 
-  using CannyEdgesDistanceFeatureGeneratorType = itk::CannyEdgesDistanceFeatureGenerator<Dimension>;
-  using SpatialObjectType = CannyEdgesDistanceFeatureGeneratorType::SpatialObjectType;
+  CannyEdgesFeatureGeneratorType::Pointer featureGenerator = CannyEdgesFeatureGeneratorType::New();
 
-  CannyEdgesDistanceFeatureGeneratorType::Pointer featureGenerator = CannyEdgesDistanceFeatureGeneratorType::New();
-
-  ITK_EXERCISE_BASIC_OBJECT_METHODS(featureGenerator, CannyEdgesDistanceFeatureGenerator, FeatureGenerator);
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(featureGenerator, CannyEdgesFeatureGenerator, FeatureGenerator);
 
   InputImageSpatialObjectType::Pointer inputObject = InputImageSpatialObjectType::New();
 
@@ -70,6 +69,7 @@ itkCannyEdgesDistanceFeatureGeneratorTest1(int argc, char * argv[])
   inputObject->SetImage(inputImage);
 
   featureGenerator->SetInput(inputObject);
+
 
   double sigma = 1.0;
   if (argc > 3)
@@ -112,7 +112,6 @@ itkCannyEdgesDistanceFeatureGeneratorTest1(int argc, char * argv[])
   writer->UseCompressionOn();
 
   ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
-
 
   std::cout << "Test finished." << std::endl;
   return EXIT_SUCCESS;
