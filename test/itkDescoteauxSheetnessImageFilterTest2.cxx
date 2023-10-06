@@ -220,3 +220,15 @@ itkDescoteauxSheetnessImageFilterTest2(int argc, char * argv[])
         std::cerr << "Detection dark failure at index " << citr.GetIndex();
         std::cerr << " Input = " << iitr.Get();
         std::cerr << " Sheetness = " << citr.Get() << std::endl;
+        testStatus = EXIT_FAILURE;
+      }
+    }
+
+    ++citr;
+    ++iitr;
+  }
+
+
+  std::cout << "Test finished." << std::endl;
+  return testStatus;
+}
