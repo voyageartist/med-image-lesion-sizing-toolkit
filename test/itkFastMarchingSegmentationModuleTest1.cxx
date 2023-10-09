@@ -56,4 +56,28 @@ itkFastMarchingSegmentationModuleTest1(int argc, char * argv[])
   FeatureReaderType::Pointer featureReader = FeatureReaderType::New();
   featureReader->SetFileName(argv[2]);
 
-  ITK_TRY_EX
+  ITK_TRY_EXPECT_NO_EXCEPTION(featureReader->Update());
+
+
+  SegmentationModuleType::Pointer segmentationModule = SegmentationModuleType::New();
+
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(
+    segmentationModule, FastMarchingSegmentationModule, SinglePhaseLevelSetSegmentationModule);
+
+  using InputSpatialObjectType = SegmentationModuleType::InputSpatialObjectType;
+  using FeatureSpatialObjectType = SegmentationModuleType::FeatureSpatialObjectType;
+  using OutputSpatialObjectType = SegmentationModuleType::OutputSpatialObjectType;
+
+  InputSpatialObjectType::Pointer   inputObject = InputSpatialObjectType::New();
+  FeatureSpatialObjectType::Pointer featureObject = FeatureSpatialObjectType::New();
+
+  FeatureImageType::Pointer featureImage = featureReader->GetOutput();
+  featureImage->DisconnectPipeline();
+
+  featureObject->SetImage(featureImage);
+
+  segmentationModule->SetFeature(featureObject);
+  segmentationModule->SetInput(landmarksReader->GetOutput());
+
+  double stoppingTime = 10.0;
+  if (argc > 4)
