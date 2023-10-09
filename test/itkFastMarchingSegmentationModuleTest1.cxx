@@ -81,3 +81,34 @@ itkFastMarchingSegmentationModuleTest1(int argc, char * argv[])
 
   double stoppingTime = 10.0;
   if (argc > 4)
+  {
+    stoppingTime = std::stod(argv[4]);
+  }
+  segmentationModule->SetStoppingValue(stoppingTime);
+  ITK_TEST_SET_GET_VALUE(stoppingTime, segmentationModule->GetStoppingValue());
+
+  double distanceFromSeeds = 5.0;
+  if (argc > 5)
+  {
+    distanceFromSeeds = std::stod(argv[5]);
+  }
+  segmentationModule->SetDistanceFromSeeds(distanceFromSeeds);
+  ITK_TEST_SET_GET_VALUE(distanceFromSeeds, segmentationModule->GetDistanceFromSeeds());
+
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(segmentationModule->Update());
+
+
+  using SpatialObjectType = SegmentationModuleType::SpatialObjectType;
+  SpatialObjectType::ConstPointer segmentation = segmentationModule->GetOutput();
+
+  OutputSpatialObjectType::ConstPointer outputObject =
+    dynamic_cast<const OutputSpatialObjectType *>(segmentation.GetPointer());
+  OutputImageType::ConstPointer outputImage = outputObject->GetImage();
+  OutputWriterType::Pointer     writer = OutputWriterType::New();
+
+  writer->SetFileName(argv[3]);
+  writer->SetInput(outputImage);
+  writer->UseCompressionOn();
+
+  ITK_
