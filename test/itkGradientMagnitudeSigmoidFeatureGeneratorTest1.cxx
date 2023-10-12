@@ -2,7 +2,7 @@
 /*=========================================================================
 
   Program:   Lesion Sizing Toolkit
-  Module:    itkFrangiTubularnessFeatureGeneratorTest1.cxx
+  Module:    itkGradientMagnitudeSigmoidFeatureGeneratorTest1.cxx
 
   Copyright (c) Kitware Inc.
   All rights reserved.
@@ -14,7 +14,7 @@
 
 =========================================================================*/
 
-#include "itkFrangiTubularnessFeatureGenerator.h"
+#include "itkGradientMagnitudeSigmoidFeatureGenerator.h"
 #include "itkImage.h"
 #include "itkSpatialObject.h"
 #include "itkImageSpatialObject.h"
@@ -24,13 +24,13 @@
 
 
 int
-itkFrangiTubularnessFeatureGeneratorTest1(int argc, char * argv[])
+itkGradientMagnitudeSigmoidFeatureGeneratorTest1(int argc, char * argv[])
 {
   if (argc < 3)
   {
     std::cerr << "Missing parameters." << std::endl;
     std::cerr << "Usage: " << argv[0];
-    std::cerr << " inputImage outputImage [sigma sheetness bloobiness noise ]" << std::endl;
+    std::cerr << " inputImage outputImage [sigma alpha beta]" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -54,12 +54,15 @@ itkFrangiTubularnessFeatureGeneratorTest1(int argc, char * argv[])
 
   ITK_TRY_EXPECT_NO_EXCEPTION(reader->Update());
 
-  using FrangiTubularnessFeatureGeneratorType = itk::FrangiTubularnessFeatureGenerator<Dimension>;
-  using SpatialObjectType = FrangiTubularnessFeatureGeneratorType::SpatialObjectType;
 
-  FrangiTubularnessFeatureGeneratorType::Pointer featureGenerator = FrangiTubularnessFeatureGeneratorType::New();
+  using GradientMagnitudeSigmoidFeatureGeneratorType = itk::GradientMagnitudeSigmoidFeatureGenerator<Dimension>;
+  using SpatialObjectType = GradientMagnitudeSigmoidFeatureGeneratorType::SpatialObjectType;
 
-  ITK_EXERCISE_BASIC_OBJECT_METHODS(featureGenerator, FrangiTubularnessFeatureGenerator, FeatureGenerator);
+  GradientMagnitudeSigmoidFeatureGeneratorType::Pointer featureGenerator =
+    GradientMagnitudeSigmoidFeatureGeneratorType::New();
+
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(featureGenerator, GradientMagnitudeSigmoidFeatureGenerator, FeatureGenerator);
+
 
   InputImageSpatialObjectType::Pointer inputObject = InputImageSpatialObjectType::New();
 
@@ -80,29 +83,21 @@ itkFrangiTubularnessFeatureGeneratorTest1(int argc, char * argv[])
   featureGenerator->SetSigma(sigma);
   ITK_TEST_SET_GET_VALUE(sigma, featureGenerator->GetSigma());
 
-  double sheetnessNormalization = 0.5;
+  double alpha = -1.0;
   if (argc > 4)
   {
-    sheetnessNormalization = std::stod(argv[4]);
+    alpha = std::stod(argv[4]);
   }
-  featureGenerator->SetSheetnessNormalization(sheetnessNormalization);
-  ITK_TEST_SET_GET_VALUE(sheetnessNormalization, featureGenerator->GetSheetnessNormalization());
+  featureGenerator->SetAlpha(alpha);
+  ITK_TEST_SET_GET_VALUE(alpha, featureGenerator->GetAlpha());
 
-  double bloobinessNormalization = 2.0;
+  double beta = 128;
   if (argc > 5)
   {
-    bloobinessNormalization = std::stod(argv[5]);
+    beta = std::stod(argv[5]);
   }
-  featureGenerator->SetBloobinessNormalization(bloobinessNormalization);
-  ITK_TEST_SET_GET_VALUE(bloobinessNormalization, featureGenerator->GetBloobinessNormalization());
-
-  double noiseNormalization = 1.0;
-  if (argc > 6)
-  {
-    noiseNormalization = std::stod(argv[6]);
-  }
-  featureGenerator->SetNoiseNormalization(noiseNormalization);
-  ITK_TEST_SET_GET_VALUE(noiseNormalization, featureGenerator->GetNoiseNormalization());
+  featureGenerator->SetBeta(beta);
+  ITK_TEST_SET_GET_VALUE(beta, featureGenerator->GetBeta());
 
 
   ITK_TRY_EXPECT_NO_EXCEPTION(featureGenerator->Update());
@@ -121,6 +116,7 @@ itkFrangiTubularnessFeatureGeneratorTest1(int argc, char * argv[])
   writer->SetInput(outputImage);
 
   ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
+
 
   std::cout << "Test finished." << std::endl;
   return EXIT_SUCCESS;

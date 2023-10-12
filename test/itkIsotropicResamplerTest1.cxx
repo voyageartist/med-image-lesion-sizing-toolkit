@@ -2,7 +2,7 @@
 /*=========================================================================
 
   Program:   Lesion Sizing Toolkit
-  Module:    itkFrangiTubularnessFeatureGeneratorTest1.cxx
+  Module:    itkIsotropicResamplerTest1.cxx
 
   Copyright (c) Kitware Inc.
   All rights reserved.
@@ -14,7 +14,7 @@
 
 =========================================================================*/
 
-#include "itkFrangiTubularnessFeatureGenerator.h"
+#include "itkIsotropicResampler.h"
 #include "itkImage.h"
 #include "itkSpatialObject.h"
 #include "itkImageSpatialObject.h"
@@ -24,20 +24,20 @@
 
 
 int
-itkFrangiTubularnessFeatureGeneratorTest1(int argc, char * argv[])
+itkIsotropicResamplerTest1(int argc, char * argv[])
 {
   if (argc < 3)
   {
     std::cerr << "Missing parameters." << std::endl;
     std::cerr << "Usage: " << argv[0];
-    std::cerr << " inputImage outputImage [sigma sheetness bloobiness noise ]" << std::endl;
+    std::cerr << " inputImage outputImage " << std::endl;
     return EXIT_FAILURE;
   }
 
   constexpr unsigned int Dimension = 3;
 
   using InputPixelType = signed short;
-  using OutputPixelType = float;
+  using OutputPixelType = signed short;
 
   using InputImageType = itk::Image<InputPixelType, Dimension>;
   using OutputImageType = itk::Image<OutputPixelType, Dimension>;
@@ -54,12 +54,14 @@ itkFrangiTubularnessFeatureGeneratorTest1(int argc, char * argv[])
 
   ITK_TRY_EXPECT_NO_EXCEPTION(reader->Update());
 
-  using FrangiTubularnessFeatureGeneratorType = itk::FrangiTubularnessFeatureGenerator<Dimension>;
-  using SpatialObjectType = FrangiTubularnessFeatureGeneratorType::SpatialObjectType;
 
-  FrangiTubularnessFeatureGeneratorType::Pointer featureGenerator = FrangiTubularnessFeatureGeneratorType::New();
+  using ResampleFilterType = itk::IsotropicResampler<Dimension>;
+  using SpatialObjectType = ResampleFilterType::SpatialObjectType;
 
-  ITK_EXERCISE_BASIC_OBJECT_METHODS(featureGenerator, FrangiTubularnessFeatureGenerator, FeatureGenerator);
+  ResampleFilterType::Pointer resampler = ResampleFilterType::New();
+
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(resampler, IsotropicResampler, ProcessObject);
+
 
   InputImageSpatialObjectType::Pointer inputObject = InputImageSpatialObjectType::New();
 
@@ -69,49 +71,15 @@ itkFrangiTubularnessFeatureGeneratorTest1(int argc, char * argv[])
 
   inputObject->SetImage(inputImage);
 
-  featureGenerator->SetInput(inputObject);
+  resampler->SetInput(inputObject);
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(resampler->Update());
 
 
-  double sigma = 1.0;
-  if (argc > 3)
-  {
-    sigma = std::stod(argv[3]);
-  }
-  featureGenerator->SetSigma(sigma);
-  ITK_TEST_SET_GET_VALUE(sigma, featureGenerator->GetSigma());
-
-  double sheetnessNormalization = 0.5;
-  if (argc > 4)
-  {
-    sheetnessNormalization = std::stod(argv[4]);
-  }
-  featureGenerator->SetSheetnessNormalization(sheetnessNormalization);
-  ITK_TEST_SET_GET_VALUE(sheetnessNormalization, featureGenerator->GetSheetnessNormalization());
-
-  double bloobinessNormalization = 2.0;
-  if (argc > 5)
-  {
-    bloobinessNormalization = std::stod(argv[5]);
-  }
-  featureGenerator->SetBloobinessNormalization(bloobinessNormalization);
-  ITK_TEST_SET_GET_VALUE(bloobinessNormalization, featureGenerator->GetBloobinessNormalization());
-
-  double noiseNormalization = 1.0;
-  if (argc > 6)
-  {
-    noiseNormalization = std::stod(argv[6]);
-  }
-  featureGenerator->SetNoiseNormalization(noiseNormalization);
-  ITK_TEST_SET_GET_VALUE(noiseNormalization, featureGenerator->GetNoiseNormalization());
-
-
-  ITK_TRY_EXPECT_NO_EXCEPTION(featureGenerator->Update());
-
-
-  SpatialObjectType::ConstPointer feature = featureGenerator->GetFeature();
+  SpatialObjectType::ConstPointer resampledImage = resampler->GetOutput();
 
   OutputImageSpatialObjectType::ConstPointer outputObject =
-    dynamic_cast<const OutputImageSpatialObjectType *>(feature.GetPointer());
+    dynamic_cast<const OutputImageSpatialObjectType *>(resampledImage.GetPointer());
 
   OutputImageType::ConstPointer outputImage = outputObject->GetImage();
 
@@ -119,8 +87,10 @@ itkFrangiTubularnessFeatureGeneratorTest1(int argc, char * argv[])
 
   writer->SetFileName(argv[2]);
   writer->SetInput(outputImage);
+  writer->UseCompressionOn();
 
   ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
+
 
   std::cout << "Test finished." << std::endl;
   return EXIT_SUCCESS;
