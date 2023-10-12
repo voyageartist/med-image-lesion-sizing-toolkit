@@ -11,4 +11,35 @@
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notice for more information.
 
-=======================================================================
+=========================================================================*/
+
+#include "itkFeatureGenerator.h"
+#include "itkImage.h"
+#include "itkSpatialObject.h"
+#include "itkImageSpatialObject.h"
+
+int
+itkFeatureGeneratorTest1(int itkNotUsed(argc), char * itkNotUsed(argv)[])
+{
+  constexpr unsigned int Dimension = 3;
+
+  using FeatureGeneratorType = itk::FeatureGenerator<Dimension>;
+  using SpatialObjectType = FeatureGeneratorType::SpatialObjectType;
+
+  FeatureGeneratorType::Pointer featureGenerator = FeatureGeneratorType::New();
+
+  using ImageSpatialObjectType = itk::ImageSpatialObject<Dimension>;
+
+  ImageSpatialObjectType::Pointer inputObject = ImageSpatialObjectType::New();
+
+  featureGenerator->SetInput(inputObject);
+
+  featureGenerator->Update();
+
+  SpatialObjectType::ConstPointer feature = featureGenerator->GetFeature();
+
+  featureGenerator->Print(std::cout);
+
+
+  return EXIT_SUCCESS;
+}
