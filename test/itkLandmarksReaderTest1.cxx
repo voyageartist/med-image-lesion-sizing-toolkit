@@ -72,4 +72,34 @@ itkLandmarksReaderTest1(int argc, char * argv[])
   landmarkPointsReader->SetFileName(argv[1]);
   landmarkPointsReader->Update();
 
-  SpatialObjectReaderType::GroupPointer
+  SpatialObjectReaderType::GroupPointer group = landmarkPointsReader->GetGroup();
+
+  if (!group)
+  {
+    std::cerr << "Test failed!" << std::endl;
+    std::cerr << "No Group." << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  std::cout << "Number of children in the group:" << group->GetNumberOfChildren(1) << std::endl;
+
+  using ObjectListType = SpatialObjectReaderType::GroupType::ObjectListType;
+
+  ObjectListType * groupChildren = group->GetChildren(999999);
+
+  ObjectListType::const_iterator spatialObjectItr = groupChildren->begin();
+
+
+  const InputSpatialObjectType * landmarkSpatialObject2 = nullptr;
+
+  while (spatialObjectItr != groupChildren->end())
+  {
+    std::string objectName = (*spatialObjectItr)->GetTypeName();
+    if (objectName == "LandmarkSpatialObject")
+    {
+      landmarkSpatialObject2 = dynamic_cast<const InputSpatialObjectType *>(spatialObjectItr->GetPointer());
+    }
+    spatialObjectItr++;
+  }
+
+  using LandmarkPointLis
