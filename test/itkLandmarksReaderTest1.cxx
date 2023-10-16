@@ -40,4 +40,36 @@ itkLandmarksReaderTest1(int argc, char * argv[])
   //
   using LandmarksReaderType = itk::LandmarksReader<Dimension>;
 
-  LandmarksReaderType::Pointer landmarksReade
+  LandmarksReaderType::Pointer landmarksReader = LandmarksReaderType::New();
+
+  std::string inputFileName = argv[1];
+
+  landmarksReader->SetFileName(inputFileName);
+  landmarksReader->SetFileName(argv[1]);
+
+  std::string recoveredFileName = landmarksReader->GetFileName();
+
+  if (recoveredFileName != inputFileName)
+  {
+    std::cerr << "Error in Set/GetFileName()" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(landmarksReader->Update());
+
+
+  InputSpatialObjectType::ConstPointer landmarkSpatialObject1 = landmarksReader->GetOutput();
+
+  //
+  // Reading the landmarks file by using direct ITK classes
+  //
+  using SpatialObjectReaderType = itk::SpatialObjectReader<3, unsigned short>;
+
+  SpatialObjectReaderType::Pointer landmarkPointsReader = SpatialObjectReaderType::New();
+
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(landmarkPointsReader, SpatialObjectReader, Object);
+
+  landmarkPointsReader->SetFileName(argv[1]);
+  landmarkPointsReader->Update();
+
+  SpatialObjectReaderType::GroupPointer
