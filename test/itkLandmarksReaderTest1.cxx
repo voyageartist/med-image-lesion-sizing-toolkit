@@ -102,4 +102,26 @@ itkLandmarksReaderTest1(int argc, char * argv[])
     spatialObjectItr++;
   }
 
-  using LandmarkPointLis
+  using LandmarkPointListType = InputSpatialObjectType::LandmarkPointListType;
+
+  const unsigned int numberOfPoints1 = landmarkSpatialObject1->GetNumberOfPoints();
+  const unsigned int numberOfPoints2 = landmarkSpatialObject2->GetNumberOfPoints();
+
+  if (numberOfPoints1 != numberOfPoints2)
+  {
+    std::cerr << "Test failed!" << std::endl;
+    std::cerr << "Number of points is not consistent between two read methods" << std::endl;
+    std::cerr << "Error in GetNumberOfPoints()" << std::endl;
+    std::cerr << "Expected value " << numberOfPoints1 << std::endl;
+    std::cerr << " differs from " << numberOfPoints2 << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  const LandmarkPointListType & points1 = landmarkSpatialObject1->GetPoints();
+  const LandmarkPointListType & points2 = landmarkSpatialObject2->GetPoints();
+
+  for (unsigned int i = 0; i < numberOfPoints1; ++i)
+  {
+    if (points1[i].GetPositionInObjectSpace() != points2[i].GetPositionInObjectSpace())
+    {
+      std::cerr << "Test fa
