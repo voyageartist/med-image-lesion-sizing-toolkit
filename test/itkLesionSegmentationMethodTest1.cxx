@@ -69,4 +69,6 @@ itkLesionSegmentationMethodTest1(int itkNotUsed(argc), char * itkNotUsed(argv)[]
   ITK_TRY_EXPECT_EXCEPTION(segmentationMethod->Update());
 
 
- 
+  std::cout << "Test finished." << std::endl;
+  return EXIT_SUCCESS;
+}
