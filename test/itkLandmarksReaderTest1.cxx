@@ -124,4 +124,15 @@ itkLandmarksReaderTest1(int argc, char * argv[])
   {
     if (points1[i].GetPositionInObjectSpace() != points2[i].GetPositionInObjectSpace())
     {
-      std::cerr << "Test fa
+      std::cerr << "Test failed!" << std::endl;
+      std::cerr << "Error : point " << i << " has different positions" << std::endl;
+      std::cerr << "Expected value " << points2[i].GetPositionInObjectSpace() << std::endl;
+      std::cerr << " differs from" << points1[i].GetPositionInObjectSpace() << std::endl;
+      return EXIT_FAILURE;
+    }
+  }
+
+
+  std::cout << "Test finished." << std::endl;
+  return EXIT_SUCCESS;
+}
