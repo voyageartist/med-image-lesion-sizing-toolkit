@@ -40,4 +40,20 @@ itkLesionSegmentationMethodTest2(int itkNotUsed(argc), char * itkNotUsed(argv)[]
 
   ImageMaskSpatialObjectType::Pointer regionOfInterest = ImageMaskSpatialObjectType::New();
 
- 
+  segmentationMethod->SetRegionOfInterest(regionOfInterest);
+
+  ImageMaskSpatialObjectType::Pointer initialSegmentation = ImageMaskSpatialObjectType::New();
+
+  segmentationMethod->SetInitialSegmentation(initialSegmentation);
+
+  using TubularnessGeneratorType = itk::FrangiTubularnessFeatureGenerator<Dimension>;
+  TubularnessGeneratorType::Pointer tubularnessGenerator = TubularnessGeneratorType::New();
+
+  using SheetnessGeneratorType = itk::DescoteauxSheetnessFeatureGenerator<Dimension>;
+  SheetnessGeneratorType::Pointer sheetnessGenerator = SheetnessGeneratorType::New();
+
+  using VesselnessGeneratorType = itk::SatoVesselnessFeatureGenerator<Dimension>;
+  VesselnessGeneratorType::Pointer vesselnessGenerator = VesselnessGeneratorType::New();
+
+  using LocalStructureGeneratorType = itk::SatoLocalStructureFeatureGenerator<Dimension>;
+  LocalStructureGeneratorType::Pointer localStructureGenerator = LocalStructureGeneratorType::New(
