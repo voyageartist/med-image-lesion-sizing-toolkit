@@ -40,4 +40,33 @@ itkLesionSegmentationMethodTest1(int itkNotUsed(argc), char * itkNotUsed(argv)[]
 
   const MethodType::SpatialObjectType * regionOfInterestReturned = segmentationMethod->GetRegionOfInterest();
 
-  if (regionOfInterestReturned != regionOfInterest.
+  if (regionOfInterestReturned != regionOfInterest.GetPointer())
+  {
+    std::cerr << "Test failed! " << std::endl;
+    std::cerr << "Error in Set/GetRegionOfInterest() " << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  ImageMaskSpatialObjectType::Pointer initialSegmentation = ImageMaskSpatialObjectType::New();
+
+  segmentationMethod->SetInitialSegmentation(initialSegmentation);
+
+  const MethodType::SpatialObjectType * initialSegmentationReturned = segmentationMethod->GetInitialSegmentation();
+
+  if (initialSegmentationReturned != initialSegmentation.GetPointer())
+  {
+    std::cerr << "Test failed! " << std::endl;
+    std::cerr << "Error in Set/GetInitialSegmentation() " << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  using FeatureGeneratorType = itk::FeatureGenerator<Dimension>;
+
+  FeatureGeneratorType::Pointer featureGenerator = FeatureGeneratorType::New();
+
+  segmentationMethod->AddFeatureGenerator(featureGenerator);
+
+  ITK_TRY_EXPECT_EXCEPTION(segmentationMethod->Update());
+
+
+ 
