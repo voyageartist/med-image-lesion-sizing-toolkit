@@ -56,4 +56,21 @@ itkLesionSegmentationMethodTest2(int itkNotUsed(argc), char * itkNotUsed(argv)[]
   VesselnessGeneratorType::Pointer vesselnessGenerator = VesselnessGeneratorType::New();
 
   using LocalStructureGeneratorType = itk::SatoLocalStructureFeatureGenerator<Dimension>;
-  LocalStructureGeneratorType::Pointer localStructureGenerator = LocalStructureGeneratorType::New(
+  LocalStructureGeneratorType::Pointer localStructureGenerator = LocalStructureGeneratorType::New();
+
+  using GradientMagnitudeSigmoidGeneratorType = itk::GradientMagnitudeSigmoidFeatureGenerator<Dimension>;
+  GradientMagnitudeSigmoidGeneratorType::Pointer gradientMagnitudeSigmoidGenerator =
+    GradientMagnitudeSigmoidGeneratorType::New();
+
+  segmentationMethod->AddFeatureGenerator(tubularnessGenerator);
+  segmentationMethod->AddFeatureGenerator(sheetnessGenerator);
+  segmentationMethod->AddFeatureGenerator(vesselnessGenerator);
+  segmentationMethod->AddFeatureGenerator(localStructureGenerator);
+  segmentationMethod->AddFeatureGenerator(gradientMagnitudeSigmoidGenerator);
+
+  ITK_TRY_EXPECT_EXCEPTION(segmentationMethod->Update());
+
+
+  std::cout << "Test finished." << std::endl;
+  return EXIT_SUCCESS;
+}
