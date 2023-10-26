@@ -2,7 +2,7 @@
 /*=========================================================================
 
   Program:   Lesion Sizing Toolkit
-  Module:    itkLesionSegmentationMethodTest4.cxx
+  Module:    itkLesionSegmentationMethodTest6.cxx
 
   Copyright (c) Kitware Inc.
   All rights reserved.
@@ -14,7 +14,7 @@
 
 =========================================================================*/
 
-// The test runs a fast marching level set from user supplied seed points
+// The test runs a shape detection level set from user supplied seed points
 // and then runs the shape detection level set with the results from the
 // fast marching to get the final segmentation.
 
@@ -26,24 +26,28 @@
 #include "itkImageMaskSpatialObject.h"
 #include "itkLungWallFeatureGenerator.h"
 #include "itkSatoVesselnessSigmoidFeatureGenerator.h"
-#include "itkCannyEdgesFeatureGenerator.h"
 #include "itkSigmoidFeatureGenerator.h"
-#include "itkFastMarchingSegmentationModule.h"
-#include "itkMinimumFeatureAggregator.h"
+#include "itkGradientMagnitudeSigmoidFeatureGenerator.h"
+#include "itkFastMarchingAndShapeDetectionLevelSetSegmentationModule.h"
 #include "itkMinimumFeatureAggregator.h"
 #include "itkTestingMacros.h"
 
 
+// Applies fast marhching followed by shape detection.
 int
-itkLesionSegmentationMethodTest4(int argc, char * argv[])
+itkLesionSegmentationMethodTest6(int argc, char * argv[])
 {
   if (argc < 3)
   {
     std::cerr << "Missing parameters." << std::endl;
     std::cerr << "Usage: " << argv[0];
-    std::cerr << " landmarksFile inputImage outputImage";
-    std::cerr << " stoppingValue";
-    std::cerr << " distanceFromSeeds" << std::endl;
+    std::cerr << " landmarksFile inputImage toutputImage";
+    std::cerr << " [RMSErrorForShapeDetection]"
+              << " [IterationsForShapeDetection]"
+              << " [CurvatureScalingForShapeDetection]"
+              << " [PropagationScalingForShapeDetection]";
+    std::cerr << " stopping time for fast marching";
+    std::cerr << " distance from seeds for fast marching" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -80,8 +84,9 @@ itkLesionSegmentationMethodTest4(int argc, char * argv[])
   using SigmoidFeatureGeneratorType = itk::SigmoidFeatureGenerator<Dimension>;
   SigmoidFeatureGeneratorType::Pointer sigmoidGenerator = SigmoidFeatureGeneratorType::New();
 
-  using CannyEdgesFeatureGeneratorType = itk::CannyEdgesFeatureGenerator<Dimension>;
-  CannyEdgesFeatureGeneratorType::Pointer cannyEdgesGenerator = CannyEdgesFeatureGeneratorType::New();
+  using GradientMagnitudeSigmoidGeneratorType = itk::GradientMagnitudeSigmoidFeatureGenerator<Dimension>;
+  GradientMagnitudeSigmoidGeneratorType::Pointer gradientMagnitudeSigmoidGenerator =
+    GradientMagnitudeSigmoidGeneratorType::New();
 
   using FeatureAggregatorType = itk::MinimumFeatureAggregator<Dimension>;
   FeatureAggregatorType::Pointer featureAggregator = FeatureAggregatorType::New();
@@ -89,11 +94,12 @@ itkLesionSegmentationMethodTest4(int argc, char * argv[])
   featureAggregator->AddFeatureGenerator(lungWallGenerator);
   featureAggregator->AddFeatureGenerator(vesselnessGenerator);
   featureAggregator->AddFeatureGenerator(sigmoidGenerator);
-  featureAggregator->AddFeatureGenerator(cannyEdgesGenerator);
+  featureAggregator->AddFeatureGenerator(gradientMagnitudeSigmoidGenerator);
 
   lesionSegmentationMethod->AddFeatureGenerator(featureAggregator);
 
   using SpatialObjectType = MethodType::SpatialObjectType;
+
   using InputImageSpatialObjectType = itk::ImageSpatialObject<Dimension, InputPixelType>;
   InputImageSpatialObjectType::Pointer inputObject = InputImageSpatialObjectType::New();
 
@@ -106,38 +112,72 @@ itkLesionSegmentationMethodTest4(int argc, char * argv[])
   lungWallGenerator->SetInput(inputObject);
   vesselnessGenerator->SetInput(inputObject);
   sigmoidGenerator->SetInput(inputObject);
-  cannyEdgesGenerator->SetInput(inputObject);
+  gradientMagnitudeSigmoidGenerator->SetInput(inputObject);
 
   lungWallGenerator->SetLungThreshold(-400);
 
   vesselnessGenerator->SetSigma(1.0);
   vesselnessGenerator->SetAlpha1(0.5);
   vesselnessGenerator->SetAlpha2(2.0);
-  vesselnessGenerator->SetSigmoidAlpha(-10.0);
-  vesselnessGenerator->SetSigmoidBeta(80.0);
 
   sigmoidGenerator->SetAlpha(1.0);
   sigmoidGenerator->SetBeta(-200.0);
 
-  cannyEdgesGenerator->SetSigma(1.0);
-  cannyEdgesGenerator->SetUpperThreshold(150.0);
-  cannyEdgesGenerator->SetLowerThreshold(75.0);
+  gradientMagnitudeSigmoidGenerator->SetSigma(1.0);
+  gradientMagnitudeSigmoidGenerator->SetAlpha(-0.1);
+  gradientMagnitudeSigmoidGenerator->SetBeta(150.0);
 
-  using SegmentationModuleType = itk::FastMarchingSegmentationModule<Dimension>;
+  using SegmentationModuleType = itk::FastMarchingAndShapeDetectionLevelSetSegmentationModule<Dimension>;
   SegmentationModuleType::Pointer segmentationModule = SegmentationModuleType::New();
 
-  double stoppingTime = 10.0;
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(
+    segmentationModule, FastMarchingAndShapeDetectionLevelSetSegmentationModule, SinglePhaseLevelSetSegmentationModule);
+
+
+  double maximumRMSError = 0.0002;
   if (argc > 4)
   {
-    stoppingTime = std::stod(argv[4]);
+    maximumRMSError = std::stod(argv[4]);
   }
-  segmentationModule->SetStoppingValue(stoppingTime);
-  ITK_TEST_SET_GET_VALUE(stoppingTime, segmentationModule->GetStoppingValue());
+  segmentationModule->SetMaximumRMSError(maximumRMSError);
+  ITK_TEST_SET_GET_VALUE(maximumRMSError, segmentationModule->GetMaximumRMSError());
 
-  double distanceFromSeeds = 5.0;
+  unsigned int maximumNumberOfIterations = 300;
   if (argc > 5)
   {
-    distanceFromSeeds = std::stod(argv[5]);
+    maximumNumberOfIterations = std::stoi(argv[5]);
+  }
+  segmentationModule->SetMaximumNumberOfIterations(maximumNumberOfIterations);
+  ITK_TEST_SET_GET_VALUE(maximumNumberOfIterations, segmentationModule->GetMaximumNumberOfIterations());
+
+  double curvatureScaling = 1.0;
+  if (argc > 6)
+  {
+    curvatureScaling = std::stod(argv[6]);
+  }
+  segmentationModule->SetCurvatureScaling(curvatureScaling);
+  ITK_TEST_SET_GET_VALUE(curvatureScaling, segmentationModule->GetCurvatureScaling());
+
+  double propagationScaling = 10.0;
+  if (argc > 7)
+  {
+    propagationScaling = std::stod(argv[7]);
+  }
+  segmentationModule->SetPropagationScaling(propagationScaling);
+  ITK_TEST_SET_GET_VALUE(propagationScaling, segmentationModule->GetPropagationScaling());
+
+  double stoppingValue = 500.0;
+  if (argc > 8)
+  {
+    stoppingValue = std::stod(argv[8]);
+  }
+  segmentationModule->SetStoppingValue(stoppingValue);
+  ITK_TEST_SET_GET_VALUE(stoppingValue, segmentationModule->GetStoppingValue());
+
+  double distanceFromSeeds = 0.5;
+  if (argc > 9)
+  {
+    distanceFromSeeds = std::stod(argv[9]);
   }
   segmentationModule->SetDistanceFromSeeds(distanceFromSeeds);
   ITK_TEST_SET_GET_VALUE(distanceFromSeeds, segmentationModule->GetDistanceFromSeeds());
@@ -150,7 +190,6 @@ itkLesionSegmentationMethodTest4(int argc, char * argv[])
   LandmarksReaderType::Pointer landmarksReader = LandmarksReaderType::New();
 
   landmarksReader->SetFileName(argv[1]);
-
   ITK_TRY_EXPECT_NO_EXCEPTION(landmarksReader->Update());
 
 
@@ -177,12 +216,13 @@ itkLesionSegmentationMethodTest4(int argc, char * argv[])
   writer->SetInput(outputImage);
   writer->UseCompressionOn();
 
-  ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
-
 
   segmentationModule->Print(std::cout);
 
   std::cout << "Name of class " << segmentationModule->GetNameOfClass() << std::endl;
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
+
 
   std::cout << "Test finished." << std::endl;
   return EXIT_SUCCESS;

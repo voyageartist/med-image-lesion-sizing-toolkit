@@ -2,7 +2,7 @@
 /*=========================================================================
 
   Program:   Lesion Sizing Toolkit
-  Module:    itkLesionSegmentationMethodTest4.cxx
+  Module:    itkLesionSegmentationMethodTest5.cxx
 
   Copyright (c) Kitware Inc.
   All rights reserved.
@@ -14,36 +14,37 @@
 
 =========================================================================*/
 
-// The test runs a fast marching level set from user supplied seed points
-// and then runs the shape detection level set with the results from the
-// fast marching to get the final segmentation.
+// The test runs a shape detection level set from user supplied segmentation
+// and then runs the shape detection level set using as input level set the
+// segmentation supplied by the user.
 
 #include "itkLesionSegmentationMethod.h"
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "itkLandmarksReader.h"
+#include "itkSpatialObject.h"
 #include "itkImageMaskSpatialObject.h"
 #include "itkLungWallFeatureGenerator.h"
 #include "itkSatoVesselnessSigmoidFeatureGenerator.h"
-#include "itkCannyEdgesFeatureGenerator.h"
 #include "itkSigmoidFeatureGenerator.h"
-#include "itkFastMarchingSegmentationModule.h"
-#include "itkMinimumFeatureAggregator.h"
+#include "itkGradientMagnitudeSigmoidFeatureGenerator.h"
+#include "itkShapeDetectionLevelSetSegmentationModule.h"
 #include "itkMinimumFeatureAggregator.h"
 #include "itkTestingMacros.h"
 
 
 int
-itkLesionSegmentationMethodTest4(int argc, char * argv[])
+itkLesionSegmentationMethodTest5(int argc, char * argv[])
 {
   if (argc < 3)
   {
     std::cerr << "Missing parameters." << std::endl;
     std::cerr << "Usage: " << argv[0];
-    std::cerr << " landmarksFile inputImage outputImage";
-    std::cerr << " stoppingValue";
-    std::cerr << " distanceFromSeeds" << std::endl;
+    std::cerr << " inputSegmentation inputImage outputImage ";
+    std::cerr << " [RMSErrorForShapeDetection]"
+              << " [IterationsForShapeDetection]"
+              << " [CurvatureScalingForShapeDetection]"
+              << " [PropagationScalingForShapeDetection]" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -80,8 +81,9 @@ itkLesionSegmentationMethodTest4(int argc, char * argv[])
   using SigmoidFeatureGeneratorType = itk::SigmoidFeatureGenerator<Dimension>;
   SigmoidFeatureGeneratorType::Pointer sigmoidGenerator = SigmoidFeatureGeneratorType::New();
 
-  using CannyEdgesFeatureGeneratorType = itk::CannyEdgesFeatureGenerator<Dimension>;
-  CannyEdgesFeatureGeneratorType::Pointer cannyEdgesGenerator = CannyEdgesFeatureGeneratorType::New();
+  using GradientMagnitudeSigmoidGeneratorType = itk::GradientMagnitudeSigmoidFeatureGenerator<Dimension>;
+  GradientMagnitudeSigmoidGeneratorType::Pointer gradientMagnitudeSigmoidGenerator =
+    GradientMagnitudeSigmoidGeneratorType::New();
 
   using FeatureAggregatorType = itk::MinimumFeatureAggregator<Dimension>;
   FeatureAggregatorType::Pointer featureAggregator = FeatureAggregatorType::New();
@@ -89,11 +91,12 @@ itkLesionSegmentationMethodTest4(int argc, char * argv[])
   featureAggregator->AddFeatureGenerator(lungWallGenerator);
   featureAggregator->AddFeatureGenerator(vesselnessGenerator);
   featureAggregator->AddFeatureGenerator(sigmoidGenerator);
-  featureAggregator->AddFeatureGenerator(cannyEdgesGenerator);
+  featureAggregator->AddFeatureGenerator(gradientMagnitudeSigmoidGenerator);
 
   lesionSegmentationMethod->AddFeatureGenerator(featureAggregator);
 
   using SpatialObjectType = MethodType::SpatialObjectType;
+
   using InputImageSpatialObjectType = itk::ImageSpatialObject<Dimension, InputPixelType>;
   InputImageSpatialObjectType::Pointer inputObject = InputImageSpatialObjectType::New();
 
@@ -106,55 +109,83 @@ itkLesionSegmentationMethodTest4(int argc, char * argv[])
   lungWallGenerator->SetInput(inputObject);
   vesselnessGenerator->SetInput(inputObject);
   sigmoidGenerator->SetInput(inputObject);
-  cannyEdgesGenerator->SetInput(inputObject);
+  gradientMagnitudeSigmoidGenerator->SetInput(inputObject);
 
   lungWallGenerator->SetLungThreshold(-400);
 
   vesselnessGenerator->SetSigma(1.0);
   vesselnessGenerator->SetAlpha1(0.5);
   vesselnessGenerator->SetAlpha2(2.0);
-  vesselnessGenerator->SetSigmoidAlpha(-10.0);
-  vesselnessGenerator->SetSigmoidBeta(80.0);
 
   sigmoidGenerator->SetAlpha(1.0);
   sigmoidGenerator->SetBeta(-200.0);
 
-  cannyEdgesGenerator->SetSigma(1.0);
-  cannyEdgesGenerator->SetUpperThreshold(150.0);
-  cannyEdgesGenerator->SetLowerThreshold(75.0);
+  gradientMagnitudeSigmoidGenerator->SetSigma(1.0);
+  gradientMagnitudeSigmoidGenerator->SetAlpha(-0.1);
+  gradientMagnitudeSigmoidGenerator->SetBeta(150.0);
 
-  using SegmentationModuleType = itk::FastMarchingSegmentationModule<Dimension>;
+  using SegmentationModuleType = itk::ShapeDetectionLevelSetSegmentationModule<Dimension>;
   SegmentationModuleType::Pointer segmentationModule = SegmentationModuleType::New();
 
-  double stoppingTime = 10.0;
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(
+    segmentationModule, ShapeDetectionLevelSetSegmentationModule, SinglePhaseLevelSetSegmentationModule);
+
+
+  double maximumRMSError = 0.0002;
   if (argc > 4)
   {
-    stoppingTime = std::stod(argv[4]);
+    maximumRMSError = std::stod(argv[4]);
   }
-  segmentationModule->SetStoppingValue(stoppingTime);
-  ITK_TEST_SET_GET_VALUE(stoppingTime, segmentationModule->GetStoppingValue());
+  segmentationModule->SetMaximumRMSError(maximumRMSError);
+  ITK_TEST_SET_GET_VALUE(maximumRMSError, segmentationModule->GetMaximumRMSError());
 
-  double distanceFromSeeds = 5.0;
+  unsigned int maximumNumberOfIterations = 300;
   if (argc > 5)
   {
-    distanceFromSeeds = std::stod(argv[5]);
+    maximumNumberOfIterations = std::stoi(argv[5]);
   }
-  segmentationModule->SetDistanceFromSeeds(distanceFromSeeds);
-  ITK_TEST_SET_GET_VALUE(distanceFromSeeds, segmentationModule->GetDistanceFromSeeds());
+  segmentationModule->SetMaximumNumberOfIterations(maximumNumberOfIterations);
+  ITK_TEST_SET_GET_VALUE(maximumNumberOfIterations, segmentationModule->GetMaximumNumberOfIterations());
+
+  double curvatureScaling = 1.0;
+  if (argc > 6)
+  {
+    curvatureScaling = std::stod(argv[6]);
+  }
+  segmentationModule->SetCurvatureScaling(curvatureScaling);
+  ITK_TEST_SET_GET_VALUE(curvatureScaling, segmentationModule->GetCurvatureScaling());
+
+  double propagationScaling = 500.0;
+  if (argc > 7)
+  {
+    propagationScaling = std::stod(argv[7]);
+  }
+  segmentationModule->SetPropagationScaling(propagationScaling);
+  ITK_TEST_SET_GET_VALUE(propagationScaling, segmentationModule->GetPropagationScaling());
 
 
   lesionSegmentationMethod->SetSegmentationModule(segmentationModule);
 
-  using LandmarksReaderType = itk::LandmarksReader<Dimension>;
+  using InputSpatialObjectType = SegmentationModuleType::InputSpatialObjectType;
+  using InputSegmentationType = SegmentationModuleType::InputImageType;
 
-  LandmarksReaderType::Pointer landmarksReader = LandmarksReaderType::New();
+  using InputSegmentationReaderType = itk::ImageFileReader<InputSegmentationType>;
 
-  landmarksReader->SetFileName(argv[1]);
+  InputSegmentationReaderType::Pointer inputSegmentationReader = InputSegmentationReaderType::New();
 
-  ITK_TRY_EXPECT_NO_EXCEPTION(landmarksReader->Update());
+  inputSegmentationReader->SetFileName(argv[1]);
 
+  ITK_TRY_EXPECT_NO_EXCEPTION(inputSegmentationReader->Update());
 
-  lesionSegmentationMethod->SetInitialSegmentation(landmarksReader->GetOutput());
+  InputSegmentationType::Pointer inputSegmentation = inputSegmentationReader->GetOutput();
+
+  inputSegmentation->DisconnectPipeline();
+
+  InputSpatialObjectType::Pointer inputImageSpatialObject = InputSpatialObjectType::New();
+
+  inputImageSpatialObject->SetImage(inputSegmentation);
+
+  lesionSegmentationMethod->SetInitialSegmentation(inputImageSpatialObject);
 
   ITK_TRY_EXPECT_NO_EXCEPTION(lesionSegmentationMethod->Update());
 
@@ -179,10 +210,6 @@ itkLesionSegmentationMethodTest4(int argc, char * argv[])
 
   ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
 
-
-  segmentationModule->Print(std::cout);
-
-  std::cout << "Name of class " << segmentationModule->GetNameOfClass() << std::endl;
 
   std::cout << "Test finished." << std::endl;
   return EXIT_SUCCESS;
