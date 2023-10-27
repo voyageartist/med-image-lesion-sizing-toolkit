@@ -33,4 +33,30 @@
 
 // Applies fast marhching followed by segmentation using geodesic active contours.
 int
-itk
+itkLesionSegmentationMethodTest7(int argc, char * argv[])
+{
+  if (argc < 3)
+  {
+    std::cerr << "Missing parameters." << std::endl;
+    std::cerr << "Usage: " << argv[0];
+    std::cerr << " landmarksFile inputImage outputImage";
+    std::cerr << " [RMSErrorForGeodesicActiveContour]"
+              << " [IterationsForGeodesicActiveContour]"
+              << " [CurvatureScalingForGeodesicActiveContour]"
+              << " [PropagationScalingForGeodesicActiveContour]"
+              << " [AdvectionScalingForGeodesicActiveContour]";
+    std::cerr << " [stoppingTime]";
+    std::cerr << " [distanceFromSeeds]" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+
+  constexpr unsigned int Dimension = 3;
+  using InputPixelType = signed short;
+
+  using InputImageType = itk::Image<InputPixelType, Dimension>;
+
+  using InputImageReaderType = itk::ImageFileReader<InputImageType>;
+  InputImageReaderType::Pointer inputImageReader = InputImageReaderType::New();
+
+ 
