@@ -186,4 +186,29 @@ itkLesionSegmentationMethodTest7(int argc, char * argv[])
 
 
   lesionSegmentationMethod->SetInitialSegmentation(landmarksReader->GetOutput());
-  ITK_TRY_EXPECT_NO_EXC
+  ITK_TRY_EXPECT_NO_EXCEPTION(lesionSegmentationMethod->Update());
+
+
+  using SpatialObjectType = SegmentationModuleType::SpatialObjectType;
+  using OutputSpatialObjectType = SegmentationModuleType::OutputSpatialObjectType;
+  using OutputImageType = SegmentationModuleType::OutputImageType;
+
+  SpatialObjectType::ConstPointer segmentation = segmentationModule->GetOutput();
+
+  OutputSpatialObjectType::ConstPointer outputObject =
+    dynamic_cast<const OutputSpatialObjectType *>(segmentation.GetPointer());
+  OutputImageType::ConstPointer outputImage = outputObject->GetImage();
+
+  using OutputWriterType = itk::ImageFileWriter<OutputImageType>;
+  OutputWriterType::Pointer writer = OutputWriterType::New();
+  writer->SetFileName(argv[3]);
+  writer->SetInput(outputImage);
+  writer->UseCompressionOn();
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
+
+
+  //
+  // Exercise the exception on the number of feature generators
+  //
+  lesionSegmentationMetho
