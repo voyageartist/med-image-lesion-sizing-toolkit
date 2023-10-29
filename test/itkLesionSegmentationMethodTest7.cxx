@@ -155,4 +155,35 @@ itkLesionSegmentationMethodTest7(int argc, char * argv[])
     advectionScaling = std::stod(argv[8]);
   }
   segmentationModule->SetAdvectionScaling(advectionScaling);
-  ITK_
+  ITK_TEST_SET_GET_VALUE(advectionScaling, segmentationModule->GetAdvectionScaling());
+
+  double stoppingValue = 5.0;
+  if (argc > 9)
+  {
+    stoppingValue = std::stod(argv[9]);
+  }
+  segmentationModule->SetStoppingValue(stoppingValue);
+  ITK_TEST_SET_GET_VALUE(stoppingValue, segmentationModule->GetStoppingValue());
+
+  double distanceFromSeeds = 2.0;
+  if (argc > 10)
+  {
+    distanceFromSeeds = std::stod(argv[10]);
+  }
+  segmentationModule->SetDistanceFromSeeds(distanceFromSeeds);
+  ITK_TEST_SET_GET_VALUE(distanceFromSeeds, segmentationModule->GetDistanceFromSeeds());
+
+
+  lesionSegmentationMethod->SetSegmentationModule(segmentationModule);
+
+  using LandmarksReaderType = itk::LandmarksReader<Dimension>;
+
+  LandmarksReaderType::Pointer landmarksReader = LandmarksReaderType::New();
+
+  landmarksReader->SetFileName(argv[1]);
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(landmarksReader->Update());
+
+
+  lesionSegmentationMethod->SetInitialSegmentation(landmarksReader->GetOutput());
+  ITK_TRY_EXPECT_NO_EXC
