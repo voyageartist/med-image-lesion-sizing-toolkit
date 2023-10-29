@@ -126,4 +126,33 @@ itkLesionSegmentationMethodTest7(int argc, char * argv[])
   ITK_TEST_SET_GET_VALUE(maximumRMSError, segmentationModule->GetMaximumRMSError());
 
   unsigned int maximumNumberOfIterations = 300;
-  if (argc 
+  if (argc > 5)
+  {
+    maximumNumberOfIterations = std::stoi(argv[5]);
+  }
+  segmentationModule->SetMaximumNumberOfIterations(maximumNumberOfIterations);
+  ITK_TEST_SET_GET_VALUE(maximumNumberOfIterations, segmentationModule->GetMaximumNumberOfIterations());
+
+  double curvatureScaling = 1.0;
+  if (argc > 6)
+  {
+    curvatureScaling = std::stod(argv[6]);
+  }
+  segmentationModule->SetCurvatureScaling(curvatureScaling);
+  ITK_TEST_SET_GET_VALUE(curvatureScaling, segmentationModule->GetCurvatureScaling());
+
+  double propagationScaling = 500.0;
+  if (argc > 7)
+  {
+    propagationScaling = std::stod(argv[7]);
+  }
+  segmentationModule->SetPropagationScaling(propagationScaling);
+  ITK_TEST_SET_GET_VALUE(propagationScaling, segmentationModule->GetPropagationScaling());
+
+  double advectionScaling = 0.0;
+  if (argc > 8)
+  {
+    advectionScaling = std::stod(argv[8]);
+  }
+  segmentationModule->SetAdvectionScaling(advectionScaling);
+  ITK_
