@@ -102,4 +102,28 @@ itkLesionSegmentationMethodTest7(int argc, char * argv[])
   lungWallGenerator->SetInput(inputObject);
   vesselnessGenerator->SetInput(inputObject);
   sigmoidGenerator->SetInput(inputObject);
-  lungWallGenerator->SetLungThr
+  lungWallGenerator->SetLungThreshold(-400);
+  vesselnessGenerator->SetSigma(1.0);
+  vesselnessGenerator->SetAlpha1(0.5);
+  vesselnessGenerator->SetAlpha2(2.0);
+  sigmoidGenerator->SetAlpha(1.0);
+  sigmoidGenerator->SetBeta(-200.0);
+
+  using SegmentationModuleType = itk::FastMarchingAndGeodesicActiveContourLevelSetSegmentationModule<Dimension>;
+  SegmentationModuleType::Pointer segmentationModule = SegmentationModuleType::New();
+
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(segmentationModule,
+                                FastMarchingAndGeodesicActiveContourLevelSetSegmentationModule,
+                                SinglePhaseLevelSetSegmentationModule);
+
+
+  double maximumRMSError = 0.0002;
+  if (argc > 4)
+  {
+    maximumRMSError = std::stod(argv[4]);
+  }
+  segmentationModule->SetMaximumRMSError(maximumRMSError);
+  ITK_TEST_SET_GET_VALUE(maximumRMSError, segmentationModule->GetMaximumRMSError());
+
+  unsigned int maximumNumberOfIterations = 300;
+  if (argc 
