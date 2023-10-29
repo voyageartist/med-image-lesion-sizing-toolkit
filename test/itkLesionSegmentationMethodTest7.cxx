@@ -80,4 +80,26 @@ itkLesionSegmentationMethodTest7(int argc, char * argv[])
   LungWallGeneratorType::Pointer lungWallGenerator = LungWallGeneratorType::New();
 
   using SigmoidFeatureGeneratorType = itk::SigmoidFeatureGenerator<Dimension>;
-  SigmoidFeatureGeneratorType::Pointer sigmoidGenerator = SigmoidFeatureG
+  SigmoidFeatureGeneratorType::Pointer sigmoidGenerator = SigmoidFeatureGeneratorType::New();
+
+  using FeatureAggregatorType = itk::MinimumFeatureAggregator<Dimension>;
+  FeatureAggregatorType::Pointer featureAggregator = FeatureAggregatorType::New();
+  featureAggregator->AddFeatureGenerator(lungWallGenerator);
+  featureAggregator->AddFeatureGenerator(vesselnessGenerator);
+  featureAggregator->AddFeatureGenerator(sigmoidGenerator);
+  lesionSegmentationMethod->AddFeatureGenerator(featureAggregator);
+
+  using SpatialObjectType = MethodType::SpatialObjectType;
+  using InputImageSpatialObjectType = itk::ImageSpatialObject<Dimension, InputPixelType>;
+  InputImageSpatialObjectType::Pointer inputObject = InputImageSpatialObjectType::New();
+
+  InputImageType::Pointer inputImage = inputImageReader->GetOutput();
+
+  inputImage->DisconnectPipeline();
+
+  inputObject->SetImage(inputImage);
+
+  lungWallGenerator->SetInput(inputObject);
+  vesselnessGenerator->SetInput(inputObject);
+  sigmoidGenerator->SetInput(inputObject);
+  lungWallGenerator->SetLungThr
