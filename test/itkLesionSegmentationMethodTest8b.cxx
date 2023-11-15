@@ -61,4 +61,32 @@ itkLesionSegmentationMethodTest8b(int argc, char * argv[])
 
   ITK_TRY_EXPECT_NO_EXCEPTION(inputImageReader->Update());
 
-  const InputImageType * inp
+  const InputImageType * inputImage = inputImageReader->GetOutput();
+
+  LandmarksReaderType::Pointer landmarksReader = LandmarksReaderType::New();
+  landmarksReader->SetFileName(argv[1]);
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(landmarksReader->Update());
+
+
+  const SeedSpatialObjectType * landmarks = landmarksReader->GetOutput();
+
+  SegmentationMethodType::Pointer segmentationMethod = SegmentationMethodType::New();
+
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(segmentationMethod, LesionSegmentationImageFilter8, ImageToImageFilter);
+
+
+  segmentationMethod->SetInput(inputImage);
+  segmentationMethod->SetSeeds(landmarks->GetPoints());
+  segmentationMethod->SetRegionOfInterest(inputImage->GetBufferedRegion());
+
+  double sigmoidBeta = -500.0;
+  if (argc > 4)
+  {
+    sigmoidBeta = std::stod(argv[4]);
+  }
+  segmentationMethod->SetSigmoidBeta(sigmoidBeta);
+  ITK_TEST_SET_GET_VALUE(sigmoidBeta, segmentationMethod->GetSigmoidBeta());
+
+  segmentationMethod->SetResampleThickSliceData(resampleThickSliceData);
+  segmentationMeth
