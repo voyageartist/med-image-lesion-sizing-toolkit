@@ -41,4 +41,24 @@ itkLesionSegmentationMethodTest8b(int argc, char * argv[])
   bool useVesselEnhancingDiffusion = false, resampleThickSliceData = false;
   for (int i = 1; i < argc; i++)
   {
-    useVesselEnhancingDi
+    useVesselEnhancingDiffusion |= (strcmp("-UseVesselEnhancingDiffusion", argv[i]) == 0);
+    resampleThickSliceData |= (strcmp("-ResampleThickSliceData", argv[i]) == 0);
+  }
+
+  constexpr unsigned int Dimension = 3;
+  using InputPixelType = signed short;
+  using OutputPixelType = float;
+  using InputImageType = itk::Image<InputPixelType, Dimension>;
+  using OutputImageType = itk::Image<OutputPixelType, Dimension>;
+  using SegmentationMethodType = itk::LesionSegmentationImageFilter8<InputImageType, OutputImageType>;
+  using InputImageReaderType = itk::ImageFileReader<InputImageType>;
+  using LandmarksReaderType = itk::LandmarksReader<Dimension>;
+  using SeedSpatialObjectType = itk::LandmarkSpatialObject<Dimension>;
+  using OutputWriterType = itk::ImageFileWriter<OutputImageType>;
+
+  InputImageReaderType::Pointer inputImageReader = InputImageReaderType::New();
+  inputImageReader->SetFileName(argv[2]);
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(inputImageReader->Update());
+
+  const InputImageType * inp
