@@ -89,4 +89,17 @@ itkLesionSegmentationMethodTest8b(int argc, char * argv[])
   ITK_TEST_SET_GET_VALUE(sigmoidBeta, segmentationMethod->GetSigmoidBeta());
 
   segmentationMethod->SetResampleThickSliceData(resampleThickSliceData);
-  segmentationMeth
+  segmentationMethod->SetUseVesselEnhancingDiffusion(useVesselEnhancingDiffusion);
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(segmentationMethod->Update());
+
+  OutputWriterType::Pointer writer = OutputWriterType::New();
+  writer->SetFileName(argv[3]);
+  writer->SetInput(segmentationMethod->GetOutput());
+  writer->UseCompressionOn();
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
+
+  std::cout << "Test finished." << std::endl;
+  return EXIT_SUCCESS;
+}
