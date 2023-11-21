@@ -61,4 +61,25 @@ itkLesionSegmentationMethodTest9(int argc, char * argv[])
 
   inputImageReader->SetFileName(argv[2]);
 
-  ITK_TRY_EXPECT_NO_EXCEPTION(inpu
+  ITK_TRY_EXPECT_NO_EXCEPTION(inputImageReader->Update());
+
+  using MethodType = itk::LesionSegmentationMethod<Dimension>;
+
+  MethodType::Pointer lesionSegmentationMethod = MethodType::New();
+
+  using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<Dimension>;
+
+  ImageMaskSpatialObjectType::Pointer regionOfInterest = ImageMaskSpatialObjectType::New();
+
+  lesionSegmentationMethod->SetRegionOfInterest(regionOfInterest);
+
+  using VesselnessGeneratorType = itk::SatoVesselnessSigmoidFeatureGenerator<Dimension>;
+  VesselnessGeneratorType::Pointer vesselnessGenerator = VesselnessGeneratorType::New();
+
+  using LungWallGeneratorType = itk::LungWallFeatureGenerator<Dimension>;
+  LungWallGeneratorType::Pointer lungWallGenerator = LungWallGeneratorType::New();
+
+  using SigmoidFeatureGeneratorType = itk::SigmoidFeatureGenerator<Dimension>;
+  SigmoidFeatureGeneratorType::Pointer sigmoidGenerator = SigmoidFeatureGeneratorType::New();
+
+  using GradientMagnitude
