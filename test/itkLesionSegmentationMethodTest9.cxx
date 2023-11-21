@@ -35,4 +35,30 @@
 int
 itkLesionSegmentationMethodTest9(int argc, char * argv[])
 {
-  if (ar
+  if (argc < 3)
+  {
+    std::cerr << "Missing parameters." << std::endl;
+    std::cerr << "Usage: " << argv[0];
+    std::cerr << " landmarksFile inputImage outputImage";
+    std::cerr << " [RMSErrorForGeodesicActiveContour]"
+              << " [IterationsForGeodesicActiveContour]"
+              << " [CurvatureScalingForGeodesicActiveContour]"
+              << " [PropagationScalingForGeodesicActiveContour]"
+              << " [AdvectionScalingForGeodesicActiveContour]";
+    std::cerr << " [stoppingTime]";
+    std::cerr << " [distanceFromSeeds]" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+
+  constexpr unsigned int Dimension = 3;
+  using InputPixelType = signed short;
+
+  using InputImageType = itk::Image<InputPixelType, Dimension>;
+
+  using InputImageReaderType = itk::ImageFileReader<InputImageType>;
+  InputImageReaderType::Pointer inputImageReader = InputImageReaderType::New();
+
+  inputImageReader->SetFileName(argv[2]);
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(inpu
