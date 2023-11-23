@@ -97,3 +97,28 @@ itkLesionSegmentationMethodTest9(int argc, char * argv[])
   using SpatialObjectType = MethodType::SpatialObjectType;
   using InputImageSpatialObjectType = itk::ImageSpatialObject<Dimension, InputPixelType>;
   InputImageSpatialObjectType::Pointer inputObject = InputImageSpatialObjectType::New();
+
+  InputImageType::Pointer inputImage = inputImageReader->GetOutput();
+
+  inputImage->DisconnectPipeline();
+
+  inputObject->SetImage(inputImage);
+
+  lungWallGenerator->SetInput(inputObject);
+  vesselnessGenerator->SetInput(inputObject);
+  sigmoidGenerator->SetInput(inputObject);
+  gradientMagnitudeSigmoidGenerator->SetInput(inputObject);
+  lungWallGenerator->SetLungThreshold(-400);
+  vesselnessGenerator->SetSigma(1.0);
+  vesselnessGenerator->SetAlpha1(0.5);
+  vesselnessGenerator->SetAlpha2(2.0);
+  vesselnessGenerator->SetSigmoidAlpha(-10.0);
+  vesselnessGenerator->SetSigmoidBeta(80.0);
+  sigmoidGenerator->SetAlpha(1.0);
+  sigmoidGenerator->SetBeta(-200.0);
+  gradientMagnitudeSigmoidGenerator->SetSigma(1.0);
+  gradientMagnitudeSigmoidGenerator->SetAlpha(-100.0);
+  gradientMagnitudeSigmoidGenerator->SetBeta(300);
+
+  using SegmentationModuleType = itk::FastMarchingAndGeodesicActiveContourLevelSetSegmentationModule<Dimension>;
+  SegmentationModuleType::Pointer segmentati
