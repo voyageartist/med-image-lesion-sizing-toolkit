@@ -82,4 +82,18 @@ itkLesionSegmentationMethodTest9(int argc, char * argv[])
   using SigmoidFeatureGeneratorType = itk::SigmoidFeatureGenerator<Dimension>;
   SigmoidFeatureGeneratorType::Pointer sigmoidGenerator = SigmoidFeatureGeneratorType::New();
 
-  using GradientMagnitude
+  using GradientMagnitudeSigmoidFeatureGeneratorType = itk::GradientMagnitudeSigmoidFeatureGenerator<Dimension>;
+  GradientMagnitudeSigmoidFeatureGeneratorType::Pointer gradientMagnitudeSigmoidGenerator =
+    GradientMagnitudeSigmoidFeatureGeneratorType::New();
+
+  using FeatureAggregatorType = itk::MinimumFeatureAggregator<Dimension>;
+  FeatureAggregatorType::Pointer featureAggregator = FeatureAggregatorType::New();
+  featureAggregator->AddFeatureGenerator(lungWallGenerator);
+  featureAggregator->AddFeatureGenerator(vesselnessGenerator);
+  featureAggregator->AddFeatureGenerator(sigmoidGenerator);
+  featureAggregator->AddFeatureGenerator(gradientMagnitudeSigmoidGenerator);
+  lesionSegmentationMethod->AddFeatureGenerator(featureAggregator);
+
+  using SpatialObjectType = MethodType::SpatialObjectType;
+  using InputImageSpatialObjectType = itk::ImageSpatialObject<Dimension, InputPixelType>;
+  InputImageSpatialObjectType::Pointer inputObject = InputImageSpatialObjectType::New();
