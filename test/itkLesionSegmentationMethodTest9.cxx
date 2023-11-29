@@ -121,4 +121,32 @@ itkLesionSegmentationMethodTest9(int argc, char * argv[])
   gradientMagnitudeSigmoidGenerator->SetBeta(300);
 
   using SegmentationModuleType = itk::FastMarchingAndGeodesicActiveContourLevelSetSegmentationModule<Dimension>;
-  SegmentationModuleType::Pointer segmentati
+  SegmentationModuleType::Pointer segmentationModule = SegmentationModuleType::New();
+
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(segmentationModule,
+                                FastMarchingAndGeodesicActiveContourLevelSetSegmentationModule,
+                                SinglePhaseLevelSetSegmentationModule);
+
+
+  double maximumRMSError = 0.0002;
+  if (argc > 4)
+  {
+    maximumRMSError = std::stod(argv[4]);
+  }
+  segmentationModule->SetMaximumRMSError(maximumRMSError);
+  ITK_TEST_SET_GET_VALUE(maximumRMSError, segmentationModule->GetMaximumRMSError());
+
+  unsigned int maximumNumberOfIterations = 300;
+  if (argc > 5)
+  {
+    maximumNumberOfIterations = std::stoi(argv[5]);
+  }
+  segmentationModule->SetMaximumNumberOfIterations(maximumNumberOfIterations);
+  ITK_TEST_SET_GET_VALUE(maximumNumberOfIterations, segmentationModule->GetMaximumNumberOfIterations());
+
+  double curvatureScaling = 1.0;
+  if (argc > 6)
+  {
+    curvatureScaling = std::stod(argv[6]);
+  }
+  segmentationModule->SetCurvatur
