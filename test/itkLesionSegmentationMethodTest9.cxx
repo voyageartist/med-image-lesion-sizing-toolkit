@@ -149,4 +149,36 @@ itkLesionSegmentationMethodTest9(int argc, char * argv[])
   {
     curvatureScaling = std::stod(argv[6]);
   }
-  segmentationModule->SetCurvatur
+  segmentationModule->SetCurvatureScaling(curvatureScaling);
+  ITK_TEST_SET_GET_VALUE(curvatureScaling, segmentationModule->GetCurvatureScaling());
+
+  double propagationScaling = 500.0;
+  if (argc > 7)
+  {
+    propagationScaling = std::stod(argv[7]);
+  }
+  segmentationModule->SetPropagationScaling(propagationScaling);
+  ITK_TEST_SET_GET_VALUE(propagationScaling, segmentationModule->GetPropagationScaling());
+
+  double advectionScaling = 0.0;
+  if (argc > 8)
+  {
+    advectionScaling = std::stod(argv[8]);
+  }
+  segmentationModule->SetAdvectionScaling(advectionScaling);
+  ITK_TEST_SET_GET_VALUE(advectionScaling, segmentationModule->GetAdvectionScaling());
+
+  double stoppingValue = 5.0;
+  if (argc > 9)
+  {
+    stoppingValue = std::stod(argv[9]);
+  }
+  segmentationModule->SetStoppingValue(stoppingValue);
+  ITK_TEST_SET_GET_VALUE(stoppingValue, segmentationModule->GetStoppingValue());
+
+  double distanceFromSeeds = 2.5;
+  if (argc > 10)
+  {
+    distanceFromSeeds = std::stod(argv[10]);
+  }
+  segmentationModule->SetDistanceFr
