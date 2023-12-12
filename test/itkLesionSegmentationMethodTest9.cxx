@@ -181,4 +181,26 @@ itkLesionSegmentationMethodTest9(int argc, char * argv[])
   {
     distanceFromSeeds = std::stod(argv[10]);
   }
-  segmentationModule->SetDistanceFr
+  segmentationModule->SetDistanceFromSeeds(distanceFromSeeds);
+  ITK_TEST_SET_GET_VALUE(distanceFromSeeds, segmentationModule->GetDistanceFromSeeds());
+
+
+  lesionSegmentationMethod->SetSegmentationModule(segmentationModule);
+
+  using LandmarksReaderType = itk::LandmarksReader<Dimension>;
+
+  LandmarksReaderType::Pointer landmarksReader = LandmarksReaderType::New();
+
+  landmarksReader->SetFileName(argv[1]);
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(landmarksReader->Update());
+
+  lesionSegmentationMethod->SetInitialSegmentation(landmarksReader->GetOutput());
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(lesionSegmentationMethod->Update());
+
+  using SpatialObjectType = SegmentationModuleType::SpatialObjectType;
+  using OutputSpatialObjectType = SegmentationModuleType::OutputSpatialObjectType;
+  using OutputImageType = SegmentationModuleType::OutputImageType;
+
+  SpatialObjectType::ConstPointer segmentation = segmentationModule->GetO
