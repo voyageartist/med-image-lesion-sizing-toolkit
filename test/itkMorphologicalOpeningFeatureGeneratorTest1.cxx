@@ -2,7 +2,7 @@
 /*=========================================================================
 
   Program:   Lesion Sizing Toolkit
-  Module:    itkLungWallFeatureGeneratorTest1.cxx
+  Module:    itkMorphologicalOpeningFeatureGeneratorTest1.cxx
 
   Copyright (c) Kitware Inc.
   All rights reserved.
@@ -14,7 +14,7 @@
 
 =========================================================================*/
 
-#include "itkLungWallFeatureGenerator.h"
+#include "itkMorphologicalOpeningFeatureGenerator.h"
 #include "itkImage.h"
 #include "itkSpatialObject.h"
 #include "itkImageSpatialObject.h"
@@ -24,8 +24,9 @@
 
 
 int
-itkLungWallFeatureGeneratorTest1(int argc, char * argv[])
+itkMorphologicalOpeningFeatureGeneratorTest1(int argc, char * argv[])
 {
+
   if (argc < 3)
   {
     std::cerr << "Missing parameters." << std::endl;
@@ -54,13 +55,12 @@ itkLungWallFeatureGeneratorTest1(int argc, char * argv[])
 
   ITK_TRY_EXPECT_NO_EXCEPTION(reader->Update());
 
-  using LungWallFeatureGeneratorType = itk::LungWallFeatureGenerator<Dimension>;
-  using SpatialObjectType = LungWallFeatureGeneratorType::SpatialObjectType;
+  using FeatureGeneratorType = itk::MorphologicalOpeningFeatureGenerator<Dimension>;
+  using SpatialObjectType = FeatureGeneratorType::SpatialObjectType;
 
-  LungWallFeatureGeneratorType::Pointer featureGenerator = LungWallFeatureGeneratorType::New();
+  FeatureGeneratorType::Pointer featureGenerator = FeatureGeneratorType::New();
 
-  ITK_EXERCISE_BASIC_OBJECT_METHODS(featureGenerator, LungWallFeatureGenerator, FeatureGenerator);
-
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(featureGenerator, MorphologicalOpeningFeatureGenerator, FeatureGenerator);
 
   InputImageSpatialObjectType::Pointer inputObject = InputImageSpatialObjectType::New();
 
@@ -72,7 +72,7 @@ itkLungWallFeatureGeneratorTest1(int argc, char * argv[])
 
   featureGenerator->SetInput(inputObject);
 
-  LungWallFeatureGeneratorType::InputPixelType lungThreshold = 100;
+  FeatureGeneratorType::InputPixelType lungThreshold = -400;
   if (argc > 3)
   {
     lungThreshold = std::stoi(argv[3]);
@@ -80,8 +80,8 @@ itkLungWallFeatureGeneratorTest1(int argc, char * argv[])
   featureGenerator->SetLungThreshold(lungThreshold);
   ITK_TEST_SET_GET_VALUE(lungThreshold, featureGenerator->GetLungThreshold());
 
-  ITK_TRY_EXPECT_NO_EXCEPTION(featureGenerator->Update());
 
+  ITK_TRY_EXPECT_NO_EXCEPTION(featureGenerator->Update());
 
   SpatialObjectType::ConstPointer feature = featureGenerator->GetFeature();
 
@@ -97,6 +97,7 @@ itkLungWallFeatureGeneratorTest1(int argc, char * argv[])
   writer->SetInput(outputImage);
 
   ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
+
 
   std::cout << "Test finished." << std::endl;
   return EXIT_SUCCESS;
