@@ -129,3 +129,13 @@ itkMorphologicalOpenningFeatureGeneratorTest1(int argc, char * argv[])
     std::cerr << "Error in Set/GetLungThreshold()" << std::endl;
     return EXIT_FAILURE;
   }
+
+  featureGenerator->SetLungThreshold(200);
+  if (featureGenerator->GetLungThreshold() != 200)
+  {
+    std::cerr << "Error in Set/GetLungThreshold()" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  return EXIT_SUCCESS;
+}
