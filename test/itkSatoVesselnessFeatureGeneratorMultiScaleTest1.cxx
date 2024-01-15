@@ -52,4 +52,28 @@ itkSatoVesselnessFeatureGeneratorMultiScaleTest1(int argc, char * argv[])
   AggregatorType::Pointer featureAggregator = AggregatorType::New();
 
   using FeatureGeneratorType = itk::SatoVesselnessFeatureGenerator<Dimension>;
-  using SpatialObjectType = Featur
+  using SpatialObjectType = FeatureGeneratorType::SpatialObjectType;
+
+  FeatureGeneratorType::Pointer featureGenerator1 = FeatureGeneratorType::New();
+
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(featureGenerator1, SatoVesselnessFeatureGenerator, FeatureGenerator);
+
+  FeatureGeneratorType::Pointer featureGenerator2 = FeatureGeneratorType::New();
+
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(featureGenerator2, SatoVesselnessFeatureGenerator, FeatureGenerator);
+
+  FeatureGeneratorType::Pointer featureGenerator3 = FeatureGeneratorType::New();
+
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(featureGenerator3, SatoVesselnessFeatureGenerator, FeatureGenerator);
+
+  FeatureGeneratorType::Pointer featureGenerator4 = FeatureGeneratorType::New();
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(featureGenerator4, SatoVesselnessFeatureGenerator, FeatureGenerator);
+
+
+  double smallestSigma = 1.0;
+  if (argc > 3)
+  {
+    smallestSigma = std::stod(argv[3]);
+  }
+  featureGenerator1->SetSigma(smallestSigma);
+  ITK_TEST_SET_GET_VALUE(smallestSigma, featureGenerator1
