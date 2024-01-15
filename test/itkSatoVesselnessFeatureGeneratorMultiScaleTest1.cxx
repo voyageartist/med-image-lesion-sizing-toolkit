@@ -22,4 +22,34 @@
 
 
 int
-itkSatoVesselnessFeatu
+itkSatoVesselnessFeatureGeneratorMultiScaleTest1(int argc, char * argv[])
+{
+  if (argc < 3)
+  {
+    std::cerr << "Missing parameters." << std::endl;
+    std::cerr << "Usage: " << argv[0];
+    std::cerr << " inputImage outputImage ";
+    std::cerr << " [sigma alpha1 alpha2]" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+
+  constexpr unsigned int Dimension = 3;
+  using InputPixelType = signed short;
+
+  using InputImageType = itk::Image<InputPixelType, Dimension>;
+
+  using InputImageReaderType = itk::ImageFileReader<InputImageType>;
+  InputImageReaderType::Pointer inputImageReader = InputImageReaderType::New();
+
+  inputImageReader->SetFileName(argv[1]);
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(inputImageReader->Update());
+
+
+  using AggregatorType = itk::MaximumFeatureAggregator<Dimension>;
+
+  AggregatorType::Pointer featureAggregator = AggregatorType::New();
+
+  using FeatureGeneratorType = itk::SatoVesselnessFeatureGenerator<Dimension>;
+  using SpatialObjectType = Featur
