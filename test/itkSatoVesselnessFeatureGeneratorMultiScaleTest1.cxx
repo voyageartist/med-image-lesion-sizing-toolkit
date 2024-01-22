@@ -98,4 +98,31 @@ itkSatoVesselnessFeatureGeneratorMultiScaleTest1(int argc, char * argv[])
   ITK_TEST_SET_GET_VALUE(alpha1, featureGenerator2->GetAlpha1());
   featureGenerator3->SetAlpha1(alpha1);
   ITK_TEST_SET_GET_VALUE(alpha1, featureGenerator3->GetAlpha1());
-  featureGenerator4->SetAl
+  featureGenerator4->SetAlpha1(alpha1);
+  ITK_TEST_SET_GET_VALUE(alpha1, featureGenerator4->GetAlpha1());
+
+  double alpha2 = 2.0;
+  if (argc > 5)
+  {
+    alpha2 = std::stod(argv[5]);
+  }
+  featureGenerator1->SetAlpha2(alpha2);
+  ITK_TEST_SET_GET_VALUE(alpha2, featureGenerator1->GetAlpha2());
+  featureGenerator2->SetAlpha2(alpha2);
+  ITK_TEST_SET_GET_VALUE(alpha2, featureGenerator2->GetAlpha2());
+  featureGenerator3->SetAlpha2(alpha2);
+  ITK_TEST_SET_GET_VALUE(alpha2, featureGenerator3->GetAlpha2());
+  featureGenerator4->SetAlpha2(alpha2);
+  ITK_TEST_SET_GET_VALUE(alpha2, featureGenerator4->GetAlpha2());
+
+
+  using SpatialObjectType = AggregatorType::SpatialObjectType;
+
+  using InputImageSpatialObjectType = itk::ImageSpatialObject<Dimension, InputPixelType>;
+  InputImageSpatialObjectType::Pointer inputObject = InputImageSpatialObjectType::New();
+
+  InputImageType::Pointer inputImage = inputImageReader->GetOutput();
+
+  inputImage->DisconnectPipeline();
+
+  inputObjec
