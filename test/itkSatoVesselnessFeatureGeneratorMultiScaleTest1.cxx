@@ -76,4 +76,26 @@ itkSatoVesselnessFeatureGeneratorMultiScaleTest1(int argc, char * argv[])
     smallestSigma = std::stod(argv[3]);
   }
   featureGenerator1->SetSigma(smallestSigma);
-  ITK_TEST_SET_GET_VALUE(smallestSigma, featureGenerator1
+  ITK_TEST_SET_GET_VALUE(smallestSigma, featureGenerator1->GetSigma());
+  double smallestSigma2 = smallestSigma * 2.0;
+  featureGenerator2->SetSigma(smallestSigma2);
+  ITK_TEST_SET_GET_VALUE(smallestSigma2, featureGenerator2->GetSigma());
+  double smallestSigma3 = smallestSigma * 4.0;
+  featureGenerator3->SetSigma(smallestSigma3);
+  ITK_TEST_SET_GET_VALUE(smallestSigma3, featureGenerator3->GetSigma());
+  double smallestSigma4 = smallestSigma * 8.0;
+  featureGenerator4->SetSigma(smallestSigma4);
+  ITK_TEST_SET_GET_VALUE(smallestSigma4, featureGenerator4->GetSigma());
+
+  double alpha1 = 0.5;
+  if (argc > 4)
+  {
+    alpha1 = std::stod(argv[4]);
+  }
+  featureGenerator1->SetAlpha1(alpha1);
+  ITK_TEST_SET_GET_VALUE(alpha1, featureGenerator1->GetAlpha1());
+  featureGenerator2->SetAlpha1(alpha1);
+  ITK_TEST_SET_GET_VALUE(alpha1, featureGenerator2->GetAlpha1());
+  featureGenerator3->SetAlpha1(alpha1);
+  ITK_TEST_SET_GET_VALUE(alpha1, featureGenerator3->GetAlpha1());
+  featureGenerator4->SetAl
