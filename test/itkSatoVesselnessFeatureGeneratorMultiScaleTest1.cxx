@@ -125,4 +125,29 @@ itkSatoVesselnessFeatureGeneratorMultiScaleTest1(int argc, char * argv[])
 
   inputImage->DisconnectPipeline();
 
-  inputObjec
+  inputObject->SetImage(inputImage);
+
+  featureGenerator1->SetInput(inputObject);
+  featureGenerator2->SetInput(inputObject);
+  featureGenerator3->SetInput(inputObject);
+  featureGenerator4->SetInput(inputObject);
+
+  featureAggregator->AddFeatureGenerator(featureGenerator1);
+  featureAggregator->AddFeatureGenerator(featureGenerator2);
+  featureAggregator->AddFeatureGenerator(featureGenerator3);
+  featureAggregator->AddFeatureGenerator(featureGenerator4);
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(featureAggregator->Update());
+
+
+  SpatialObjectType::ConstPointer finalFeature = featureAggregator->GetFeature();
+
+  using OutputImageSpatialObjectType = AggregatorType::OutputImageSpatialObjectType;
+  using OutputImageType = AggregatorType::OutputImageType;
+
+  OutputImageSpatialObjectType::ConstPointer outputObject =
+    dynamic_cast<const OutputImageSpatialObjectType *>(finalFeature.GetPointer());
+
+  OutputImageType::ConstPointer outputImage = outputObject->GetImage();
+
+  using OutputWriterTy
