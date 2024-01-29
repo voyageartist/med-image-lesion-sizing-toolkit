@@ -150,4 +150,19 @@ itkSatoVesselnessFeatureGeneratorMultiScaleTest1(int argc, char * argv[])
 
   OutputImageType::ConstPointer outputImage = outputObject->GetImage();
 
-  using OutputWriterTy
+  using OutputWriterType = itk::ImageFileWriter<OutputImageType>;
+  OutputWriterType::Pointer writer = OutputWriterType::New();
+
+  writer->SetFileName(argv[2]);
+  writer->SetInput(outputImage);
+  writer->UseCompressionOn();
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
+
+
+  featureAggregator->Print(std::cout);
+
+
+  std::cout << "Test finished." << std::endl;
+  return EXIT_SUCCESS;
+}
