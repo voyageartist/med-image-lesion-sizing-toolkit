@@ -45,4 +45,37 @@ itkSatoVesselnessFeatureGeneratorTest1(int argc, char * argv[])
   using WriterType = itk::ImageFileWriter<OutputImageType>;
 
   using InputImageSpatialObjectType = itk::ImageSpatialObject<Dimension, InputPixelType>;
-  using OutputImageSpatialObjectT
+  using OutputImageSpatialObjectType = itk::ImageSpatialObject<Dimension, OutputPixelType>;
+
+  ReaderType::Pointer reader = ReaderType::New();
+
+  reader->SetFileName(argv[1]);
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(reader->Update());
+
+
+  using SatoVesselnessFeatureGeneratorType = itk::SatoVesselnessFeatureGenerator<Dimension>;
+  using SpatialObjectType = SatoVesselnessFeatureGeneratorType::SpatialObjectType;
+
+  SatoVesselnessFeatureGeneratorType::Pointer featureGenerator = SatoVesselnessFeatureGeneratorType::New();
+
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(featureGenerator, SatoVesselnessFeatureGenerator, FeatureGenerator);
+
+
+  InputImageSpatialObjectType::Pointer inputObject = InputImageSpatialObjectType::New();
+
+  InputImageType::Pointer inputImage = reader->GetOutput();
+
+  inputImage->DisconnectPipeline();
+
+  inputObject->SetImage(inputImage);
+
+  featureGenerator->SetInput(inputObject);
+
+
+  double sigma = 1.0;
+  if (argc > 3)
+  {
+    sigma = std::stod(argv[3]);
+  }
+  featureGenerator->SetSigma(sigma)
