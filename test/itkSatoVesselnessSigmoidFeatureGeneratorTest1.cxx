@@ -1,7 +1,8 @@
+
 /*=========================================================================
 
   Program:   Lesion Sizing Toolkit
-  Module:    itkSatoVesselnessFeatureGeneratorTest1.cxx
+  Module:    itkSatoVesselnessSigmoidFeatureGeneratorTest1.cxx
 
   Copyright (c) Kitware Inc.
   All rights reserved.
@@ -13,7 +14,7 @@
 
 =========================================================================*/
 
-#include "itkSatoVesselnessFeatureGenerator.h"
+#include "itkSatoVesselnessSigmoidFeatureGenerator.h"
 #include "itkImage.h"
 #include "itkSpatialObject.h"
 #include "itkImageSpatialObject.h"
@@ -23,13 +24,14 @@
 
 
 int
-itkSatoVesselnessFeatureGeneratorTest1(int argc, char * argv[])
+itkSatoVesselnessSigmoidFeatureGeneratorTest1(int argc, char * argv[])
 {
   if (argc < 3)
   {
     std::cerr << "Missing parameters." << std::endl;
     std::cerr << "Usage: " << argv[0];
-    std::cerr << " inputImage outputImage [sigma alpha1 alpha2]" << std::endl;
+    std::cerr << " inputImage outputImage [sigma alpha1 alpha2 ";
+    std::cerr << " sigmoidAlpha sigmoidBeta]" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -54,12 +56,14 @@ itkSatoVesselnessFeatureGeneratorTest1(int argc, char * argv[])
   ITK_TRY_EXPECT_NO_EXCEPTION(reader->Update());
 
 
-  using SatoVesselnessFeatureGeneratorType = itk::SatoVesselnessFeatureGenerator<Dimension>;
-  using SpatialObjectType = SatoVesselnessFeatureGeneratorType::SpatialObjectType;
+  using SatoVesselnessSigmoidFeatureGeneratorType = itk::SatoVesselnessSigmoidFeatureGenerator<Dimension>;
+  using SpatialObjectType = SatoVesselnessSigmoidFeatureGeneratorType::SpatialObjectType;
 
-  SatoVesselnessFeatureGeneratorType::Pointer featureGenerator = SatoVesselnessFeatureGeneratorType::New();
+  SatoVesselnessSigmoidFeatureGeneratorType::Pointer featureGenerator =
+    SatoVesselnessSigmoidFeatureGeneratorType::New();
 
-  ITK_EXERCISE_BASIC_OBJECT_METHODS(featureGenerator, SatoVesselnessFeatureGenerator, FeatureGenerator);
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(
+    featureGenerator, SatoVesselnessSigmoidFeatureGenerator, SatoVesselnessFeatureGenerator);
 
 
   InputImageSpatialObjectType::Pointer inputObject = InputImageSpatialObjectType::New();
@@ -97,6 +101,22 @@ itkSatoVesselnessFeatureGeneratorTest1(int argc, char * argv[])
   featureGenerator->SetAlpha2(alpha2);
   ITK_TEST_SET_GET_VALUE(alpha2, featureGenerator->GetAlpha2());
 
+  double sigmoidAlpha = 1.0;
+  if (argc > 6)
+  {
+    sigmoidAlpha = std::stod(argv[6]);
+  }
+  featureGenerator->SetSigmoidAlpha(sigmoidAlpha);
+  ITK_TEST_SET_GET_VALUE(sigmoidAlpha, featureGenerator->GetSigmoidAlpha());
+
+  double sigmoidBeta = -200.0;
+  if (argc > 7)
+  {
+    sigmoidBeta = std::stod(argv[7]);
+  }
+  featureGenerator->SetSigmoidBeta(sigmoidBeta);
+  ITK_TEST_SET_GET_VALUE(sigmoidBeta, featureGenerator->GetSigmoidBeta());
+
 
   ITK_TRY_EXPECT_NO_EXCEPTION(featureGenerator->Update());
 
@@ -112,6 +132,7 @@ itkSatoVesselnessFeatureGeneratorTest1(int argc, char * argv[])
 
   writer->SetFileName(argv[2]);
   writer->SetInput(outputImage);
+  writer->UseCompressionOn();
 
   ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
 
