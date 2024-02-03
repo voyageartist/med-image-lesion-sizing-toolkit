@@ -78,4 +78,39 @@ itkSatoVesselnessFeatureGeneratorTest1(int argc, char * argv[])
   {
     sigma = std::stod(argv[3]);
   }
-  featureGenerator->SetSigma(sigma)
+  featureGenerator->SetSigma(sigma);
+  ITK_TEST_SET_GET_VALUE(sigma, featureGenerator->GetSigma());
+
+  double alpha1 = 0.5;
+  if (argc > 4)
+  {
+    alpha1 = std::stod(argv[4]);
+  }
+  featureGenerator->SetAlpha1(alpha1);
+  ITK_TEST_SET_GET_VALUE(alpha1, featureGenerator->GetAlpha1());
+
+  double alpha2 = 2.0;
+  if (argc > 5)
+  {
+    alpha2 = std::stod(argv[5]);
+  }
+  featureGenerator->SetAlpha2(alpha2);
+  ITK_TEST_SET_GET_VALUE(alpha2, featureGenerator->GetAlpha2());
+
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(featureGenerator->Update());
+
+
+  SpatialObjectType::ConstPointer feature = featureGenerator->GetFeature();
+
+  OutputImageSpatialObjectType::ConstPointer outputObject =
+    dynamic_cast<const OutputImageSpatialObjectType *>(feature.GetPointer());
+
+  OutputImageType::ConstPointer outputImage = outputObject->GetImage();
+
+  WriterType::Pointer writer = WriterType::New();
+
+  writer->SetFileName(argv[2]);
+  writer->SetInput(outputImage);
+
+  ITK_TRY_EXPECT_NO_E
