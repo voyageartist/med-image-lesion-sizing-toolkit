@@ -46,4 +46,33 @@ itkSegmentationVolumeEstimatorTest1(int itkNotUsed(argc), char * itkNotUsed(argv
 {
   constexpr unsigned int Dimension = 3;
 
-  using Volume
+  using VolumeEstimatorType = itk::VolumeEstimatorSurrogate;
+
+  VolumeEstimatorType::Pointer volumeEstimator = VolumeEstimatorType::New();
+
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(volumeEstimator, VolumeEstimatorSurrogate, SegmentationVolumeEstimator);
+
+  using ImageSpatialObjectType = itk::ImageSpatialObject<Dimension>;
+
+  ImageSpatialObjectType::Pointer inputObject = ImageSpatialObjectType::New();
+
+  volumeEstimator->SetInput(inputObject);
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(volumeEstimator->Update());
+
+
+  VolumeEstimatorType::RealType volume1 = volumeEstimator->GetVolume();
+
+  const VolumeEstimatorType::RealObjectType * volumeObject = volumeEstimator->GetVolumeOutput();
+
+  if (volumeObject->Get() != volume1)
+  {
+    std::cerr << "Test failed!" << std::endl;
+    std::cerr << "Error in GetVolumeOutput() and/or GetVolume() " << std::endl;
+    return EXIT_FAILURE;
+  }
+
+
+  std::cout << "Test finished." << std::endl;
+  return EXIT_SUCCESS;
+}
