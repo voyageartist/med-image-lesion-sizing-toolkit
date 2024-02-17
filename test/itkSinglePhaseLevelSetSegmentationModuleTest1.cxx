@@ -44,4 +44,26 @@ itkSinglePhaseLevelSetSegmentationModuleTest1(int itkNotUsed(argc), char * itkNo
 
   constexpr double propagationScaling = 1.3;
   segmentationModule->SetPropagationScaling(propagationScaling);
-  ITK_TEST
+  ITK_TEST_SET_GET_VALUE(propagationScaling, segmentationModule->GetPropagationScaling());
+
+  constexpr double curvatureScaling = 1.7;
+  segmentationModule->SetCurvatureScaling(curvatureScaling);
+  ITK_TEST_SET_GET_VALUE(curvatureScaling, segmentationModule->GetCurvatureScaling());
+
+  constexpr double advectionScaling = 1.9;
+  segmentationModule->SetAdvectionScaling(advectionScaling);
+  ITK_TEST_SET_GET_VALUE(advectionScaling, segmentationModule->GetAdvectionScaling());
+
+  constexpr double maximumRMSError = 0.01;
+  segmentationModule->SetMaximumRMSError(maximumRMSError);
+  ITK_TEST_SET_GET_VALUE(maximumRMSError, segmentationModule->GetMaximumRMSError());
+
+  constexpr unsigned int maximumNumberOfIterations = 179;
+  segmentationModule->SetMaximumNumberOfIterations(maximumNumberOfIterations);
+  ITK_TEST_SET_GET_VALUE(maximumNumberOfIterations, segmentationModule->GetMaximumNumberOfIterations());
+
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(segmentationModule->Update());
+
+
+  std::cout << "Tes
