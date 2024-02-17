@@ -16,4 +16,32 @@
 #include "itkSinglePhaseLevelSetSegmentationModule.h"
 #include "itkImage.h"
 #include "itkSpatialObject.h"
-#include "itkImageSpatialObject.
+#include "itkImageSpatialObject.h"
+#include "itkImageMaskSpatialObject.h"
+#include "itkTestingMacros.h"
+
+
+int
+itkSinglePhaseLevelSetSegmentationModuleTest1(int itkNotUsed(argc), char * itkNotUsed(argv)[])
+{
+  constexpr unsigned int Dimension = 3;
+
+  using SegmentationModuleType = itk::SinglePhaseLevelSetSegmentationModule<Dimension>;
+
+  SegmentationModuleType::Pointer segmentationModule = SegmentationModuleType::New();
+
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(segmentationModule, SinglePhaseLevelSetSegmentationModule, SegmentationModule);
+
+  using ImageSpatialObjectType = itk::ImageSpatialObject<Dimension>;
+
+  ImageSpatialObjectType::Pointer inputObject = ImageSpatialObjectType::New();
+
+  segmentationModule->SetInput(inputObject);
+
+  ImageSpatialObjectType::Pointer featureObject = ImageSpatialObjectType::New();
+
+  segmentationModule->SetFeature(featureObject);
+
+  constexpr double propagationScaling = 1.3;
+  segmentationModule->SetPropagationScaling(propagationScaling);
+  ITK_TEST
