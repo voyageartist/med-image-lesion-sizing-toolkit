@@ -13,4 +13,31 @@ set(WRAPPER_SUBMODULE_ORDER
    itkFastMarchingAndGeodesicActiveContourLevelSetSegmentationModule
    itkFastMarchingAndShapeDetectionLevelSetSegmentationModule
    itkFastMarchingSegmentationModule
-   it
+   itkFeatureAggregator
+   itkFeatureGenerator
+   itkFrangiTubularnessFeatureGenerator
+   itkFrangiTubularnessImageFilter
+   itkGeodesicActiveContourLevelSetSegmentationModule
+   itkGradientMagnitudeSigmoidFeatureGenerator
+   itkGrayscaleImageSegmentationVolumeEstimator
+   itkIsotropicResampler
+   itkIsotropicResamplerImageFilter
+   itkLandmarksReader
+   itkLesionSegmentationImageFilter8
+   itkLesionSegmentationMethod
+   itkLocalStructureImageFilter
+   itkLungWallFeatureGenerator
+   itkMaximumFeatureAggregator
+   itkMinimumFeatureAggregator
+   itkMorphologicalOpeningFeatureGenerator
+   itkRegionCompetitionImageFilter
+   itkRegionGrowingSegmentationModule
+   itkSatoLocalStructureFeatureGenerator
+   itkSatoVesselnessFeatureGenerator
+   itkSatoVesselnessSigmoidFeatureGenerator
+   itkSegmentationModule
+   itkSegmentationVolumeEstimator
+   itkShapeDetectionLevelSetSegmentationModule
+   itkSigmoidFeatureGenerator
+   itkSinglePhaseLevelSetSegmentationModule
+   itkVesselE
