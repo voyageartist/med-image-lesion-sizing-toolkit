@@ -1,0 +1,16 @@
+itk_wrap_module(LesionSizingToolkit)
+
+set(WRAPPER_SUBMODULE_ORDER
+   itkBinaryThresholdFeatureGenerator
+   itkCannyEdgeDetectionRecursiveGaussianImageFilter
+   itkCannyEdgesDistanceAdvectionFieldFeatureGenerator
+   itkCannyEdgesDistanceFeatureGenerator
+   itkCannyEdgesFeatureGenerator
+   itkConfidenceConnectedSegmentationModule
+   itkConnectedThresholdSegmentationModule
+   itkDescoteauxSheetnessFeatureGenerator
+   itkDescoteauxSheetnessImageFilter
+   itkFastMarchingAndGeodesicActiveContourLevelSetSegmentationModule
+   itkFastMarchingAndShapeDetectionLevelSetSegmentationModule
+   itkFastMarchingSegmentationModule
+   it

@@ -66,4 +66,6 @@ itkSinglePhaseLevelSetSegmentationModuleTest1(int itkNotUsed(argc), char * itkNo
   ITK_TRY_EXPECT_NO_EXCEPTION(segmentationModule->Update());
 
 
-  std::cout << "Tes
+  std::cout << "Test finished." << std::endl;
+  return EXIT_SUCCESS;
+}
