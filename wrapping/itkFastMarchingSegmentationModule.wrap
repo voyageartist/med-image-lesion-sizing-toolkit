@@ -1,0 +1,2 @@
+itk_wrap_class("itk::FastMarchingSegmentationModule" POINTER)
+  fore
