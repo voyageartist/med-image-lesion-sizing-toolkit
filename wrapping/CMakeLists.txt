@@ -40,4 +40,10 @@ set(WRAPPER_SUBMODULE_ORDER
    itkShapeDetectionLevelSetSegmentationModule
    itkSigmoidFeatureGenerator
    itkSinglePhaseLevelSetSegmentationModule
-   itkVesselE
+   itkVesselEnhancingDiffusion3DImageFilter
+   itkVotingBinaryHoleFillFloodingImageFilter
+   itkWeightedSumFeatureAggregator
+   )
+
+itk_auto_load_submodules()
+itk_end_wrap_module()
